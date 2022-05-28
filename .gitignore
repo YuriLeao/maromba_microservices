@@ -1,7 +1,8 @@
 # Change extension of this file to .gitignore
 
 *.class
-pgdata/
+
+.pgdata/
 
 # Mobile Tools for Java (J2ME)
 .mtj.tmp/
@@ -1295,5 +1296,6 @@ maromba_empresa/.mvn/wrapper/maven-wrapper.jar
 maromba_empresa/.mvn/wrapper/maven-wrapper.properties
 maromba_empresa/mvnw
 .pgdata/base/1/1247_vm
+maromba_empresa/.mvn/wrapper/maven-wrapper.jar
 maromba_empresa/.mvn/wrapper/maven-wrapper.jar
 maromba_empresa/.mvn/wrapper/maven-wrapper.jar
