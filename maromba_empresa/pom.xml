@@ -9,10 +9,10 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.api.maromba</groupId>
-	<artifactId>maromba_login</artifactId>
+	<artifactId>maromba_empresa</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>maromba_login</name>
-	<description>Projeto para controle de login</description>
+	<name>maromba_empresa</name>
+	<description>rojeto para controle de empresa</description>
 	<properties>
 		<java.version>17</java.version>
 	</properties>

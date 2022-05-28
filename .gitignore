@@ -1,19 +1,43 @@
+# Change extension of this file to .gitignore
 
-maromba_empresa/.classpath
-maromba_empresa/.project
-maromba_empresa/.settings/org.eclipse.core.resources.prefs
-maromba_empresa/.settings/org.eclipse.jdt.core.prefs
-maromba_empresa/.settings/org.eclipse.m2e.core.prefs
-maromba_empresa/HELP.md
-maromba_empresa/target/classes/application.properties
-maromba_empresa/target/classes/com/api/maromba/empresa/MarombaEmpresaApplication.class
-maromba_empresa/target/classes/META-INF/MANIFEST.MF
-maromba_empresa/target/classes/META-INF/maven/com.api.maromba/maromba_empresa/pom.properties
-maromba_empresa/target/classes/META-INF/maven/com.api.maromba/maromba_empresa/pom.xml
-maromba_empresa/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst
-maromba_empresa/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst
-maromba_empresa/target/maven-status/maven-compiler-plugin/testCompile/default-testCompile/createdFiles.lst
-maromba_empresa/target/maven-status/maven-compiler-plugin/testCompile/default-testCompile/inputFiles.lst
-maromba_empresa/target/surefire-reports/com.api.maromba.empresa.MarombaEmpresaApplicationTests.txt
-maromba_empresa/target/surefire-reports/TEST-com.api.maromba.empresa.MarombaEmpresaApplicationTests.xml
-maromba_empresa/target/test-classes/com/api/maromba/empresa/MarombaEmpresaApplicationTests.class
+*.class
+pgdata/
+
+# Mobile Tools for Java (J2ME)
+.mtj.tmp/
+
+# Package Files #
+*.jar
+*.war
+*.ear
+
+#Gradle temporary files
+target/
+
+#Eclipse files
+**/.project
+**/.classpath
+**/.settings/
+blog/bin/
+**/.tern-project
+
+#IntelliJ files
+**/*.iml
+**/.idea
+**/.gradle
+
+
+# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
+hs_err_pid*
+.pgdata/base/1/112
+.pgdata/base/1/112
+.pgdata/base/1/112
+.pgdata/base/1/113
+.pgdata/base/1/1247
+.pgdata/base/1/112
+.pgdata/base/1/113
+maromba_login/src/main/resources/application.properties
+maromba_login/src/main/java/com/api/maromba/login/models/UsuarioModel.java
+maromba_login/src/main/java/com/api/maromba/login/dtos/UsuarioDto.java
+maromba_login/pom.xml
+maromba_login/Dockerfile

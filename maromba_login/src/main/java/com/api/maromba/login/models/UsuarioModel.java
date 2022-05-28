@@ -38,11 +38,11 @@ public class UsuarioModel implements Serializable {
 	@Column(nullable = false)
 	private String genero;
 	@Column(nullable = false)
-	private String empresa_id;
-	@Column(nullable = false)
 	private String telefone;
 	@Column(nullable = false)
 	private Double peso;
+	@Column(nullable = false)
+	private String empresaId;
 	@Column(nullable = false)
 	@JsonSerialize(using = LocalDateSerializer.class)
 	@JsonDeserialize(using = LocalDateDeserializer.class)
@@ -87,12 +87,6 @@ public class UsuarioModel implements Serializable {
 	public void setDataNascimento(LocalDate data_nascimento) {
 		this.dataNascimento = data_nascimento;
 	}
-	public String getEmpresaId() {
-		return empresa_id;
-	}
-	public void setEmpresaId(String empresa_id) {
-		this.empresa_id = empresa_id;
-	}
 	public String getTelefone() {
 		return telefone;
 	}
@@ -105,7 +99,11 @@ public class UsuarioModel implements Serializable {
 	public void setPeso(Double peso) {
 		this.peso = peso;
 	}
-	
-	
+	public String getEmpresaId() {
+		return empresaId;
+	}
+	public void setEmpresaId(String empresaId) {
+		this.empresaId = empresaId;
+	}
 
 }
