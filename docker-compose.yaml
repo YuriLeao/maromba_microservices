@@ -22,8 +22,8 @@ services:
           - "9000:80"
         depends_on: 
           - db
-    javaapi:
-        image: maromba-api
+    maromba_login_api:
+        image: maromba_login_api
         ports:
           - "8080:8080"
         depends_on:
