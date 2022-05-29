@@ -23,6 +23,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.api.maromba.login.dtos.UsuarioDto;
+import com.api.maromba.login.exception.ResponseBadRequestException;
+import com.api.maromba.login.exception.ResponseConflictException;
+import com.api.maromba.login.exception.ResponseNotFoundException;
 import com.api.maromba.login.models.UsuarioModel;
 import com.api.maromba.login.services.UsuarioService;
 
@@ -34,23 +37,21 @@ public class UsuarioController {
 	@Autowired
 	UsuarioService usuarioService;
 	
-	@PostMapping
+	@PostMapping("incluir")
 	public ResponseEntity<Object> salvar(@RequestBody @Valid UsuarioDto usuarioDto){
 		if(usuarioService.existe(usuarioDto.getUsuario())){
-			return ResponseEntity.status(HttpStatus.CONFLICT).body("Conflito: Usuário já existente");
+			throw new ResponseConflictException("Usuário já existente.");
 		}
-		
 		var usuarioModel = new UsuarioModel();
 		BeanUtils.copyProperties(usuarioDto, usuarioModel);
 		return ResponseEntity.status(HttpStatus.CREATED).body(usuarioService.salvar(usuarioModel));
-		
 	}
 	
 	@GetMapping
 	public ResponseEntity<Page<UsuarioModel>> obterTodos(@PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.ASC) Pageable pageable){
 		Page<UsuarioModel> usuarioPages = usuarioService.findAll(pageable);
 		if(usuarioPages.isEmpty()) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(usuarioPages);
+			throw new ResponseNotFoundException("Nenhum usário encontrado.");
 		}
 		return ResponseEntity.status(HttpStatus.OK).body(usuarioPages);
 	}
@@ -59,7 +60,7 @@ public class UsuarioController {
 	public ResponseEntity<Object> logar(@PathVariable(value = "usuario") String usuario, @PathVariable(value = "senha") String senha){
 		Optional<UsuarioModel> usuarioModelOptional = usuarioService.findByUsuarioAndSenha(usuario, senha);
 		if(!usuarioModelOptional.isPresent()) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(usuarioModelOptional.get());
+			throw new ResponseNotFoundException("Usuário ou senha inválidos.");
 		}
 		return ResponseEntity.status(HttpStatus.OK).body(usuarioModelOptional.get());
 	}
@@ -68,7 +69,7 @@ public class UsuarioController {
 	public ResponseEntity<Object> deletar(@PathVariable(value = "usuario") String usuario, @PathVariable(value = "senha") String senha){
 		Optional<UsuarioModel> usuarioModelOptional = usuarioService.findByUsuarioAndSenha(usuario, senha);
 		if(!usuarioModelOptional.isPresent()) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuário não encontrado");
+			throw new ResponseNotFoundException("Usuário não encontrado");
 		}
 		usuarioService.deletar(usuarioModelOptional.get());
 		return ResponseEntity.status(HttpStatus.OK).body("Usuário deletado com sucesso");
@@ -79,7 +80,7 @@ public class UsuarioController {
 			@RequestBody UsuarioDto usuarioDto){
 		Optional<UsuarioModel> usuarioModelOptional = usuarioService.findByUsuarioAndSenha(usuario, senha);
 		if(!usuarioModelOptional.isPresent()) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuário não encontrado");
+			throw new ResponseNotFoundException("Usuário não encontrado");
 		}
 		
 		var usuarioModel = new UsuarioModel();
