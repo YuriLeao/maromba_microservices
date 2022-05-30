@@ -5,6 +5,9 @@ spring:
     name: login_service
   config:
     import: optional:configserver:http://localhost:8888/
+  cloud:
+    config:
+      profile: dev
   jpa:
     database: POSTGRESQL
     show-sql: true
