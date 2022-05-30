@@ -1,4 +1,10 @@
+server:
+  port: 8080
 spring:
+  application:
+    name: login_service
+  config:
+    import: optional:config_server:http://localhost:8888/
   jpa:
     database: POSTGRESQL
     show-sql: true
@@ -18,3 +24,9 @@ spring:
   devtools:
     remote:
       secret: 123
+management:
+  endpoints:
+    web:
+      exposure:
+        include:
+        - '*'

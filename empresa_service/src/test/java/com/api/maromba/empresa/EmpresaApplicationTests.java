@@ -1,10 +1,10 @@
-package com.api.maromba.login;
+package com.api.maromba.empresa;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class ApplicationTests {
+class EmpresaApplicationTests {
 
 	@Test
 	void contextLoads() {

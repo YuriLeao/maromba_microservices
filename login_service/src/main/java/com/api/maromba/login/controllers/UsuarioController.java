@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.api.maromba.login.configuration.LoginConfiguration;
 import com.api.maromba.login.dtos.UsuarioDto;
 import com.api.maromba.login.exception.ResponseConflictException;
 import com.api.maromba.login.exception.ResponseNotFoundException;
@@ -36,6 +37,9 @@ public class UsuarioController {
 	@Autowired
 	UsuarioService usuarioService;
 	
+	@Autowired
+	LoginConfiguration configuration;
+	
 	@PostMapping("incluir")
 	public ResponseEntity<Object> salvar(@RequestBody @Valid UsuarioDto usuarioDto){
 		if(usuarioService.existe(usuarioDto.getUsuario())){
@@ -43,7 +47,7 @@ public class UsuarioController {
 		}
 		var usuarioModel = new UsuarioModel();
 		BeanUtils.copyProperties(usuarioDto, usuarioModel);
-		return ResponseEntity.status(HttpStatus.CREATED).body(usuarioService.salvar(usuarioModel));
+		return ResponseEntity.status(HttpStatus.CREATED).body(configuration.getAmbiente());//usuarioService.salvar(usuarioModel));
 	}
 	
 	@GetMapping
