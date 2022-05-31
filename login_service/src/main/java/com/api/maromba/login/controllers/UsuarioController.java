@@ -6,7 +6,6 @@ import javax.validation.Valid;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cloud.config.environment.Environment;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -73,10 +72,10 @@ public class UsuarioController {
 	public ResponseEntity<Object> deletar(@PathVariable(value = "usuario") String usuario, @PathVariable(value = "senha") String senha){
 		Optional<UsuarioModel> usuarioModelOptional = usuarioService.findByUsuarioAndSenha(usuario, senha);
 		if(!usuarioModelOptional.isPresent()) {
-			throw new ResponseNotFoundException("Usuário não encontrado");
+			throw new ResponseNotFoundException("Usuário não encontrado.");
 		}
 		usuarioService.deletar(usuarioModelOptional.get());
-		return ResponseEntity.status(HttpStatus.OK).body("Usuário deletado com sucesso");
+		return ResponseEntity.status(HttpStatus.OK).body("Usuário deletado com sucesso.");
 	}
 	
 	@PutMapping("alterar/{usuario}/{senha}")
@@ -84,7 +83,7 @@ public class UsuarioController {
 			@RequestBody UsuarioDto usuarioDto){
 		Optional<UsuarioModel> usuarioModelOptional = usuarioService.findByUsuarioAndSenha(usuario, senha);
 		if(!usuarioModelOptional.isPresent()) {
-			throw new ResponseNotFoundException("Usuário não encontrado");
+			throw new ResponseNotFoundException("Usuário não encontrado.");
 		}
 		
 		var usuarioModel = new UsuarioModel();
