@@ -1299,3 +1299,9 @@ maromba_empresa/mvnw
 maromba_empresa/.mvn/wrapper/maven-wrapper.jar
 maromba_empresa/.mvn/wrapper/maven-wrapper.jar
 maromba_empresa/.mvn/wrapper/maven-wrapper.jar
+login_service/mvnw
+eureka_server/.mvn/wrapper/maven-wrapper.jar
+eureka_server/.mvn/wrapper/maven-wrapper.properties
+eureka_server/.mvn/wrapper/maven-wrapper.jar
+eureka_server/mvnw
+*.jar
