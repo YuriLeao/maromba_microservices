@@ -1,6 +1,7 @@
 package com.api.maromba.login.dtos;
 
 import java.time.LocalDate;
+import java.util.UUID;
 
 import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.NotBlank;
@@ -20,8 +21,9 @@ public class UsuarioDto {
 	private String telefone;
 	@DecimalMin("30.00")
 	private Double peso;
-	@NotBlank
-	private String empresaId;
+	@NotNull
+	private UUID empresaId;
+	private String empresaNome;
 	@NotNull
 	private LocalDate dataNascimento;
 	
@@ -67,11 +69,17 @@ public class UsuarioDto {
 	public void setPeso(Double peso) {
 		this.peso = peso;
 	}
-	public String getEmpresaId() {
+	public UUID getEmpresaId() {
 		return empresaId;
 	}
-	public void setEmpresaId(String empresaId) {
+	public void setEmpresaId(UUID empresaId) {
 		this.empresaId = empresaId;
+	}
+	public String getEmpresaNome() {
+		return empresaNome;
+	}
+	public void setEmpresaNome(String empresaNome) {
+		this.empresaNome = empresaNome;
 	}
 	
 }

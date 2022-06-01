@@ -42,7 +42,7 @@ public class UsuarioModel implements Serializable {
 	@Column(nullable = false)
 	private Double peso;
 	@Column(nullable = false)
-	private String empresaId;
+	private UUID empresaId;
 	@Column(nullable = false)
 	@JsonSerialize(using = LocalDateSerializer.class)
 	@JsonDeserialize(using = LocalDateDeserializer.class)
@@ -99,10 +99,10 @@ public class UsuarioModel implements Serializable {
 	public void setPeso(Double peso) {
 		this.peso = peso;
 	}
-	public String getEmpresaId() {
+	public UUID getEmpresaId() {
 		return empresaId;
 	}
-	public void setEmpresaId(String empresaId) {
+	public void setEmpresaId(UUID empresaId) {
 		this.empresaId = empresaId;
 	}
 
