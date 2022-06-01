@@ -30,3 +30,6 @@ spring:
   devtools:
     remote:
       secret: 123
+springdoc:
+  api-docs:
+    path: /empresa-service/v3/api-docs
