@@ -13,7 +13,7 @@ import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
 import io.github.resilience4j.retry.annotation.Retry;
 
 @RestController
-@RequestMapping("usuario")
+@RequestMapping("usuario-service")
 public class TesteController {
 	
 	private Logger logger = LoggerFactory.getLogger(TesteController.class);

@@ -10,6 +10,6 @@ spring:
            uri: https://github.com/YuriLeao/maromba-config-service
            #username
            #passworld
-           defaault-label: main
+           default-label: main
            search-paths:
-           - 'login_service*'
+           - 'usuario-service*'

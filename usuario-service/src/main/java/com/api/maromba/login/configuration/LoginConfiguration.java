@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @RefreshScope
-@ConfigurationProperties("loginservice")
+@ConfigurationProperties("usuario-service")
 public class LoginConfiguration {
 	private String ambiente;
 

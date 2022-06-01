@@ -21,7 +21,7 @@ resilience4j:
         enable-exponential-backoff: true
 spring:
   application:
-    name: login-service
+    name: usuario-service
   config:
     import: optional:configserver:http://localhost:8888/
   cloud:
@@ -47,4 +47,4 @@ spring:
       secret: 123
 springdoc:
   api-docs:
-    path: login-service/v3/api-docs
+    path: usuario-service/v3/api-docs

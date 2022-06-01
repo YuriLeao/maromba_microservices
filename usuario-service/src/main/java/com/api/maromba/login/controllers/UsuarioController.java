@@ -37,7 +37,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @Tag(name = "Usuario Service API")
 @RestController
 @CrossOrigin(origins = "*", maxAge = 3600)
-@RequestMapping("/usuario")
+@RequestMapping("/usuario-service")
 public class UsuarioController {
 	
 	@Autowired
