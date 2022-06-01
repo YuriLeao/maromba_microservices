@@ -50,11 +50,11 @@ public class EmpresaController {
 	
 	@GetMapping
 	public ResponseEntity<Page<EmpresaModel>> obterTodos(@PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.ASC) Pageable pageable){
-		Page<EmpresaModel> usuarioPages = empresaService.findAll(pageable);
-		if(usuarioPages.isEmpty()) {
+		Page<EmpresaModel> empresaPages = empresaService.findAll(pageable);
+		if(empresaPages.isEmpty()) {
 			throw new ResponseNotFoundException("Nenhuma empresa encontrada.");
 		}
-		return ResponseEntity.status(HttpStatus.OK).body(usuarioPages);
+		return ResponseEntity.status(HttpStatus.OK).body(empresaPages);
 	}
 	
 	@GetMapping("obterById/{id}")
