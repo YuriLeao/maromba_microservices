@@ -1305,3 +1305,7 @@ eureka_server/.mvn/wrapper/maven-wrapper.properties
 eureka_server/.mvn/wrapper/maven-wrapper.jar
 eureka_server/mvnw
 *.jar
+gateway_server/.mvn/wrapper/maven-wrapper.jar
+gateway_server/.mvn/wrapper/maven-wrapper.properties
+gateway_server/.mvn/wrapper/maven-wrapper.jar
+gateway_server/mvnw
