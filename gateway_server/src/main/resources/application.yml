@@ -7,9 +7,17 @@ eureka:
 spring:
   application:
     name: gateway-server
-  #cloud:
-    #gateway:
-     # discovery:
-      #  locator:
-       #   enabled: true
-        #  lower-case-service-id: true
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+      routes:
+      - id: empresa
+        uri: lb://empresa-service
+        predicates:
+        - Path=/empresa/**
+      - id: usuario
+        uri: lb://login-service
+        predicates:
+        - Path=/usuario/**
