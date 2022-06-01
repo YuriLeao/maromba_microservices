@@ -31,6 +31,10 @@ import com.api.maromba.login.models.UsuarioModel;
 import com.api.maromba.login.proxy.EmpresaProxy;
 import com.api.maromba.login.services.UsuarioService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
+@Tag(name = "Usuario Service API")
 @RestController
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RequestMapping("/usuario")
@@ -45,6 +49,7 @@ public class UsuarioController {
 	@Autowired
 	private Environment environment;
 	
+	@Operation(summary = "Salva um novo usuario.")
 	@PostMapping("incluir")
 	public ResponseEntity<Object> salvar(@RequestBody @Valid UsuarioDto usuarioDto){
 		if(usuarioService.existe(usuarioDto.getUsuario())){

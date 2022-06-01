@@ -29,7 +29,10 @@ import com.api.maromba.empresa.exceptions.ResponseNotFoundException;
 import com.api.maromba.empresa.models.EmpresaModel;
 import com.api.maromba.empresa.services.EmpresaService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
+@Tag(name = "Empresa Service API endpoint")
 @RestController
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RequestMapping("/empresa")
@@ -38,6 +41,7 @@ public class EmpresaController {
 	@Autowired
 	private EmpresaService empresaService;
 	
+	@Operation(summary = "Salva uma nova empresa.")
 	@PostMapping("incluir")
 	public ResponseEntity<Object> salvar(@RequestBody @Valid EmpresaDto empresaDto){
 		if(empresaService.existe(empresaDto.getNome())){
