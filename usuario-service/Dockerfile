@@ -1,7 +1,5 @@
 FROM amazoncorretto:17.0.3
-
 WORKDIR /app
-
-COPY target/maromba_login-0.0.1-SNAPSHOT.jar /app/maromba-login.jar
-
-ENTRYPOINT ["java", "-jar", "maromba-login.jar"]
+COPY usuario-service/target/*.jar /app/usuario-service.jar
+RUN bash -c 'touch /app/usuario-service.jar'
+ENTRYPOINT ["java","-Djava.security.egd=file:dev/./urandom", "-jar", "usuario-service.jar"]
