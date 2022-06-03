@@ -30,6 +30,9 @@ spring:
   devtools:
     remote:
       secret: 123
+  sleuth:
+    sampler:
+      probability: 1.0
 springdoc:
   api-docs:
     path: /empresa-service/v3/api-docs
