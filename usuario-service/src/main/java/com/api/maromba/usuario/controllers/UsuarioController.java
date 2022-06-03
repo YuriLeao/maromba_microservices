@@ -5,6 +5,8 @@ import java.util.Optional;
 
 import javax.validation.Valid;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
@@ -40,6 +42,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @RequestMapping("/usuario-service")
 public class UsuarioController {
 	
+	private Logger logger = LoggerFactory.getLogger(UsuarioController.class);
+	
 	@Autowired
 	private UsuarioService usuarioService;
 	
@@ -62,6 +66,7 @@ public class UsuarioController {
 	
 	@GetMapping
 	public ResponseEntity<Page<UsuarioModel>> obterTodos(@PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.ASC) Pageable pageable){
+		logger.info("obterTodos foi chamado com -> paginaNumero {}, quantidadePagina {},  tipoOrganizacao{}", pageable.getPageNumber(), pageable.getPageSize(), pageable.getSort());
 		Page<UsuarioModel> usuarioPages = usuarioService.findAll(pageable);
 		if(usuarioPages.isEmpty()) {
 			throw new ResponseNotFoundException("Nenhum usário encontrado.");
