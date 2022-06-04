@@ -1,4 +1,4 @@
-package com.api.maromba.usuario.exception.handler;
+package com.api.maromba.empresa.exceptions.handler;
 
 import java.time.LocalDateTime;
 
@@ -12,10 +12,10 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import com.api.maromba.usuario.exception.ExceptionResponse;
-import com.api.maromba.usuario.exception.ResponseBadRequestException;
-import com.api.maromba.usuario.exception.ResponseConflictException;
-import com.api.maromba.usuario.exception.ResponseNotFoundException;
+import com.api.maromba.empresa.exceptions.ExceptionResponse;
+import com.api.maromba.empresa.exceptions.ResponseBadRequestException;
+import com.api.maromba.empresa.exceptions.ResponseConflictException;
+import com.api.maromba.empresa.exceptions.ResponseNotFoundException;
 
 @ControllerAdvice
 @RestController

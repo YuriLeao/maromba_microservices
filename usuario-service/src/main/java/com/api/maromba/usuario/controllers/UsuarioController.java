@@ -5,11 +5,8 @@ import java.util.Optional;
 
 import javax.validation.Valid;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -33,6 +30,8 @@ import com.api.maromba.usuario.models.UsuarioModel;
 import com.api.maromba.usuario.proxy.EmpresaProxy;
 import com.api.maromba.usuario.services.UsuarioService;
 
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import io.github.resilience4j.retry.annotation.Retry;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
@@ -42,19 +41,16 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @RequestMapping("/usuario-service")
 public class UsuarioController {
 	
-	private Logger logger = LoggerFactory.getLogger(UsuarioController.class);
-	
 	@Autowired
 	private UsuarioService usuarioService;
 	
 	@Autowired
 	private EmpresaProxy empresaProxy;
 	
-	@Autowired
-	private Environment environment;
-	
 	@Operation(summary = "Salva um novo usuario.")
 	@PostMapping("incluir")
+	@Retry(name = "default")
+	@CircuitBreaker(name = "default")
 	public ResponseEntity<Object> salvar(@RequestBody @Valid UsuarioDto usuarioDto){
 		if(usuarioService.existe(usuarioDto.getUsuario())){
 			throw new ResponseConflictException("Usuário já existente.");
@@ -64,9 +60,11 @@ public class UsuarioController {
 		return ResponseEntity.status(HttpStatus.CREATED).body(usuarioService.salvar(usuarioModel));
 	}
 	
+	@Operation(summary = "Obtém todos os usuários.")
 	@GetMapping
+	@Retry(name = "default")
+	@CircuitBreaker(name = "default")
 	public ResponseEntity<Page<UsuarioModel>> obterTodos(@PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.ASC) Pageable pageable){
-		logger.info("obterTodos foi chamado com -> paginaNumero {}, quantidadePagina {},  tipoOrganizacao{}", pageable.getPageNumber(), pageable.getPageSize(), pageable.getSort());
 		Page<UsuarioModel> usuarioPages = usuarioService.findAll(pageable);
 		if(usuarioPages.isEmpty()) {
 			throw new ResponseNotFoundException("Nenhum usário encontrado.");
@@ -74,8 +72,11 @@ public class UsuarioController {
 		return ResponseEntity.status(HttpStatus.OK).body(usuarioPages);
 	}
 	
-	@GetMapping("logar/{usuario}/{senha}")
-	public ResponseEntity<Object> logar(@PathVariable(value = "usuario") String usuario, @PathVariable(value = "senha") String senha){
+	@Operation(summary = "Faz login.")
+	@GetMapping("login/{usuario}/{senha}")
+	@Retry(name = "default")
+	@CircuitBreaker(name = "default")
+	public ResponseEntity<Object> login(@PathVariable(value = "usuario") String usuario, @PathVariable(value = "senha") String senha){
 		Optional<UsuarioModel> usuarioModelOptional = usuarioService.findByUsuarioAndSenha(usuario, senha);
 		if(!usuarioModelOptional.isPresent()) {
 			throw new ResponseNotFoundException("Usuário ou senha inválidos.");
@@ -84,11 +85,14 @@ public class UsuarioController {
 		BeanUtils.copyProperties(usuarioModelOptional.get(), usuarioDto);
 		var response = empresaProxy.obterById(usuarioDto.getEmpresaId());
 		LinkedHashMap<String, Object> linkedHashMap = (LinkedHashMap<String, Object>)response.getBody();
-		usuarioDto.setEmpresaNome(linkedHashMap.get("nome").toString().concat("  porta:").concat(environment.getProperty("local.server.port")));
+		usuarioDto.setEmpresaNome(linkedHashMap.get("nome").toString());
 		return ResponseEntity.status(HttpStatus.OK).body(usuarioDto);
 	}
 	
+	@Operation(summary = "Deleta um usuário.")
 	@DeleteMapping("deletar/{usuario}/{senha}")
+	@Retry(name = "default")
+	@CircuitBreaker(name = "default")
 	public ResponseEntity<Object> deletar(@PathVariable(value = "usuario") String usuario, @PathVariable(value = "senha") String senha){
 		Optional<UsuarioModel> usuarioModelOptional = usuarioService.findByUsuarioAndSenha(usuario, senha);
 		if(!usuarioModelOptional.isPresent()) {
@@ -98,7 +102,10 @@ public class UsuarioController {
 		return ResponseEntity.status(HttpStatus.OK).body("Usuário deletado com sucesso.");
 	}
 	
+	@Operation(summary = "Altera um usuario.")
 	@PutMapping("alterar/{usuario}/{senha}")
+	@Retry(name = "default")
+	@CircuitBreaker(name = "default")
 	public ResponseEntity<Object> alterar(@PathVariable(value = "usuario") String usuario, @PathVariable(value = "senha") String senha,
 			@RequestBody UsuarioDto usuarioDto){
 		Optional<UsuarioModel> usuarioModelOptional = usuarioService.findByUsuarioAndSenha(usuario, senha);

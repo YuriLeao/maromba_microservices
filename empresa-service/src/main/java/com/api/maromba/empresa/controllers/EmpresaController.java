@@ -29,6 +29,8 @@ import com.api.maromba.empresa.exceptions.ResponseNotFoundException;
 import com.api.maromba.empresa.models.EmpresaModel;
 import com.api.maromba.empresa.services.EmpresaService;
 
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import io.github.resilience4j.retry.annotation.Retry;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
@@ -43,6 +45,8 @@ public class EmpresaController {
 	
 	@Operation(summary = "Salva uma nova empresa.")
 	@PostMapping("incluir")
+	@Retry(name = "default")
+	@CircuitBreaker(name = "default")
 	public ResponseEntity<Object> salvar(@RequestBody @Valid EmpresaDto empresaDto){
 		if(empresaService.existe(empresaDto.getNome())){
 			throw new ResponseConflictException("Empresa já existente.");
@@ -52,8 +56,11 @@ public class EmpresaController {
 		return ResponseEntity.status(HttpStatus.CREATED).body(empresaService.salvar(empresaModel));
 	}
 	
+	@Operation(summary = "Obtém todas as empresas.")
 	@GetMapping
-	public ResponseEntity<Page<EmpresaModel>> obterTodos(@PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.ASC) Pageable pageable){
+	@Retry(name = "default")
+	@CircuitBreaker(name = "default")
+	public ResponseEntity<Page<EmpresaModel>> obter(@PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.ASC) Pageable pageable){
 		Page<EmpresaModel> empresaPages = empresaService.findAll(pageable);
 		if(empresaPages.isEmpty()) {
 			throw new ResponseNotFoundException("Nenhuma empresa encontrada.");
@@ -61,7 +68,10 @@ public class EmpresaController {
 		return ResponseEntity.status(HttpStatus.OK).body(empresaPages);
 	}
 	
+	@Operation(summary = "Obtém uma empresa.")
 	@GetMapping("obterById/{id}")
+	@Retry(name = "default")
+	@CircuitBreaker(name = "default")
 	public ResponseEntity<Object> obterById(@PathVariable(value = "id") UUID id){
 		Optional<EmpresaModel> empresaModelOptional = empresaService.findById(id);
 		if(!empresaModelOptional.isPresent()) {
@@ -70,7 +80,10 @@ public class EmpresaController {
 		return ResponseEntity.status(HttpStatus.OK).body(empresaModelOptional.get());
 	}
 	
+	@Operation(summary = "Deleta uma empresa.")
 	@DeleteMapping("deletar/{id}")
+	@Retry(name = "default")
+	@CircuitBreaker(name = "default")
 	public ResponseEntity<Object> deletar(@PathVariable(value = "id") UUID id){
 		Optional<EmpresaModel> empresaModelOptional = empresaService.findById(id);
 		if(!empresaModelOptional.isPresent()) {
@@ -80,7 +93,10 @@ public class EmpresaController {
 		return ResponseEntity.status(HttpStatus.OK).body("Empresa deletada com sucesso.");
 	}
 	
+	@Operation(summary = "Altera uma empresa.")
 	@PutMapping("alterar/{id}")
+	@Retry(name = "default")
+	@CircuitBreaker(name = "default")
 	public ResponseEntity<Object> alterar(@PathVariable(value = "id") UUID id, @RequestBody EmpresaDto empresaDto){
 		Optional<EmpresaModel> empresaModelOptional = empresaService.findById(id);
 		if(!empresaModelOptional.isPresent()) {
