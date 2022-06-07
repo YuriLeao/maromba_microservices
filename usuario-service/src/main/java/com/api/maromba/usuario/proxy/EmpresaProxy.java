@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 @FeignClient(name = "empresa-service")
 public interface EmpresaProxy {
 	
-	@GetMapping("/empresa/obterById/{id}")
+	@GetMapping("/empresa-service/obterById/{id}")
 	public ResponseEntity<Object> obterById(@PathVariable(value = "id") UUID id);
 		
 }
