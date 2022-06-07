@@ -1,10 +1,14 @@
 package com.api.maromba.usuario.controllers;
 
+import java.io.UnsupportedEncodingException;
+import java.security.NoSuchAlgorithmException;
 import java.util.LinkedHashMap;
 import java.util.Optional;
 
 import javax.validation.Valid;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -47,11 +51,13 @@ public class UsuarioController {
 	@Autowired
 	private EmpresaProxy empresaProxy;
 	
+	private Logger logger = LoggerFactory.getLogger(UsuarioController.class);
+	
 	@Operation(summary = "Salva um novo usuario.")
 	@PostMapping("incluir")
 	@Retry(name = "default")
 	@CircuitBreaker(name = "default")
-	public ResponseEntity<Object> salvar(@RequestBody @Valid UsuarioDto usuarioDto){
+	public ResponseEntity<Object> salvar(@RequestBody @Valid UsuarioDto usuarioDto) throws NoSuchAlgorithmException, UnsupportedEncodingException{
 		if(usuarioService.existe(usuarioDto.getUsuario())){
 			throw new ResponseConflictException("Usuário já existente.");
 		}
@@ -76,16 +82,20 @@ public class UsuarioController {
 	@GetMapping("login/{usuario}/{senha}")
 	@Retry(name = "default")
 	@CircuitBreaker(name = "default")
-	public ResponseEntity<Object> login(@PathVariable(value = "usuario") String usuario, @PathVariable(value = "senha") String senha){
+	public ResponseEntity<Object> login(@PathVariable(value = "usuario") String usuario, @PathVariable(value = "senha") String senha) throws NoSuchAlgorithmException, UnsupportedEncodingException{
 		Optional<UsuarioModel> usuarioModelOptional = usuarioService.findByUsuarioAndSenha(usuario, senha);
 		if(!usuarioModelOptional.isPresent()) {
 			throw new ResponseNotFoundException("Usuário ou senha inválidos.");
 		}
 		UsuarioDto usuarioDto = new UsuarioDto();
 		BeanUtils.copyProperties(usuarioModelOptional.get(), usuarioDto);
-		var response = empresaProxy.obterById(usuarioDto.getEmpresaId());
-		LinkedHashMap<String, Object> linkedHashMap = (LinkedHashMap<String, Object>)response.getBody();
-		usuarioDto.setEmpresaNome(linkedHashMap.get("nome").toString());
+		try {
+			var response = empresaProxy.obterById(usuarioDto.getEmpresaId());
+			LinkedHashMap<String, Object> linkedHashMap = (LinkedHashMap<String, Object>)response.getBody();
+			usuarioDto.setEmpresaNome(linkedHashMap.get("nome").toString());
+		} catch (Exception e) {
+			logger.error("Erro na obtenção do nome da empresa.");
+		}
 		return ResponseEntity.status(HttpStatus.OK).body(usuarioDto);
 	}
 	
@@ -93,7 +103,7 @@ public class UsuarioController {
 	@DeleteMapping("deletar/{usuario}/{senha}")
 	@Retry(name = "default")
 	@CircuitBreaker(name = "default")
-	public ResponseEntity<Object> deletar(@PathVariable(value = "usuario") String usuario, @PathVariable(value = "senha") String senha){
+	public ResponseEntity<Object> deletar(@PathVariable(value = "usuario") String usuario, @PathVariable(value = "senha") String senha) throws NoSuchAlgorithmException, UnsupportedEncodingException{
 		Optional<UsuarioModel> usuarioModelOptional = usuarioService.findByUsuarioAndSenha(usuario, senha);
 		if(!usuarioModelOptional.isPresent()) {
 			throw new ResponseNotFoundException("Usuário não encontrado.");
@@ -107,7 +117,7 @@ public class UsuarioController {
 	@Retry(name = "default")
 	@CircuitBreaker(name = "default")
 	public ResponseEntity<Object> alterar(@PathVariable(value = "usuario") String usuario, @PathVariable(value = "senha") String senha,
-			@RequestBody UsuarioDto usuarioDto){
+			@RequestBody UsuarioDto usuarioDto) throws NoSuchAlgorithmException, UnsupportedEncodingException{
 		Optional<UsuarioModel> usuarioModelOptional = usuarioService.findByUsuarioAndSenha(usuario, senha);
 		if(!usuarioModelOptional.isPresent()) {
 			throw new ResponseNotFoundException("Usuário não encontrado.");
