@@ -32,8 +32,10 @@ import com.api.maromba.empresa.services.EmpresaService;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.github.resilience4j.retry.annotation.Retry;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
+@SecurityRequirement(name = "bearerAuth")
 @Tag(name = "Empresa Service API endpoint")
 @RestController
 @CrossOrigin(origins = "*", maxAge = 3600)

@@ -27,6 +27,8 @@ public class UsuarioDto {
 	@NotNull
 	private LocalDate dataNascimento;
 	
+	private String token;
+	
 	public String getUsuario() {
 		return usuario;
 	}
@@ -81,5 +83,10 @@ public class UsuarioDto {
 	public void setEmpresaNome(String empresaNome) {
 		this.empresaNome = empresaNome;
 	}
-	
+	public String getToken() {
+		return token;
+	}
+	public void setToken(String token) {
+		this.token = token;
+	}
 }

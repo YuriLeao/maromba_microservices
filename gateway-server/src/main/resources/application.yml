@@ -1,3 +1,5 @@
+jwt:
+  secret: birllMonstrao
 server:
   port: 8765
 eureka:
@@ -13,14 +15,6 @@ spring:
         locator:
           enabled: true
       routes:
-      - id: empresa-service
-        uri: lb://empresa-service
-        predicates:
-        - Path=/empresa-service/**
-      - id: usuario-service
-        uri: lb://usuario-service
-        predicates:
-        - Path=/usuario-service/**
       - id: openapi
         uri: lb://gateway-server
         predicates:

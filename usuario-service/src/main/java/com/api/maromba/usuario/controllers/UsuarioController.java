@@ -2,7 +2,10 @@ package com.api.maromba.usuario.controllers;
 
 import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Optional;
 
 import javax.validation.Valid;
@@ -11,7 +14,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
@@ -33,10 +38,12 @@ import com.api.maromba.usuario.exception.ResponseNotFoundException;
 import com.api.maromba.usuario.models.UsuarioModel;
 import com.api.maromba.usuario.proxy.EmpresaProxy;
 import com.api.maromba.usuario.services.UsuarioService;
+import com.api.maromba.usuario.util.JwtUtil;
 
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.github.resilience4j.retry.annotation.Retry;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 @Tag(name = "Usuario Service API")
@@ -51,32 +58,51 @@ public class UsuarioController {
 	@Autowired
 	private EmpresaProxy empresaProxy;
 	
+	@Autowired
+	private JwtUtil jwtUtil;
+	
 	private Logger logger = LoggerFactory.getLogger(UsuarioController.class);
 	
+	@SecurityRequirement(name = "Bearer Authentication")
 	@Operation(summary = "Salva um novo usuario.")
 	@PostMapping("incluir")
 	@Retry(name = "default")
 	@CircuitBreaker(name = "default")
 	public ResponseEntity<Object> salvar(@RequestBody @Valid UsuarioDto usuarioDto) throws NoSuchAlgorithmException, UnsupportedEncodingException{
-		if(usuarioService.existe(usuarioDto.getUsuario())){
-			throw new ResponseConflictException("Usuário já existente.");
-		}
 		var usuarioModel = new UsuarioModel();
 		BeanUtils.copyProperties(usuarioDto, usuarioModel);
-		return ResponseEntity.status(HttpStatus.CREATED).body(usuarioService.salvar(usuarioModel));
+		if(usuarioService.existe(usuarioModel.getUsuario())){
+			throw new ResponseConflictException("Usuário já existente.");
+		}
+		usuarioModel = usuarioService.salvar(usuarioModel);
+		BeanUtils.copyProperties(usuarioModel, usuarioDto);
+		usuarioDto.setSenha(null);
+		return ResponseEntity.status(HttpStatus.CREATED).body(usuarioDto);
 	}
 	
+	@SecurityRequirement(name = "Bearer Authentication")
 	@Operation(summary = "Obtém todos os usuários.")
 	@GetMapping
 	@Retry(name = "default")
 	@CircuitBreaker(name = "default")
-	public ResponseEntity<Page<UsuarioModel>> obterTodos(@PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.ASC) Pageable pageable){
+	public ResponseEntity<Page<UsuarioDto>> obterTodos(@PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.ASC) Pageable pageable){
 		Page<UsuarioModel> usuarioPages = usuarioService.findAll(pageable);
 		if(usuarioPages.isEmpty()) {
 			throw new ResponseNotFoundException("Nenhum usário encontrado.");
 		}
-		return ResponseEntity.status(HttpStatus.OK).body(usuarioPages);
+		List<UsuarioDto> usuarioDtos = new ArrayList<UsuarioDto>();
+		for (UsuarioModel usuarioModel : usuarioPages) {
+			UsuarioDto usuarioDto = new UsuarioDto();
+			BeanUtils.copyProperties(usuarioModel, usuarioDto);
+			usuarioDto.setSenha(null);
+			usuarioDtos.add(usuarioDto);
+		}
+		Page<UsuarioDto> usuarioDtoPages = new PageImpl<UsuarioDto>(usuarioDtos);
+		return ResponseEntity.status(HttpStatus.OK).body(usuarioDtoPages);
 	}
+	
+	@Value("${api.server.url}")
+	private String jwtSecret;
 	
 	@Operation(summary = "Faz login.")
 	@GetMapping("login/{usuario}/{senha}")
@@ -87,6 +113,7 @@ public class UsuarioController {
 		if(!usuarioModelOptional.isPresent()) {
 			throw new ResponseNotFoundException("Usuário ou senha inválidos.");
 		}
+		logger.info(jwtSecret);
 		UsuarioDto usuarioDto = new UsuarioDto();
 		BeanUtils.copyProperties(usuarioModelOptional.get(), usuarioDto);
 		try {
@@ -96,9 +123,12 @@ public class UsuarioController {
 		} catch (Exception e) {
 			logger.error("Erro na obtenção do nome da empresa.");
 		}
+		usuarioDto.setToken(jwtUtil.generateToken(usuarioModelOptional.get()));
+		usuarioDto.setSenha(null);
 		return ResponseEntity.status(HttpStatus.OK).body(usuarioDto);
 	}
 	
+	@SecurityRequirement(name = "Bearer Authentication")
 	@Operation(summary = "Deleta um usuário.")
 	@DeleteMapping("deletar/{usuario}/{senha}")
 	@Retry(name = "default")
@@ -112,6 +142,7 @@ public class UsuarioController {
 		return ResponseEntity.status(HttpStatus.OK).body("Usuário deletado com sucesso.");
 	}
 	
+	@SecurityRequirement(name = "Bearer Authentication")
 	@Operation(summary = "Altera um usuario.")
 	@PutMapping("alterar/{usuario}/{senha}")
 	@Retry(name = "default")
@@ -126,6 +157,9 @@ public class UsuarioController {
 		var usuarioModel = new UsuarioModel();
 		BeanUtils.copyProperties(usuarioDto, usuarioModel);
 		usuarioModel.setId(usuarioModelOptional.get().getId());
-		return ResponseEntity.status(HttpStatus.CREATED).body(usuarioService.salvar(usuarioModel));
+		usuarioModel = usuarioService.salvar(usuarioModel);
+		BeanUtils.copyProperties(usuarioModel, usuarioDto);
+		usuarioDto.setSenha(null);
+		return ResponseEntity.status(HttpStatus.CREATED).body(usuarioDto);
 	}
 }	

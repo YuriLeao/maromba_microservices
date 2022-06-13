@@ -28,7 +28,6 @@ public class UsuarioService {
 	public UsuarioModel salvar(UsuarioModel usuarioModel) throws NoSuchAlgorithmException, UnsupportedEncodingException {
 		usuarioModel.setSenha(criptor.criptografarSenha(usuarioModel.getUsuario(), usuarioModel.getSenha()));
 		return usuarioRepository.save(usuarioModel);
-		
 	}
 	
 	public boolean existe(String usuario) {

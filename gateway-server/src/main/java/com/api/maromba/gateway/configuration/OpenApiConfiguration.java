@@ -18,11 +18,11 @@ public class OpenApiConfiguration {
 	public List<GroupedOpenApi> apis(SwaggerUiConfigParameters config, RouteDefinitionLocator locator){
 		var definition = locator.getRouteDefinitions().collectList().block();
 		
-		definition.stream().filter(
-				routeDefinition -> routeDefinition.getId()
-					.matches(".*-service"))
+		definition.stream()
+				.filter(routeDefinition -> routeDefinition.getId()
+					.matches(".*-SERVICE"))
 						.forEach(routeDefinition -> {
-							String name = routeDefinition.getId();
+							String name = routeDefinition.getId().replace("ReactiveCompositeDiscoveryClient_", "").toLowerCase();
 							config.addGroup(name);
 							GroupedOpenApi.builder()
 								.pathsToMatch("/" + name + "/**")

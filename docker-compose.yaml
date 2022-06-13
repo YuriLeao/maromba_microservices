@@ -90,6 +90,8 @@ services:
     depends_on:
       - rabbit-mq
       - eureka-server
+      - usuario-service
+      - empresa-service
     networks:
       - maromba-network
   usuario-service:
@@ -110,6 +112,8 @@ services:
       SPRING.DATASOURCE.USERNAME: postgres
       SPRING.DATASOURCE.PASSWORD: root
       SPRING.DATASOURCE.DRIVECLASSNAME: org.postgresql.Driver
+      API.SERVER.URL: http://localhost:8765/
+      API.SERVER.DESCRICAO: dev
     ports: 
       - 8000:8000
     depends_on:
@@ -136,6 +140,8 @@ services:
       SPRING.DATASOURCE.USERNAME: postgres
       SPRING.DATASOURCE.PASSWORD: root
       SPRING.DATASOURCE.DRIVECLASSNAME: org.postgresql.Driver
+      API.SERVER.URL: http://localhost:8765/
+      API.SERVER.DESCRICAO: dev
     ports: 
       - 8100:8100
     depends_on:
