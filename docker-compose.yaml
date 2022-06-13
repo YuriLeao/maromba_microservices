@@ -114,8 +114,6 @@ services:
       SPRING.DATASOURCE.DRIVECLASSNAME: org.postgresql.Driver
       API.SERVER.URL: http://localhost:8765/
       API.SERVER.DESCRICAO: dev
-    ports: 
-      - 8000:8000
     depends_on:
       - usuario-db
       - rabbit-mq
@@ -142,8 +140,6 @@ services:
       SPRING.DATASOURCE.DRIVECLASSNAME: org.postgresql.Driver
       API.SERVER.URL: http://localhost:8765/
       API.SERVER.DESCRICAO: dev
-    ports: 
-      - 8100:8100
     depends_on:
       - empresa-db
       - rabbit-mq
