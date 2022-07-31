@@ -50,6 +50,24 @@ public class UsuarioModel implements Serializable {
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
 	private LocalDate dataNascimento;
 	
+	public UsuarioModel(String usuario, String senha, String email, String genero, String telefone,
+			Double peso, UUID empresaId, LocalDate dataNascimento) {
+		super();
+		this.usuario = usuario;
+		this.senha = senha;
+		this.email = email;
+		this.genero = genero;
+		this.telefone = telefone;
+		this.peso = peso;
+		this.empresaId = empresaId;
+		this.dataNascimento = dataNascimento;
+	}
+	
+	public UsuarioModel() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
 	public UUID getId() {
 		return id;
 	}

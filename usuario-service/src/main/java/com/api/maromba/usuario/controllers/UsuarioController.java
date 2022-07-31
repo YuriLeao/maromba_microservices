@@ -3,7 +3,6 @@ package com.api.maromba.usuario.controllers;
 import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Optional;
@@ -101,9 +100,6 @@ public class UsuarioController {
 		return ResponseEntity.status(HttpStatus.OK).body(usuarioDtoPages);
 	}
 	
-	@Value("${api.server.url}")
-	private String jwtSecret;
-	
 	@Operation(summary = "Faz login.")
 	@GetMapping("login/{usuario}/{senha}")
 	@Retry(name = "default")
@@ -113,7 +109,6 @@ public class UsuarioController {
 		if(!usuarioModelOptional.isPresent()) {
 			throw new ResponseNotFoundException("Usuário ou senha inválidos.");
 		}
-		logger.info(jwtSecret);
 		UsuarioDto usuarioDto = new UsuarioDto();
 		BeanUtils.copyProperties(usuarioModelOptional.get(), usuarioDto);
 		try {
