@@ -1,71 +1,121 @@
 package com.api.maromba.usuario;
 
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
-import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
-import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.test.web.servlet.MockMvc;
 
+import com.api.maromba.usuario.dtos.UsuarioDto;
 import com.api.maromba.usuario.models.UsuarioModel;
+import com.api.maromba.usuario.repositories.UsuarioRepository;
+import com.api.maromba.usuario.util.Criptor;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-@TestMethodOrder(OrderAnnotation.class)
 public class UsuarioControllerTest {
-	
+
 	@Autowired
-    private MockMvc mockMvc;
-	
+	private MockMvc mockMvc;
+
 	@Autowired
 	private ObjectMapper objectMapper;
-	
+
+	@MockBean
+	private UsuarioRepository usuarioRepository;
+
+	@Autowired
+	private Criptor criptor;
+
 	@Test
-	@Order(1)   
 	public void incluir() throws Exception {
-		UsuarioModel usuario = new UsuarioModel("teste", "teste", "tt@gmail.com", "M", "99999999", 72.0, UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a"),  java.time.LocalDate.now());
+		var usuarioDto = new UsuarioDto("teste", "teste", "tt@gmail.com", "M", "99999999", 72.0,
+				UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a"), java.time.LocalDate.now());
+		var usuario = new UsuarioModel();
+		BeanUtils.copyProperties(usuarioDto, usuario);
+		usuario.setSenha(criptor.criptografarSenha("teste", "teste"));
+		when(usuarioRepository.existsByUsuario("teste")).thenReturn(false);
+		when(usuarioRepository.save(usuario)).thenReturn(usuario);
+
+
 		mockMvc.perform(post("/usuario-service/incluir").contentType("application/json")
-	        .content(objectMapper.writeValueAsString(usuario)))
-	        .andExpect(status().isCreated());
+				.content(objectMapper.writeValueAsString(usuarioDto))).andExpect(status().isCreated());
 	}
-	
+
 	@Test
-	@Order(2)   
 	public void alterar() throws Exception {
-		UsuarioModel usuario = new UsuarioModel("teste", "teste", "tt@gmail.com", "F", "99999999", 72.0, UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a"),  java.time.LocalDate.now());
+		var usuarioDto = new UsuarioDto("teste", "teste", "tt@gmail.com", "M", "99999999", 72.0,
+				UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a"), java.time.LocalDate.now());
+		usuarioDto.setId(UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a"));
+		var usuario = new UsuarioModel();
+		BeanUtils.copyProperties(usuarioDto, usuario);
+		usuario.setSenha(criptor.criptografarSenha("teste", "teste"));
+		when(usuarioRepository.findByUsuarioAndSenha("teste", criptor.criptografarSenha("teste", "teste"))).thenReturn(Optional.of(usuario));
+		when(usuarioRepository.save(usuario)).thenReturn(usuario);
+
 		mockMvc.perform(put("/usuario-service/alterar/teste/teste").contentType("application/json")
-	        .content(objectMapper.writeValueAsString(usuario)))
-	        .andExpect(status().isCreated());
+				.content(objectMapper.writeValueAsString(usuarioDto))).andExpect(status().isCreated());
 	}
-	
+
 	@Test
-	@Order(3)
 	public void login() throws Exception {
+		var usuarioDto = new UsuarioDto("teste", "teste", "tt@gmail.com", "M", "99999999", 72.0,
+				UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a"), java.time.LocalDate.now());
+		usuarioDto.setId(UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a"));
+		var usuario = new UsuarioModel();
+		BeanUtils.copyProperties(usuarioDto, usuario);
+		usuario.setSenha(criptor.criptografarSenha("teste", "teste"));
+		when(usuarioRepository.findByUsuarioAndSenha("teste", criptor.criptografarSenha("teste", "teste"))).thenReturn(Optional.of(usuario));
+
 		mockMvc.perform(get("/usuario-service/login/teste/teste").contentType("application/json"))
-	        .andExpect(status().isOk());
+				.andExpect(status().isOk());
 	}
-	
+
 	@Test
 	public void obterTodos() throws Exception {
-		mockMvc.perform(get("/usuario-service").contentType("application/json"))
-	        .andExpect(status().isOk());
+		var usuarioDto = new UsuarioDto("teste", "teste", "tt@gmail.com", "M", "99999999", 72.0,
+				UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a"), java.time.LocalDate.now());
+		usuarioDto.setId(UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a"));
+		var usuario = new UsuarioModel();
+		BeanUtils.copyProperties(usuarioDto, usuario);
+		List<UsuarioModel> lista = new ArrayList<UsuarioModel>();
+		lista.add(usuario);
+		when(usuarioRepository.findAll(PageRequest.of(0, 10).withSort(Sort.by(Sort.Direction.ASC, "id"))))
+				.thenReturn(new PageImpl<UsuarioModel>(lista));
+
+		mockMvc.perform(get("/usuario-service").contentType("application/json")).andExpect(status().isOk());
 	}
-	
+
 	@Test
 	public void deletar() throws Exception {
+		var usuarioDto = new UsuarioDto("teste", "teste", "tt@gmail.com", "M", "99999999", 72.0,
+				UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a"), java.time.LocalDate.now());
+		usuarioDto.setId(UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a"));
+		var usuario = new UsuarioModel();
+		BeanUtils.copyProperties(usuarioDto, usuario);
+		when(usuarioRepository.findByUsuarioAndSenha("teste", criptor.criptografarSenha("teste", "teste")))
+				.thenReturn(Optional.of(usuario)).thenReturn(null);
+		
 		mockMvc.perform(delete("/usuario-service/deletar/teste/teste").contentType("application/json"))
-        .andExpect(status().isOk());
+				.andExpect(status().isOk());
 	}
-	
+
 }

@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import javax.validation.Valid;
 
@@ -13,7 +14,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -68,15 +68,13 @@ public class UsuarioController {
 	@Retry(name = "default")
 	@CircuitBreaker(name = "default")
 	public ResponseEntity<Object> salvar(@RequestBody @Valid UsuarioDto usuarioDto) throws NoSuchAlgorithmException, UnsupportedEncodingException{
-		var usuarioModel = new UsuarioModel();
-		BeanUtils.copyProperties(usuarioDto, usuarioModel);
-		if(usuarioService.existe(usuarioModel.getUsuario())){
+		if(usuarioService.existsByUsuario(usuarioDto.getUsuario())){
 			throw new ResponseConflictException("Usuário já existente.");
 		}
-		usuarioModel = usuarioService.salvar(usuarioModel);
-		BeanUtils.copyProperties(usuarioModel, usuarioDto);
-		usuarioDto.setSenha(null);
-		return ResponseEntity.status(HttpStatus.CREATED).body(usuarioDto);
+		var usuarioModel = new UsuarioModel();
+		BeanUtils.copyProperties(usuarioDto, usuarioModel);
+		usuarioService.salvar(usuarioModel);
+		return ResponseEntity.status(HttpStatus.CREATED).body("Criado com sucesso.");
 	}
 	
 	@SecurityRequirement(name = "Bearer Authentication")
@@ -148,11 +146,11 @@ public class UsuarioController {
 		if(!usuarioModelOptional.isPresent()) {
 			throw new ResponseNotFoundException("Usuário não encontrado.");
 		}
-		
 		var usuarioModel = new UsuarioModel();
-		BeanUtils.copyProperties(usuarioDto, usuarioModel);
-		usuarioModel.setId(usuarioModelOptional.get().getId());
-		usuarioModel = usuarioService.salvar(usuarioModel);
+		UUID id = usuarioModelOptional.get().getId();
+		BeanUtils.copyProperties(usuarioDto, usuarioModelOptional.get());
+		usuarioModelOptional.get().setId(id);
+		usuarioModel = usuarioService.salvar(usuarioModelOptional.get());
 		BeanUtils.copyProperties(usuarioModel, usuarioDto);
 		usuarioDto.setSenha(null);
 		return ResponseEntity.status(HttpStatus.CREATED).body(usuarioDto);

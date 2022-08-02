@@ -1,9 +1,14 @@
+api:
+  server:
+    url: http://localhost:8765/
+    descricao: dev
 server:
   port: 8100
 eureka:
   client:
     service-url:
       defaultZone: http://localhost:8761/eureka
+rabbit_url: amqp://guest:guest@rabbit-mq:5672
 resilience4j:
   retry:
     instances:

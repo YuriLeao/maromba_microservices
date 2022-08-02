@@ -21,11 +21,11 @@ import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 
 @Entity
-@Table(name="tb_usuario")
+@Table(name = "tb_usuario")
 public class UsuarioModel implements Serializable {
 
 	private static final long serialVersionUID = 1L;
-	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private UUID id;
@@ -49,77 +49,75 @@ public class UsuarioModel implements Serializable {
 	@DateTimeFormat(iso = ISO.DATE)
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
 	private LocalDate dataNascimento;
-	
-	public UsuarioModel(String usuario, String senha, String email, String genero, String telefone,
-			Double peso, UUID empresaId, LocalDate dataNascimento) {
-		super();
-		this.usuario = usuario;
-		this.senha = senha;
-		this.email = email;
-		this.genero = genero;
-		this.telefone = telefone;
-		this.peso = peso;
-		this.empresaId = empresaId;
-		this.dataNascimento = dataNascimento;
-	}
-	
-	public UsuarioModel() {
-		super();
-		// TODO Auto-generated constructor stub
-	}
 
 	public UUID getId() {
 		return id;
 	}
+
 	public void setId(UUID id) {
 		this.id = id;
 	}
+
 	public String getUsuario() {
 		return usuario;
 	}
+
 	public void setUsuario(String usuario) {
 		this.usuario = usuario;
 	}
+
 	public String getSenha() {
 		return senha;
 	}
+
 	public void setSenha(String senha) {
 		this.senha = senha;
 	}
+
 	public String getEmail() {
 		return email;
 	}
+
 	public void setEmail(String email) {
 		this.email = email;
 	}
+
 	public String getGenero() {
 		return genero;
 	}
+
 	public void setGenero(String genero) {
 		this.genero = genero;
 	}
-	
+
 	public LocalDate getDataNascimento() {
 		return dataNascimento;
 	}
+
 	public void setDataNascimento(LocalDate data_nascimento) {
 		this.dataNascimento = data_nascimento;
 	}
+
 	public String getTelefone() {
 		return telefone;
 	}
+
 	public void setTelefone(String telefone) {
 		this.telefone = telefone;
 	}
+
 	public Double getPeso() {
 		return peso;
 	}
+
 	public void setPeso(Double peso) {
 		this.peso = peso;
 	}
+
 	public UUID getEmpresaId() {
 		return empresaId;
 	}
+
 	public void setEmpresaId(UUID empresaId) {
 		this.empresaId = empresaId;
 	}

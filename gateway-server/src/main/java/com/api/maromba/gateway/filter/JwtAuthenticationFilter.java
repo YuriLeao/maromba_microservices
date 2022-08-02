@@ -29,18 +29,20 @@ public class JwtAuthenticationFilter implements GatewayFilter {
 	public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
 		ServerHttpRequest request = (ServerHttpRequest) exchange.getRequest();
 
-		final List<String> apiEndpoints = List.of("/login","/usuario-service/v3/api-docs", "/empresa-service/v3/api-docs");
+		final List<String> apiEndpoints = List.of("/login", "/usuario-service/v3/api-docs",
+				"/empresa-service/v3/api-docs", "empresa-service/swagger-ui.html", "usuario-service/swagger-ui.html");
 
 		Predicate<ServerHttpRequest> isApiSecured = r -> apiEndpoints.stream()
 				.noneMatch(uri -> r.getURI().getPath().contains(uri));
 
 		if (isApiSecured.test(request)) {
 			List<String> authorization = request.getHeaders().getOrEmpty("Authorization");
-			if (authorization.size() <= 0 || authorization.get(0).isEmpty() || !authorization.get(0).startsWith("Bearer ")) {
+			if (authorization.size() <= 0 || authorization.get(0).isEmpty()
+					|| !authorization.get(0).startsWith("Bearer ")) {
 				ServerHttpResponse response = exchange.getResponse();
 				response.setStatusCode(HttpStatus.UNAUTHORIZED);
 				response.getHeaders().add("error", "No authorization was recorded.");
-				String erro = "{\n	\"error_menssage\": \"No authorization was recorded.\"\n}";  
+				String erro = "{\n	\"error_menssage\": \"No authorization was recorded.\"\n}";
 				byte[] bytes = erro.getBytes(StandardCharsets.UTF_8);
 				DataBuffer buffer = response.bufferFactory().wrap(bytes);
 				return response.writeWith(Flux.just(buffer));
@@ -54,7 +56,7 @@ public class JwtAuthenticationFilter implements GatewayFilter {
 				ServerHttpResponse response = exchange.getResponse();
 				response.setStatusCode(HttpStatus.FORBIDDEN);
 				response.getHeaders().add("error", exception.getMessage());
-				String erro = "{\n	\"error_menssage\": \"".concat(exception.getMessage()).concat("\"\n}");  
+				String erro = "{\n	\"error_menssage\": \"".concat(exception.getMessage()).concat("\"\n}");
 				byte[] bytes = erro.getBytes(StandardCharsets.UTF_8);
 				DataBuffer buffer = response.bufferFactory().wrap(bytes);
 				return response.writeWith(Flux.just(buffer));

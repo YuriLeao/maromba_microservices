@@ -30,7 +30,7 @@ public class UsuarioService {
 		return usuarioRepository.save(usuarioModel);
 	}
 	
-	public boolean existe(String usuario) {
+	public Boolean existsByUsuario(String usuario) {
 		return usuarioRepository.existsByUsuario(usuario);
 	}
 

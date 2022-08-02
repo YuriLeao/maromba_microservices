@@ -1,5 +1,7 @@
 package com.api.maromba.empresa.controllers;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -8,6 +10,7 @@ import javax.validation.Valid;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
@@ -55,31 +58,41 @@ public class EmpresaController {
 		}
 		var empresaModel = new EmpresaModel();
 		BeanUtils.copyProperties(empresaDto, empresaModel);
-		return ResponseEntity.status(HttpStatus.CREATED).body(empresaService.salvar(empresaModel));
+		empresaService.salvar(empresaModel);
+		return ResponseEntity.status(HttpStatus.CREATED).body("Criado com sucesso.");
 	}
 	
 	@Operation(summary = "Obtém todas as empresas.")
 	@GetMapping
 	@Retry(name = "default")
 	@CircuitBreaker(name = "default")
-	public ResponseEntity<Page<EmpresaModel>> obter(@PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.ASC) Pageable pageable){
+	public ResponseEntity<Page<EmpresaDto>> obterTodos(@PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.ASC) Pageable pageable){
 		Page<EmpresaModel> empresaPages = empresaService.findAll(pageable);
 		if(empresaPages.isEmpty()) {
 			throw new ResponseNotFoundException("Nenhuma empresa encontrada.");
 		}
-		return ResponseEntity.status(HttpStatus.OK).body(empresaPages);
+		List<EmpresaDto> empresasDto = new ArrayList<EmpresaDto>();
+		for (EmpresaModel empresa : empresaPages) {
+			EmpresaDto empresaDto = new EmpresaDto();
+			BeanUtils.copyProperties(empresa, empresaDto);
+			empresasDto.add(empresaDto);
+		}
+		Page<EmpresaDto> empresaDtoPages = new PageImpl<EmpresaDto>(empresasDto);
+		return ResponseEntity.status(HttpStatus.OK).body(empresaDtoPages);
 	}
 	
 	@Operation(summary = "Obtém uma empresa.")
 	@GetMapping("obterById/{id}")
 	@Retry(name = "default")
 	@CircuitBreaker(name = "default")
-	public ResponseEntity<Object> obterById(@PathVariable(value = "id") UUID id){
+	public ResponseEntity<EmpresaDto> obterById(@PathVariable(value = "id") UUID id){
 		Optional<EmpresaModel> empresaModelOptional = empresaService.findById(id);
 		if(!empresaModelOptional.isPresent()) {
 			throw new ResponseNotFoundException("Empresa não encontrada.");
 		}
-		return ResponseEntity.status(HttpStatus.OK).body(empresaModelOptional.get());
+		EmpresaDto empresaDto = new EmpresaDto();
+		BeanUtils.copyProperties(empresaModelOptional.get(), empresaDto);
+		return ResponseEntity.status(HttpStatus.OK).body(empresaDto);
 	}
 	
 	@Operation(summary = "Deleta uma empresa.")
@@ -106,8 +119,11 @@ public class EmpresaController {
 		}
 		
 		var empresaModel = new EmpresaModel();
-		BeanUtils.copyProperties(empresaDto, empresaModel);
-		empresaModel.setId(empresaModelOptional.get().getId());
-		return ResponseEntity.status(HttpStatus.CREATED).body(empresaService.salvar(empresaModel));
+		UUID idemp = empresaModelOptional.get().getId();
+		BeanUtils.copyProperties(empresaDto, empresaModelOptional.get());
+		empresaModelOptional.get().setId(idemp);
+		empresaModel = empresaService.salvar(empresaModelOptional.get());
+		BeanUtils.copyProperties(empresaModel, empresaDto);
+		return ResponseEntity.status(HttpStatus.CREATED).body(empresaDto);
 	}
 }	
