@@ -14,14 +14,14 @@ public class GatewayConfiguration {
 	@Autowired
 	private JwtAuthenticationFilter filter;
 
-	@Bean
-	public RouteLocator routes(RouteLocatorBuilder builder) {
-		return builder.routes()
-				.route("empresa-service",
-						r -> r.path("/empresa-service/**").filters(f -> f.filter(filter)).uri("lb://empresa-service"))
-				.route("usuario-service",
-						r -> r.path("/usuario-service/**").filters(f -> f.filter(filter)).uri("lb://usuario-service"))
-				.build();
-	}
+    @Bean
+    RouteLocator routes(RouteLocatorBuilder builder) {
+        return builder.routes()
+                .route("empresa-service",
+                        r -> r.path("/empresa-service/**").filters(f -> f.filter(filter)).uri("lb://empresa-service"))
+                .route("usuario-service",
+                        r -> r.path("/usuario-service/**").filters(f -> f.filter(filter)).uri("lb://usuario-service"))
+                .build();
+    }
 
 }

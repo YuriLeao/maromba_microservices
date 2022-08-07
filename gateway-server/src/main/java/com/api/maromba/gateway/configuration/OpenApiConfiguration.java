@@ -12,23 +12,23 @@ import org.springframework.context.annotation.Lazy;
 
 @Configuration
 public class OpenApiConfiguration {
-	
-	@Bean
-	@Lazy(false)
-	public List<GroupedOpenApi> apis(SwaggerUiConfigParameters config, RouteDefinitionLocator locator){
-		var definition = locator.getRouteDefinitions().collectList().block();
-		
-		definition.stream()
-				.filter(routeDefinition -> routeDefinition.getId()
-					.matches(".*-SERVICE"))
-						.forEach(routeDefinition -> {
-							String name = routeDefinition.getId().replace("ReactiveCompositeDiscoveryClient_", "").toLowerCase();
-							config.addGroup(name);
-							GroupedOpenApi.builder()
-								.pathsToMatch("/" + name + "/**")
-								.group(name).build();
-						}
-				);
-		return new ArrayList<>();
-	}
+
+    @Bean
+    @Lazy(false)
+    List<GroupedOpenApi> apis(SwaggerUiConfigParameters config, RouteDefinitionLocator locator) {
+        var definition = locator.getRouteDefinitions().collectList().block();
+
+        definition.stream()
+                .filter(routeDefinition -> routeDefinition.getId()
+                        .matches(".*-SERVICE"))
+                .forEach(routeDefinition -> {
+                            String name = routeDefinition.getId().replace("ReactiveCompositeDiscoveryClient_", "").toLowerCase();
+                            config.addGroup(name);
+                            GroupedOpenApi.builder()
+                                    .pathsToMatch("/" + name + "/**")
+                                    .group(name).build();
+                        }
+                );
+        return new ArrayList<>();
+    }
 }
