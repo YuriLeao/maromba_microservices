@@ -1,6 +1,7 @@
 package com.api.maromba.gateway.filter;
 
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.List;
 import java.util.function.Predicate;
 
@@ -14,7 +15,9 @@ import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 
+import com.api.maromba.gateway.exception.RoleException;
 import com.api.maromba.gateway.util.JwtUtil;
+import com.auth0.jwt.interfaces.DecodedJWT;
 
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -51,7 +54,19 @@ public class JwtAuthenticationFilter implements GatewayFilter {
 			final String token = authorization.get(0).substring("Bearer ".length());
 
 			try {
-				jwtUtil.validateToken(token);
+				DecodedJWT decodedJWT = jwtUtil.validateToken(token, "/usuario-service/login");
+
+				roleFilter(request, decodedJWT);
+
+			} catch (RoleException exception) {
+				ServerHttpResponse response = exchange.getResponse();
+				response.setStatusCode(HttpStatus.FORBIDDEN);
+				response.getHeaders().add("error", exception.getDescricao());
+				String erro = "{\n	\"error_menssage\": \"".concat(exception.getDescricao())
+						.concat("\"\n}");
+				byte[] bytes = erro.getBytes(StandardCharsets.UTF_8);
+				DataBuffer buffer = response.bufferFactory().wrap(bytes);
+				return response.writeWith(Flux.just(buffer));
 			} catch (Exception exception) {
 				ServerHttpResponse response = exchange.getResponse();
 				response.setStatusCode(HttpStatus.FORBIDDEN);
@@ -64,6 +79,27 @@ public class JwtAuthenticationFilter implements GatewayFilter {
 		}
 
 		return chain.filter(exchange);
+	}
+
+	private void roleFilter(ServerHttpRequest request, DecodedJWT decodedJWT) throws RoleException {
+		if (!(request.getURI().getPath().contains("/usuario-service/incluir")
+				|| request.getURI().getPath().contains("/usuario-service/alterar")
+				|| request.getURI().getPath().contains("/usuario-service/")
+				|| request.getURI().getPath().contains("/usuario-service/deletar")
+				|| request.getURI().getPath().contains("/empresa-service/obterById")
+				|| request.getURI().getPath().contains("/empresa-service/alterar"))
+				&& decodedJWT.getClaim("autorizacoes").asList(String.class).contains("empresa")) {
+			throw new RoleException("Serviço não autorizado para esse usuário.");
+		} else if (!(request.getURI().getPath().contains("/usuario-service/incluir")
+				|| request.getURI().getPath().contains("/usuario-service/alterar")
+				|| request.getURI().getPath().contains("/usuario-service/deletar")
+				|| request.getURI().getPath().contains("/usuario-service/"))
+				&& decodedJWT.getClaim("autorizacoes").asList(String.class).contains("professor")) {
+			throw new RoleException("Serviço não autorizado para esse usuário.");
+		} else if (!(request.getURI().getPath().contains("/usuario-service/alterar"))
+				&& decodedJWT.getClaim("autorizacoes").asList(String.class).contains("aluno")) {
+			throw new RoleException("Serviço não autorizado para esse usuário.");
+		}
 	}
 
 }

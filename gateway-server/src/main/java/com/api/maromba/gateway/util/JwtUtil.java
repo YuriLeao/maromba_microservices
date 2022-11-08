@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.interfaces.DecodedJWT;
 
 @Component
 public class JwtUtil {
@@ -16,12 +17,12 @@ public class JwtUtil {
 	@Value("${jwt.secret}")
 	private String jwtSecret;
 
-	public void validateToken(final String token) {
+	public DecodedJWT validateToken(final String token, String issuer) {
 		try {
 		    Algorithm algorithm = Algorithm.HMAC256(jwtSecret.getBytes()); 
-		    JWTVerifier verifier = JWT.require(algorithm)
+		    JWTVerifier verifier = JWT.require(algorithm).withIssuer(issuer)
 		        .build();
-		    verifier.verify(token);
+		   return verifier.verify(token);
 		} catch (Exception exception){
 		    logger.error("Erro ao validar token: ", exception.getMessage());
 		    throw exception;
