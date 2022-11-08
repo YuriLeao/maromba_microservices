@@ -116,7 +116,7 @@ public class UsuarioController {
 		} catch (Exception e) {
 			logger.error("Erro na obtenção do nome da empresa.");
 		}
-		usuarioDto.setToken(jwtUtil.generateToken(usuarioModelOptional.get()));
+		usuarioDto.setToken(jwtUtil.generateToken(usuarioModelOptional.get(), "/usuario-service/login"));
 		usuarioDto.setSenha(null);
 		return ResponseEntity.status(HttpStatus.OK).body(usuarioDto);
 	}

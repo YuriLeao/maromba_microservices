@@ -2,9 +2,11 @@ package com.api.maromba.usuario.models;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.UUID;
 
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -20,8 +22,11 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 
+import lombok.Data;
+
 @Entity
 @Table(name = "tb_usuario")
+@Data
 public class UsuarioModel implements Serializable {
 
 	private static final long serialVersionUID = 1L;
@@ -42,6 +47,9 @@ public class UsuarioModel implements Serializable {
 	@Column(nullable = false)
 	private Double peso;
 	@Column(nullable = false)
+	@ElementCollection
+	private List<String> autorizacoes;
+	@Column(nullable = false)
 	private UUID empresaId;
 	@Column(nullable = false)
 	@JsonSerialize(using = LocalDateSerializer.class)
@@ -49,77 +57,5 @@ public class UsuarioModel implements Serializable {
 	@DateTimeFormat(iso = ISO.DATE)
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
 	private LocalDate dataNascimento;
-
-	public UUID getId() {
-		return id;
-	}
-
-	public void setId(UUID id) {
-		this.id = id;
-	}
-
-	public String getUsuario() {
-		return usuario;
-	}
-
-	public void setUsuario(String usuario) {
-		this.usuario = usuario;
-	}
-
-	public String getSenha() {
-		return senha;
-	}
-
-	public void setSenha(String senha) {
-		this.senha = senha;
-	}
-
-	public String getEmail() {
-		return email;
-	}
-
-	public void setEmail(String email) {
-		this.email = email;
-	}
-
-	public String getGenero() {
-		return genero;
-	}
-
-	public void setGenero(String genero) {
-		this.genero = genero;
-	}
-
-	public LocalDate getDataNascimento() {
-		return dataNascimento;
-	}
-
-	public void setDataNascimento(LocalDate data_nascimento) {
-		this.dataNascimento = data_nascimento;
-	}
-
-	public String getTelefone() {
-		return telefone;
-	}
-
-	public void setTelefone(String telefone) {
-		this.telefone = telefone;
-	}
-
-	public Double getPeso() {
-		return peso;
-	}
-
-	public void setPeso(Double peso) {
-		this.peso = peso;
-	}
-
-	public UUID getEmpresaId() {
-		return empresaId;
-	}
-
-	public void setEmpresaId(UUID empresaId) {
-		this.empresaId = empresaId;
-	}
 
 }

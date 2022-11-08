@@ -1,6 +1,5 @@
 package com.api.maromba.usuario.util;
 
-import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 import org.slf4j.Logger;
@@ -21,27 +20,23 @@ public class JwtUtil {
 	@Value("${jwt.secret}")
 	private String jwtSecret;
 	
-	public String generateToken(UsuarioModel usuario) {
+	public String generateToken(UsuarioModel usuario, String issuer) {
 		Algorithm algorithm = Algorithm.HMAC256(jwtSecret.getBytes());
 		String token = JWT.create()
 				.withSubject(usuario.getId().toString())
-				.withSubject(usuario.getUsuario())
-				.withSubject(usuario.getEmail())
-				.withSubject(usuario.getGenero())
-				.withSubject(usuario.getTelefone())
-				.withSubject(usuario.getDataNascimento().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")))
-				.withSubject(usuario.getEmpresaId().toString())
-				.withSubject(usuario.getPeso().toString())
+				.withIssuer(issuer)
+				.withClaim("usuario", usuario.getUsuario())
+				.withClaim("autorizacoes", usuario.getAutorizacoes())
+				.withIssuedAt(new Date(System.currentTimeMillis()))
 				.withExpiresAt(new Date(System.currentTimeMillis() + 5 * 60 * 1000))
-				.withIssuer("Autorizacao")
 				.sign(algorithm);
 		return token;
 	}
 
-	public void validateToken(final String token) {
+	public void validateToken(final String token, String issuer) {
 		try {
 		    Algorithm algorithm = Algorithm.HMAC256(jwtSecret.getBytes());
-		    JWTVerifier verifier = JWT.require(algorithm)
+		    JWTVerifier verifier = JWT.require(algorithm).withIssuer(issuer)
 		        .build();
 		    verifier.verify(token);
 		} catch (Exception exception){
