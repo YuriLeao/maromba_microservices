@@ -43,7 +43,7 @@ public class EmpresaControllerTest {
 
 	@Test
 	public void incluir() throws Exception {
-		var empresaDto = new EmpresaDto("teste", "99999999999999", "tt@gmail.com", "1234", "99999999");
+		var empresaDto = new EmpresaDto(null, "teste", "99999999999999", "tt@gmail.com", "1234", "99999999");
 		var empresa = new EmpresaModel();
 		BeanUtils.copyProperties(empresaDto, empresa);
 		when(empresaRepository.existsByNome("teste")).thenReturn(false);
@@ -55,8 +55,8 @@ public class EmpresaControllerTest {
 
 	@Test
 	public void alterar() throws Exception {
-		var empresaDto = new EmpresaDto("teste", "99999999999999", "tt@gmail.com", "1234", "99999999");
-		empresaDto.setId(UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a"));
+		var empresaDto = new EmpresaDto(UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a"), "teste",
+				"99999999999999", "tt@gmail.com", "1234", "99999999");
 		var empresa = new EmpresaModel();
 		BeanUtils.copyProperties(empresaDto, empresa);
 		when(empresaRepository.findById(UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a")))
@@ -70,8 +70,8 @@ public class EmpresaControllerTest {
 
 	@Test
 	public void obterTodos() throws Exception {
-		var empresaDto = new EmpresaDto("teste", "99999999999999", "tt@gmail.com", "1234", "99999999");
-		empresaDto.setId(UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a"));
+		var empresaDto = new EmpresaDto(UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a"), "teste",
+				"99999999999999", "tt@gmail.com", "1234", "99999999");
 		var empresa = new EmpresaModel();
 		BeanUtils.copyProperties(empresaDto, empresa);
 		List<EmpresaModel> lista = new ArrayList<EmpresaModel>();
@@ -84,8 +84,8 @@ public class EmpresaControllerTest {
 
 	@Test
 	public void obterById() throws Exception {
-		var empresaDto = new EmpresaDto("teste", "99999999999999", "tt@gmail.com", "1234", "99999999");
-		empresaDto.setId(UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a"));
+		var empresaDto = new EmpresaDto(UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a"), "teste",
+				"99999999999999", "tt@gmail.com", "1234", "99999999");
 		var empresa = new EmpresaModel();
 		BeanUtils.copyProperties(empresaDto, empresa);
 		when(empresaRepository.findById(UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a")))
@@ -97,8 +97,8 @@ public class EmpresaControllerTest {
 
 	@Test
 	public void deletar() throws Exception {
-		var empresaDto = new EmpresaDto("teste", "99999999999999", "tt@gmail.com", "1234", "99999999");
-		empresaDto.setId(UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a"));
+		var empresaDto = new EmpresaDto(UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a"), "teste",
+				"99999999999999", "tt@gmail.com", "1234", "99999999");
 		var empresa = new EmpresaModel();
 		BeanUtils.copyProperties(empresaDto, empresa);
 		when(empresaRepository.findById(UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a")))
