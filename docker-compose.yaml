@@ -1,7 +1,7 @@
 version: '3.2'
 services:
   usuario-db:
-    image: postgres:latest
+    image: postgres:14.5
     restart: on-failure
     tty: true
     volumes: 
@@ -18,7 +18,7 @@ services:
     networks:
       - maromba-network
   empresa-db:
-    image: postgres:latest
+    image: postgres:14.5
     restart: on-failure
     tty: true
     volumes: 
