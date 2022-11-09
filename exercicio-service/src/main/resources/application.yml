@@ -47,4 +47,4 @@ spring:
       probability: 1.0
 springdoc:
   api-docs:
-    path: /exercicio_service/v3/api-docs
+    path: /exercicio-service/v3/api-docs

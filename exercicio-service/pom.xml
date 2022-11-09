@@ -8,9 +8,9 @@
 		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.api.maromba</groupId>
-	<artifactId>exercicio_service</artifactId>
+	<artifactId>exercicio-service</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>exercicio_service</name>
+	<name>exercicio-service</name>
 	<description>Projeto para controle de exercicio</description>
 	<properties>
 		<java.version>17</java.version>
