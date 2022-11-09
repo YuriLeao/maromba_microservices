@@ -48,7 +48,7 @@ public class ExercicioController {
 	@Autowired
 	private ExercicioService exercicioService;
 	
-	@Operation(summary = "Salva uma nova exercicio.")
+	@Operation(summary = "Salva um novo exercicio.")
 	@PostMapping("incluir")
 	@Retry(name = "default")
 	@CircuitBreaker(name = "default")
@@ -62,7 +62,7 @@ public class ExercicioController {
 		return ResponseEntity.status(HttpStatus.CREATED).body("Criado com sucesso.");
 	}
 	
-	@Operation(summary = "Obtém todas as exercicios.")
+	@Operation(summary = "Obtém todos os exercicios.")
 	@GetMapping
 	@Retry(name = "default")
 	@CircuitBreaker(name = "default")
@@ -81,7 +81,7 @@ public class ExercicioController {
 		return ResponseEntity.status(HttpStatus.OK).body(exercicioDtoPages);
 	}
 	
-	@Operation(summary = "Obtém uma exercicio.")
+	@Operation(summary = "Obtém um exercicio.")
 	@GetMapping("obterById/{id}")
 	@Retry(name = "default")
 	@CircuitBreaker(name = "default")
@@ -95,7 +95,7 @@ public class ExercicioController {
 		return ResponseEntity.status(HttpStatus.OK).body(exercicioDto);
 	}
 	
-	@Operation(summary = "Deleta uma exercicio.")
+	@Operation(summary = "Deleta um exercicio.")
 	@DeleteMapping("deletar/{id}")
 	@Retry(name = "default")
 	@CircuitBreaker(name = "default")
@@ -108,7 +108,7 @@ public class ExercicioController {
 		return ResponseEntity.status(HttpStatus.OK).body("Exercicio deletado com sucesso.");
 	}
 	
-	@Operation(summary = "Altera uma exercicio.")
+	@Operation(summary = "Altera um exercicio.")
 	@PutMapping("alterar/{id}")
 	@Retry(name = "default")
 	@CircuitBreaker(name = "default")
