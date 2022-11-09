@@ -9,7 +9,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class GatewayServerApplication {
 
 	public static void main(String[] args) throws InterruptedException {
-		TimeUnit.SECONDS.sleep(90);
+		TimeUnit.SECONDS.sleep(180);
 		SpringApplication.run(GatewayServerApplication.class, args);
 	}
 
