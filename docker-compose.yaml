@@ -145,6 +145,32 @@ services:
       - eureka-server
     networks:
       - maromba-network
+  exercicio-service:
+    image: yurileao/maromba/backend/exercicio-service:0.0.1-SNAPSHOT
+    #restart: always
+    build: 
+      context: .
+      dockerfile: exercicio-service/Dockerfile
+    links:
+      - exercicio-db
+    environment:
+      EUREKA.CLIENT.SERVICEURL.DEFAULTZONE: http://eureka-server:8761/eureka
+      SPRING.ZIPKIN.BASEURL: http://zipkin-server:9411/
+      RABBIT_URI: amqp://guest:guest@rabbit-mq:5672
+      SPRING_RABBITMQ_HOST: rabbit-mq
+      SPRING_ZIPKIN_SENDER_TYPE: rabbit
+      SPRING.DATASOURCE.URL: jdbc:postgresql://exercicio-db:5435/maromba-exercicio?ssl=false&currentSchema=public
+      SPRING.DATASOURCE.USERNAME: postgres
+      SPRING.DATASOURCE.PASSWORD: root
+      SPRING.DATASOURCE.DRIVECLASSNAME: org.postgresql.Driver
+      API.SERVER.URL: http://localhost:8765/
+      API.SERVER.DESCRICAO: dev
+    depends_on:
+      - exercicio-db
+      - rabbit-mq
+      - eureka-server
+    networks:
+      - maromba-network
   gateway-server:
     image: yurileao/maromba/backend/gateway-server:0.0.1-SNAPSHOT
     build: 

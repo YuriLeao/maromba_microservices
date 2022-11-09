@@ -50,7 +50,7 @@ public class ExercicioControllerTest {
 		when(exercicioRepository.existsByNome("teste")).thenReturn(false);
 		when(exercicioRepository.save(exercicio)).thenReturn(exercicio);
 
-		mockMvc.perform(post("/exercicio_service/incluir").contentType("application/json")
+		mockMvc.perform(post("/exercicio-service/incluir").contentType("application/json")
 				.content(objectMapper.writeValueAsString(exercicioDto))).andExpect(status().isCreated());
 	}
 
@@ -64,7 +64,7 @@ public class ExercicioControllerTest {
 				.thenReturn(Optional.of(exercicio));
 		when(exercicioRepository.save(exercicio)).thenReturn(exercicio);
 
-		mockMvc.perform(put("/exercicio_service/alterar/" + UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a"))
+		mockMvc.perform(put("/exercicio-service/alterar/" + UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a"))
 				.contentType("application/json").content(objectMapper.writeValueAsString(exercicioDto)))
 				.andExpect(status().isCreated());
 	}
@@ -80,7 +80,7 @@ public class ExercicioControllerTest {
 		when(exercicioRepository.findAll(PageRequest.of(0, 10).withSort(Sort.by(Sort.Direction.ASC, "id"))))
 				.thenReturn(new PageImpl<ExercicioModel>(lista));
 
-		mockMvc.perform(get("/exercicio_service").contentType("application/json")).andExpect(status().isOk());
+		mockMvc.perform(get("/exercicio-service").contentType("application/json")).andExpect(status().isOk());
 	}
 
 	@Test
@@ -92,7 +92,7 @@ public class ExercicioControllerTest {
 		when(exercicioRepository.findById(UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a")))
 				.thenReturn(Optional.of(exercicio));
 
-		mockMvc.perform(get("/exercicio_service/obterById/" + UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a"))
+		mockMvc.perform(get("/exercicio-service/obterById/" + UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a"))
 				.contentType("application/json")).andExpect(status().isOk());
 	}
 
@@ -105,7 +105,7 @@ public class ExercicioControllerTest {
 		when(exercicioRepository.findById(UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a")))
 				.thenReturn(Optional.of(exercicio)).thenReturn(null);
 
-		mockMvc.perform(delete("/exercicio_service/deletar/" + UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a"))
+		mockMvc.perform(delete("/exercicio-service/deletar/" + UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a"))
 				.contentType("application/json")).andExpect(status().isOk());
 	}
 
