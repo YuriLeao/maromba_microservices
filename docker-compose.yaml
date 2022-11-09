@@ -34,6 +34,23 @@ services:
       - 5433
     networks:
       - maromba-network
+  exercicio-db:
+    image: postgres:14.5
+    restart: on-failure
+    tty: true
+    volumes: 
+      - .pgdata/maromba-exercicio:/var/lib/postgresql/data
+    command: -p 5435
+    environment: 
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=root
+      - POSTGRES_DB=maromba-exercicio
+    ports: 
+      - 5435:5435
+    expose:
+      - 5435
+    networks:
+      - maromba-network
   pgadmin:
     image: dpage/pgadmin4
     tty: true
@@ -47,6 +64,7 @@ services:
     depends_on: 
       - usuario-db
       - empresa-db
+      - exercicio-db
   rabbit-mq:
     image: rabbitmq:3.8.14-management
     restart: on-failure
