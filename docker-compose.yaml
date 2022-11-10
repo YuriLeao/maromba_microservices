@@ -34,17 +34,17 @@ services:
       - 5433
     networks:
       - maromba-network
-  exercicio-db:
+  movimento-db:
     image: postgres:14.5
     restart: on-failure
     tty: true
     volumes: 
-      - .pgdata/maromba-exercicio:/var/lib/postgresql/data
+      - .pgdata/maromba-movimento:/var/lib/postgresql/data
     command: -p 5435
     environment: 
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=root
-      - POSTGRES_DB=maromba-exercicio
+      - POSTGRES_DB=maromba-movimento
     ports: 
       - 5435:5435
     expose:
@@ -81,7 +81,7 @@ services:
     depends_on: 
       - usuario-db
       - empresa-db
-      - exercicio-db
+      - movimento-db
   rabbit-mq:
     image: rabbitmq:3.8.14-management
     restart: on-failure
@@ -162,28 +162,28 @@ services:
       - eureka-server
     networks:
       - maromba-network
-  exercicio-service:
-    image: yurileao/maromba/backend/exercicio-service:0.0.1-SNAPSHOT
+  movimento-service:
+    image: yurileao/maromba/backend/movimento-service:0.0.1-SNAPSHOT
     #restart: always
     build: 
       context: .
-      dockerfile: exercicio-service/Dockerfile
+      dockerfile: movimento-service/Dockerfile
     links:
-      - exercicio-db
+      - movimento-db
     environment:
       EUREKA.CLIENT.SERVICEURL.DEFAULTZONE: http://eureka-server:8761/eureka
       SPRING.ZIPKIN.BASEURL: http://zipkin-server:9411/
       RABBIT_URI: amqp://guest:guest@rabbit-mq:5672
       SPRING_RABBITMQ_HOST: rabbit-mq
       SPRING_ZIPKIN_SENDER_TYPE: rabbit
-      SPRING.DATASOURCE.URL: jdbc:postgresql://exercicio-db:5435/maromba-exercicio?ssl=false&currentSchema=public
+      SPRING.DATASOURCE.URL: jdbc:postgresql://movimento-db:5435/maromba-movimento?ssl=false&currentSchema=public
       SPRING.DATASOURCE.USERNAME: postgres
       SPRING.DATASOURCE.PASSWORD: root
       SPRING.DATASOURCE.DRIVECLASSNAME: org.postgresql.Driver
       API.SERVER.URL: http://localhost:8765/
       API.SERVER.DESCRICAO: dev
     depends_on:
-      - exercicio-db
+      - movimento-db
       - rabbit-mq
       - eureka-server
     networks:

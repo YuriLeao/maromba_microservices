@@ -1,7 +1,7 @@
 package com.api.maromba.exercicioTreino.dtos;
 
 import java.util.UUID;
-
+ 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
