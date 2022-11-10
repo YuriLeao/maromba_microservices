@@ -51,17 +51,17 @@ services:
       - 5435
     networks:
       - maromba-network
-  exercicioTreino-db:
+  exercicio-db:
     image: postgres:14.5
     restart: on-failure
     tty: true
     volumes: 
-      - .pgdata/maromba-exercicioTreino:/var/lib/postgresql/data
+      - .pgdata/maromba-exercicio:/var/lib/postgresql/data
     command: -p 5436
     environment: 
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=root
-      - POSTGRES_DB=maromba-exercicioTreino
+      - POSTGRES_DB=maromba-exercicio
     ports: 
       - 5436:5436
     expose:
@@ -188,28 +188,28 @@ services:
       - eureka-server
     networks:
       - maromba-network
-  exercicioTreino-service:
-    image: yurileao/maromba/backend/exerciciotreino-service:0.0.1-SNAPSHOT
+  exercicio-service:
+    image: yurileao/maromba/backend/exercicio-service:0.0.1-SNAPSHOT
     #restart: always
     build: 
       context: .
-      dockerfile: exercicioTreino-service/Dockerfile
+      dockerfile: exercicio-service/Dockerfile
     links:
-      - exercicioTreino-db
+      - exercicio-db
     environment:
       EUREKA.CLIENT.SERVICEURL.DEFAULTZONE: http://eureka-server:8761/eureka
       SPRING.ZIPKIN.BASEURL: http://zipkin-server:9411/
       RABBIT_URI: amqp://guest:guest@rabbit-mq:5672
       SPRING_RABBITMQ_HOST: rabbit-mq
       SPRING_ZIPKIN_SENDER_TYPE: rabbit
-      SPRING.DATASOURCE.URL: jdbc:postgresql://exercicioTreino-db:5436/maromba-exercicioTreino?ssl=false&currentSchema=public
+      SPRING.DATASOURCE.URL: jdbc:postgresql://exercicio-db:5436/maromba-exercicio?ssl=false&currentSchema=public
       SPRING.DATASOURCE.USERNAME: postgres
       SPRING.DATASOURCE.PASSWORD: root
       SPRING.DATASOURCE.DRIVECLASSNAME: org.postgresql.Driver
       API.SERVER.URL: http://localhost:8765/
       API.SERVER.DESCRICAO: dev
     depends_on:
-      - exercicioTreino-db
+      - exercicio-db
       - rabbit-mq
       - eureka-server
     networks:
