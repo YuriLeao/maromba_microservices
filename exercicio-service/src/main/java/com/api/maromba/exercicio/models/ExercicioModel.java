@@ -13,7 +13,7 @@ import javax.persistence.Table;
 import lombok.Data;
 
 @Entity
-@Table(name = "tb_exercicio_")
+@Table(name = "tb_exercicio")
 @Data
 public class ExercicioModel implements Serializable {
 
@@ -23,7 +23,7 @@ public class ExercicioModel implements Serializable {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private UUID id;
 	@Column(nullable = false)
-	private UUID idExercicio;
+	private UUID idMovimento;
 	@Column(nullable = false)
 	private Integer tempoDescanso;
 	@Column(nullable = false)

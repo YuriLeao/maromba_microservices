@@ -16,7 +16,7 @@ public class ExercicioDto {
 	
 	private UUID id;
 	@NotNull
-	private UUID idExercicio;
+	private UUID idMovimento;
 	@NotNull
 	private Integer tempoDescanso;
 	@NotNull
