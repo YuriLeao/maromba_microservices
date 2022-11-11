@@ -1,0 +1,50 @@
+api:
+  server:
+    url: http://localhost:8765/
+    descricao: dev
+server:
+  port: 8300
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+rabbit_url: amqp://guest:guest@rabbit-mq:5672
+resilience4j:
+  retry:
+    instances:
+      default:
+        max-attempts: 3
+        wait-duration: 1s
+        enable-exponential-backoff: true
+spring:
+  application:
+    name: grupoMuscular-service
+  config:
+    import: optional:configserver:http://localhost:8888/
+  cloud:
+    config:
+      profile: dev
+  jpa:
+    database: POSTGRESQL
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        jdbc:
+          lob:
+            non-contextual-creation: true
+  datasource:
+    url: jdbc:postgresql://localhost:5437/maromba-grupoMuscular?currentSchema=public
+    username: postgres
+    password: root
+    driverClassName: org.postgresql.Driver
+  devtools:
+    remote:
+      secret: 123
+  sleuth:
+    sampler:
+      probability: 1.0
+springdoc:
+  api-docs:
+    path: /grupoMuscular-service/v3/api-docs

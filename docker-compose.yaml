@@ -68,6 +68,23 @@ services:
       - 5436
     networks:
       - maromba-network
+  grupoMuscular-db:
+    image: postgres:14.5
+    restart: on-failure
+    tty: true
+    volumes: 
+      - .pgdata/maromba-grupoMuscular:/var/lib/postgresql/data
+    command: -p 5437
+    environment: 
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=root
+      - POSTGRES_DB=maromba-grupoMuscular
+    ports: 
+      - 5437:5437
+    expose:
+      - 5437
+    networks:
+      - maromba-network
   pgadmin:
     image: dpage/pgadmin4
     tty: true
@@ -210,6 +227,32 @@ services:
       API.SERVER.DESCRICAO: dev
     depends_on:
       - exercicio-db
+      - rabbit-mq
+      - eureka-server
+    networks:
+      - maromba-network
+  grupoMuscular-service:
+    image: yurileao/maromba/backend/grupo-muscular-service:0.0.1-SNAPSHOT
+    #restart: always
+    build: 
+      context: .
+      dockerfile: grupoMuscular-service/Dockerfile
+    links:
+      - grupoMuscular-db
+    environment:
+      EUREKA.CLIENT.SERVICEURL.DEFAULTZONE: http://eureka-server:8761/eureka
+      SPRING.ZIPKIN.BASEURL: http://zipkin-server:9411/
+      RABBIT_URI: amqp://guest:guest@rabbit-mq:5672
+      SPRING_RABBITMQ_HOST: rabbit-mq
+      SPRING_ZIPKIN_SENDER_TYPE: rabbit
+      SPRING.DATASOURCE.URL: jdbc:postgresql://grupoMuscular-db:5437/maromba-grupoMuscular?ssl=false&currentSchema=public
+      SPRING.DATASOURCE.USERNAME: postgres
+      SPRING.DATASOURCE.PASSWORD: root
+      SPRING.DATASOURCE.DRIVECLASSNAME: org.postgresql.Driver
+      API.SERVER.URL: http://localhost:8765/
+      API.SERVER.DESCRICAO: dev
+    depends_on:
+      - grupoMuscular-db
       - rabbit-mq
       - eureka-server
     networks:
