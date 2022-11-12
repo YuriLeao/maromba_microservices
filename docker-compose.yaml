@@ -85,6 +85,23 @@ services:
       - 5437
     networks:
       - maromba-network
+  treino-db:
+    image: postgres:14.5
+    restart: on-failure
+    tty: true
+    volumes: 
+      - .pgdata/maromba-treino:/var/lib/postgresql/data
+    command: -p 5438
+    environment: 
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=root
+      - POSTGRES_DB=maromba-treino
+    ports: 
+      - 5438:5438
+    expose:
+      - 5438
+    networks:
+      - maromba-network
   pgadmin:
     image: dpage/pgadmin4
     tty: true
@@ -99,6 +116,9 @@ services:
       - usuario-db
       - empresa-db
       - movimento-db
+      - treino-db
+      - grupoMuscular-db
+      - exercicio-db
   rabbit-mq:
     image: rabbitmq:3.8.14-management
     restart: on-failure
@@ -253,6 +273,32 @@ services:
       API.SERVER.DESCRICAO: dev
     depends_on:
       - grupoMuscular-db
+      - rabbit-mq
+      - eureka-server
+    networks:
+      - maromba-network
+  treino-service:
+    image: yurileao/maromba/backend/treino-service:0.0.1-SNAPSHOT
+    #restart: always
+    build: 
+      context: .
+      dockerfile: treino-service/Dockerfile
+    links:
+      - treino-db
+    environment:
+      EUREKA.CLIENT.SERVICEURL.DEFAULTZONE: http://eureka-server:8761/eureka
+      SPRING.ZIPKIN.BASEURL: http://zipkin-server:9411/
+      RABBIT_URI: amqp://guest:guest@rabbit-mq:5672
+      SPRING_RABBITMQ_HOST: rabbit-mq
+      SPRING_ZIPKIN_SENDER_TYPE: rabbit
+      SPRING.DATASOURCE.URL: jdbc:postgresql://treino-db:5438/maromba-treino?ssl=false&currentSchema=public
+      SPRING.DATASOURCE.USERNAME: postgres
+      SPRING.DATASOURCE.PASSWORD: root
+      SPRING.DATASOURCE.DRIVECLASSNAME: org.postgresql.Driver
+      API.SERVER.URL: http://localhost:8765/
+      API.SERVER.DESCRICAO: dev
+    depends_on:
+      - treino-db
       - rabbit-mq
       - eureka-server
     networks:
