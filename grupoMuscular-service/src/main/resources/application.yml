@@ -3,7 +3,7 @@ api:
     url: http://localhost:8765/
     descricao: dev
 server:
-  port: 8300
+  port: 8400
 eureka:
   client:
     service-url:
