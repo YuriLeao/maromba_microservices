@@ -59,7 +59,7 @@ public class GrupoMuscularController {
 		return ResponseEntity.status(HttpStatus.CREATED).body("Criado com sucesso.");
 	}
 	
-	@Operation(summary = "Obtém todas os grupos musculares .")
+	@Operation(summary = "Obtém todos os grupos musculares .")
 	@GetMapping
 	@Retry(name = "default")
 	@CircuitBreaker(name = "default")
