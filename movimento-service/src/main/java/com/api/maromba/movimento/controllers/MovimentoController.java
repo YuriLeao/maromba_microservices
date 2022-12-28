@@ -63,7 +63,7 @@ public class MovimentoController {
 	}
 	
 	@Operation(summary = "Obtém todos os movimentos.")
-	@GetMapping
+	@GetMapping("obterTodos")
 	@Retry(name = "default")
 	@CircuitBreaker(name = "default")
 	public ResponseEntity<Page<MovimentoDto>> obterTodos(@PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.ASC) Pageable pageable){

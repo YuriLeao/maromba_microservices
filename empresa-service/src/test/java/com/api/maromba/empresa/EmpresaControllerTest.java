@@ -79,7 +79,7 @@ public class EmpresaControllerTest {
 		when(empresaRepository.findAll(PageRequest.of(0, 10).withSort(Sort.by(Sort.Direction.ASC, "id"))))
 				.thenReturn(new PageImpl<EmpresaModel>(lista));
 
-		mockMvc.perform(get("/empresa-service").contentType("application/json")).andExpect(status().isOk());
+		mockMvc.perform(get("/empresa-service/obterTodos").contentType("application/json")).andExpect(status().isOk());
 	}
 
 	@Test

@@ -27,7 +27,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.api.maromba.exercicio.dtos.ExercicioDto;
-import com.api.maromba.exercicio.exceptions.ResponseConflictException;
 import com.api.maromba.exercicio.exceptions.ResponseNotFoundException;
 import com.api.maromba.exercicio.models.ExercicioModel;
 import com.api.maromba.exercicio.services.ExercicioService;
@@ -60,7 +59,7 @@ public class ExercicioController {
 	}
 	
 	@Operation(summary = "Obtém todas os exercicios .")
-	@GetMapping
+	@GetMapping("obterTodos")
 	@Retry(name = "default")
 	@CircuitBreaker(name = "default")
 	public ResponseEntity<Page<ExercicioDto>> obterTodos(@PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.ASC) Pageable pageable){

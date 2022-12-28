@@ -99,7 +99,7 @@ public class TreinoControllerTest {
 		when(treinoRepository.findAll(PageRequest.of(0, 10).withSort(Sort.by(Sort.Direction.ASC, "id"))))
 				.thenReturn(new PageImpl<TreinoModel>(lista));
 
-		mockMvc.perform(get("/treino-service").contentType("application/json")).andExpect(status().isOk());
+		mockMvc.perform(get("/treino-service/obterTodos").contentType("application/json")).andExpect(status().isOk());
 	}
 
 	@Test

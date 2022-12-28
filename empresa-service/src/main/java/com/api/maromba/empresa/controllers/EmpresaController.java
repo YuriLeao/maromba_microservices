@@ -63,7 +63,7 @@ public class EmpresaController {
 	}
 	
 	@Operation(summary = "Obtém todas as empresas.")
-	@GetMapping
+	@GetMapping("obterTodos")
 	@Retry(name = "default")
 	@CircuitBreaker(name = "default")
 	public ResponseEntity<Page<EmpresaDto>> obterTodos(@PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.ASC) Pageable pageable){

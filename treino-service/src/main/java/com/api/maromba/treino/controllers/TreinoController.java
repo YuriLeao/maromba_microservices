@@ -27,7 +27,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.api.maromba.treino.dtos.TreinoDto;
-import com.api.maromba.treino.exceptions.ResponseConflictException;
 import com.api.maromba.treino.exceptions.ResponseNotFoundException;
 import com.api.maromba.treino.models.TreinoModel;
 import com.api.maromba.treino.services.TreinoService;
@@ -60,7 +59,7 @@ public class TreinoController {
 	}
 	
 	@Operation(summary = "Obtém tods os treinos.")
-	@GetMapping
+	@GetMapping("obterTodos")
 	@Retry(name = "default")
 	@CircuitBreaker(name = "default")
 	public ResponseEntity<Page<TreinoDto>> obterTodos(@PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.ASC) Pageable pageable){
