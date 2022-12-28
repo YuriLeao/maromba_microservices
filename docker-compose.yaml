@@ -68,17 +68,17 @@ services:
       - 5436
     networks:
       - maromba-network
-  grupoMuscular-db:
+  grupo-muscular-db:
     image: postgres:14.5
     restart: on-failure
     tty: true
     volumes: 
-      - .pgdata/maromba-grupoMuscular:/var/lib/postgresql/data
+      - .pgdata/maromba-grupo-muscular:/var/lib/postgresql/data
     command: -p 5437
     environment: 
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=root
-      - POSTGRES_DB=maromba-grupoMuscular
+      - POSTGRES_DB=maromba-grupo-muscular
     ports: 
       - 5437:5437
     expose:
@@ -117,7 +117,7 @@ services:
       - empresa-db
       - movimento-db
       - treino-db
-      - grupoMuscular-db
+      - grupo-muscular-db
       - exercicio-db
   rabbit-mq:
     image: rabbitmq:3.8.14-management
@@ -251,28 +251,28 @@ services:
       - eureka-server
     networks:
       - maromba-network
-  grupoMuscular-service:
+  grupo-muscular-service:
     image: yurileao/maromba/backend/grupo-muscular-service:0.0.1-SNAPSHOT
     #restart: always
     build: 
       context: .
-      dockerfile: grupoMuscular-service/Dockerfile
+      dockerfile: grupo-muscular-service/Dockerfile
     links:
-      - grupoMuscular-db
+      - grupo-muscular-db
     environment:
       EUREKA.CLIENT.SERVICEURL.DEFAULTZONE: http://eureka-server:8761/eureka
       SPRING.ZIPKIN.BASEURL: http://zipkin-server:9411/
       RABBIT_URI: amqp://guest:guest@rabbit-mq:5672
       SPRING_RABBITMQ_HOST: rabbit-mq
       SPRING_ZIPKIN_SENDER_TYPE: rabbit
-      SPRING.DATASOURCE.URL: jdbc:postgresql://grupoMuscular-db:5437/maromba-grupoMuscular?ssl=false&currentSchema=public
+      SPRING.DATASOURCE.URL: jdbc:postgresql://grupo-muscular-db:5437/maromba-grupo-muscular?ssl=false&currentSchema=public
       SPRING.DATASOURCE.USERNAME: postgres
       SPRING.DATASOURCE.PASSWORD: root
       SPRING.DATASOURCE.DRIVECLASSNAME: org.postgresql.Driver
       API.SERVER.URL: http://localhost:8765/
       API.SERVER.DESCRICAO: dev
     depends_on:
-      - grupoMuscular-db
+      - grupo-muscular-db
       - rabbit-mq
       - eureka-server
     networks:
