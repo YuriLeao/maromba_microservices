@@ -17,10 +17,19 @@ public class GatewayConfiguration {
     @Bean
     RouteLocator routes(RouteLocatorBuilder builder) {
         return builder.routes()
-                .route("empresa-service",
-                        r -> r.path("/empresa-service/**").filters(f -> f.filter(filter)).uri("lb://empresa-service"))
                 .route("usuario-service",
                         r -> r.path("/usuario-service/**").filters(f -> f.filter(filter)).uri("lb://usuario-service"))
+                .route("empresa-service",
+                        r -> r.path("/empresa-service/**").filters(f -> f.filter(filter)).uri("lb://empresa-service"))
+                .route("exercicio-service",
+                        r -> r.path("/exercicio-service/**").filters(f -> f.filter(filter)).uri("lb://exercicio-service"))
+                .route("grupo-muscular-service",
+                        r -> r.path("/grupo-muscular-service/**").filters(f -> f.filter(filter)).uri("lb://grupo-muscular-service"))
+                .route("movimento-service",
+                        r -> r.path("/movimento-service/**").filters(f -> f.filter(filter)).uri("lb://movimento-service"))
+                .route("treino-service",
+                        r -> r.path("/treino-service/**").filters(f -> f.filter(filter)).uri("lb://treino-service"))
+                
                 .build();
     }
 
