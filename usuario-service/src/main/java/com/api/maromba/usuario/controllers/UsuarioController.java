@@ -79,7 +79,7 @@ public class UsuarioController {
 	
 	@SecurityRequirement(name = "Bearer Authentication")
 	@Operation(summary = "Obtém todos os usuários.")
-	@GetMapping
+	@GetMapping("obterTodos")
 	@Retry(name = "default")
 	@CircuitBreaker(name = "default")
 	public ResponseEntity<Page<UsuarioDto>> obterTodos(@PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.ASC) Pageable pageable){
@@ -102,7 +102,7 @@ public class UsuarioController {
 	@GetMapping("login/{usuario}/{senha}")
 	@Retry(name = "default")
 	@CircuitBreaker(name = "default")
-	public ResponseEntity<Object> login(@PathVariable(value = "usuario") String usuario, @PathVariable(value = "senha") String senha) throws NoSuchAlgorithmException, UnsupportedEncodingException{
+	public ResponseEntity<UsuarioDto> login(@PathVariable(value = "usuario") String usuario, @PathVariable(value = "senha") String senha) throws NoSuchAlgorithmException, UnsupportedEncodingException{
 		Optional<UsuarioModel> usuarioModelOptional = usuarioService.findByUsuarioAndSenha(usuario, senha);
 		if(!usuarioModelOptional.isPresent()) {
 			throw new ResponseNotFoundException("Usuário ou senha inválidos.");
@@ -119,6 +119,26 @@ public class UsuarioController {
 		usuarioDto.setToken(jwtUtil.generateToken(usuarioModelOptional.get(), "/usuario-service/login"));
 		usuarioDto.setSenha(null);
 		return ResponseEntity.status(HttpStatus.OK).body(usuarioDto);
+	}
+	
+	@SecurityRequirement(name = "Bearer Authentication")
+	@Operation(summary = "Obtém uma lista de usuários atráves de parte do nome.")
+	@GetMapping("obterByNomeLike/{nome}")
+	@Retry(name = "default")
+	@CircuitBreaker(name = "default")
+	public ResponseEntity<List<UsuarioDto>> obterByNomeLike(@PathVariable(value = "nome") String nome){
+		List<UsuarioModel> usuarioModels = usuarioService.findByNomeLike(nome);
+		if(usuarioModels == null || usuarioModels.isEmpty()) {
+			throw new ResponseNotFoundException("Usuário não encontrado.");
+		}
+		List<UsuarioDto> usuarioDtos = new ArrayList<UsuarioDto>();
+		for (UsuarioModel usuarioModel : usuarioModels) {
+			UsuarioDto usuarioDto = new UsuarioDto();
+			BeanUtils.copyProperties(usuarioModel, usuarioDto);
+			usuarioDto.setSenha(null);
+			usuarioDtos.add(usuarioDto);
+		}
+		return ResponseEntity.status(HttpStatus.OK).body(usuarioDtos);
 	}
 	
 	@SecurityRequirement(name = "Bearer Authentication")
@@ -140,7 +160,7 @@ public class UsuarioController {
 	@PutMapping("alterar/{usuario}/{senha}")
 	@Retry(name = "default")
 	@CircuitBreaker(name = "default")
-	public ResponseEntity<Object> alterar(@PathVariable(value = "usuario") String usuario, @PathVariable(value = "senha") String senha,
+	public ResponseEntity<UsuarioDto> alterar(@PathVariable(value = "usuario") String usuario, @PathVariable(value = "senha") String senha,
 			@RequestBody UsuarioDto usuarioDto) throws NoSuchAlgorithmException, UnsupportedEncodingException{
 		Optional<UsuarioModel> usuarioModelOptional = usuarioService.findByUsuarioAndSenha(usuario, senha);
 		if(!usuarioModelOptional.isPresent()) {

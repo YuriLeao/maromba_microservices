@@ -23,6 +23,8 @@ public class UsuarioDto {
 	@NotBlank
 	private String senha;
 	@NotBlank
+	private String nome;
+	@NotBlank
 	private String email;
 	@NotBlank
 	private String genero;

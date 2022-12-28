@@ -47,7 +47,7 @@ public class UsuarioControllerTest {
 
 	@Test
 	public void incluir() throws Exception {
-		var usuarioDto = new UsuarioDto(null, "teste", "teste", "tt@gmail.com", "M", "99999999", 72.0,
+		var usuarioDto = new UsuarioDto(null, "teste", "teste", "teste", "tt@gmail.com", "M", "99999999", 72.0,
 				new ArrayList<String>() {
 					private static final long serialVersionUID = 1L;
 
@@ -68,7 +68,7 @@ public class UsuarioControllerTest {
 
 	@Test
 	public void alterar() throws Exception {
-		var usuarioDto = new UsuarioDto(UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a"), "teste", "teste", "tt@gmail.com", "M", "99999999", 72.0, new ArrayList<String>() {
+		var usuarioDto = new UsuarioDto(UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a"), "teste", "teste", "teste", "tt@gmail.com", "M", "99999999", 72.0, new ArrayList<String>() {
 			private static final long serialVersionUID = 1L;
 
 			{
@@ -88,7 +88,7 @@ public class UsuarioControllerTest {
 
 	@Test
 	public void login() throws Exception {
-		var usuarioDto = new UsuarioDto(UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a"), "teste", "teste", "tt@gmail.com", "M", "99999999", 72.0, new ArrayList<String>() {
+		var usuarioDto = new UsuarioDto(UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a"), "teste", "teste", "teste", "tt@gmail.com", "M", "99999999", 72.0, new ArrayList<String>() {
 			private static final long serialVersionUID = 1L;
 
 			{
@@ -107,7 +107,7 @@ public class UsuarioControllerTest {
 
 	@Test
 	public void obterTodos() throws Exception {
-		var usuarioDto = new UsuarioDto(UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a"), "teste", "teste", "tt@gmail.com", "M", "99999999", 72.0, new ArrayList<String>() {
+		var usuarioDto = new UsuarioDto(UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a"), "teste", "teste", "teste", "tt@gmail.com", "M", "99999999", 72.0, new ArrayList<String>() {
 			private static final long serialVersionUID = 1L;
 
 			{
@@ -121,12 +121,31 @@ public class UsuarioControllerTest {
 		when(usuarioRepository.findAll(PageRequest.of(0, 10).withSort(Sort.by(Sort.Direction.ASC, "id"))))
 				.thenReturn(new PageImpl<UsuarioModel>(lista));
 
-		mockMvc.perform(get("/usuario-service").contentType("application/json")).andExpect(status().isOk());
+		mockMvc.perform(get("/usuario-service/obterTodos").contentType("application/json")).andExpect(status().isOk());
+	}
+	
+	@Test
+	public void obterByNomeLike() throws Exception {
+		var usuarioDto = new UsuarioDto(UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a"), "teste", "teste", "teste", "tt@gmail.com", "M", "99999999", 72.0, new ArrayList<String>() {
+			private static final long serialVersionUID = 1L;
+
+			{
+				add("admin");
+			}
+		}, UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a"), "empresa", java.time.LocalDate.now(), null);
+		var usuario = new UsuarioModel();
+		BeanUtils.copyProperties(usuarioDto, usuario);
+		List<UsuarioModel> lista = new ArrayList<UsuarioModel>();
+		lista.add(usuario);
+		when(usuarioRepository.findByNomeLike(usuarioDto.getNome()))
+				.thenReturn(lista);
+
+		mockMvc.perform(get("/usuario-service/obterByNomeLike/teste").contentType("application/json")).andExpect(status().isOk());
 	}
 
 	@Test
 	public void deletar() throws Exception {
-		var usuarioDto = new UsuarioDto(UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a"), "teste", "teste", "tt@gmail.com", "M", "99999999", 72.0, new ArrayList<String>() {
+		var usuarioDto = new UsuarioDto(UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a"), "teste", "teste", "teste", "tt@gmail.com", "M", "99999999", 72.0, new ArrayList<String>() {
 			private static final long serialVersionUID = 1L;
 
 			{

@@ -2,6 +2,7 @@ package com.api.maromba.usuario.services;
 
 import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
+import java.util.List;
 import java.util.Optional;
 
 import javax.transaction.Transactional;
@@ -47,6 +48,10 @@ public class UsuarioService {
 
 	public Page<UsuarioModel> findAll(Pageable pageable) {
 		return usuarioRepository.findAll(pageable);
+	}
+	
+	public List<UsuarioModel> findByNomeLike(String nome) {
+		return usuarioRepository.findByNomeLike(nome);
 	}
 
 }
