@@ -56,7 +56,7 @@ public class GrupoMuscularControllerTest {
 		BeanUtils.copyProperties(grupoMuscularDto, grupoMuscular);
 		when(grupoMuscularRepository.save(grupoMuscular)).thenReturn(grupoMuscular);
 
-		mockMvc.perform(post("/grupoMuscular-service/incluir").contentType("application/json")
+		mockMvc.perform(post("/grupo-muscular-service/incluir").contentType("application/json")
 				.content(objectMapper.writeValueAsString(grupoMuscularDto))).andExpect(status().isCreated());
 	}
 
@@ -77,7 +77,7 @@ public class GrupoMuscularControllerTest {
 		when(grupoMuscularRepository.save(grupoMuscular)).thenReturn(grupoMuscular);
 
 		mockMvc.perform(
-				put("/grupoMuscular-service/alterar/" + UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a"))
+				put("/grupo-muscular-service/alterar/" + UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a"))
 						.contentType("application/json").content(objectMapper.writeValueAsString(grupoMuscularDto)))
 				.andExpect(status().isCreated());
 	}
@@ -99,7 +99,7 @@ public class GrupoMuscularControllerTest {
 		when(grupoMuscularRepository.findAll(PageRequest.of(0, 10).withSort(Sort.by(Sort.Direction.ASC, "id"))))
 				.thenReturn(new PageImpl<GrupoMuscularModel>(lista));
 
-		mockMvc.perform(get("/grupoMuscular-service").contentType("application/json")).andExpect(status().isOk());
+		mockMvc.perform(get("/grupo-muscular-service/obterTodos").contentType("application/json")).andExpect(status().isOk());
 	}
 
 	@Test
@@ -118,7 +118,7 @@ public class GrupoMuscularControllerTest {
 				.thenReturn(Optional.of(grupoMuscular));
 
 		mockMvc.perform(
-				get("/grupoMuscular-service/obterById/" + UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a"))
+				get("/grupo-muscular-service/obterById/" + UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a"))
 						.contentType("application/json"))
 				.andExpect(status().isOk());
 	}
@@ -139,7 +139,7 @@ public class GrupoMuscularControllerTest {
 				.thenReturn(Optional.of(grupoMuscular)).thenReturn(null);
 
 		mockMvc.perform(
-				delete("/grupoMuscular-service/deletar/" + UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a"))
+				delete("/grupo-muscular-service/deletar/" + UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a"))
 						.contentType("application/json"))
 				.andExpect(status().isOk());
 	}

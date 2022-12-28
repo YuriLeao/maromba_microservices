@@ -8,9 +8,9 @@
 		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.api.maromba</groupId>
-	<artifactId>grupoMuscular-service</artifactId>
+	<artifactId>grupo-muscular-service</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>grupoMuscular-service</name>
+	<name>grupo-muscular-service</name>
 	<description>Projeto para controle de grupos musculares </description>
 	<properties>
 		<java.version>17</java.version>

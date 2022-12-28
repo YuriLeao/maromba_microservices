@@ -18,7 +18,7 @@ resilience4j:
         enable-exponential-backoff: true
 spring:
   application:
-    name: grupoMuscular-service
+    name: grupo-muscular-service
   config:
     import: optional:configserver:http://localhost:8888/
   cloud:
@@ -47,4 +47,4 @@ spring:
       probability: 1.0
 springdoc:
   api-docs:
-    path: /grupoMuscular-service/v3/api-docs
+    path: /grupo-muscular-service/v3/api-docs

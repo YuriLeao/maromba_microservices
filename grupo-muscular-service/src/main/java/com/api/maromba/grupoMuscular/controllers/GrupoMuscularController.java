@@ -27,7 +27,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.api.maromba.grupoMuscular.dtos.GrupoMuscularDto;
-import com.api.maromba.grupoMuscular.exceptions.ResponseConflictException;
 import com.api.maromba.grupoMuscular.exceptions.ResponseNotFoundException;
 import com.api.maromba.grupoMuscular.models.GrupoMuscularModel;
 import com.api.maromba.grupoMuscular.services.GrupoMuscularService;
@@ -42,7 +41,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @Tag(name = "Grupo muscular Service API endpoint")
 @RestController
 @CrossOrigin(origins = "*", maxAge = 3600)
-@RequestMapping("/grupoMuscular-service")
+@RequestMapping("/grupo-muscular-service")
 public class GrupoMuscularController {
 	
 	@Autowired
@@ -60,7 +59,7 @@ public class GrupoMuscularController {
 	}
 	
 	@Operation(summary = "Obtém todos os grupos musculares .")
-	@GetMapping
+	@GetMapping("obterTodos")
 	@Retry(name = "default")
 	@CircuitBreaker(name = "default")
 	public ResponseEntity<Page<GrupoMuscularDto>> obterTodos(@PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.ASC) Pageable pageable){
