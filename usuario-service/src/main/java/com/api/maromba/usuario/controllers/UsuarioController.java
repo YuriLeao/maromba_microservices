@@ -68,7 +68,7 @@ public class UsuarioController {
 	@Retry(name = "default")
 	@CircuitBreaker(name = "default")
 	public ResponseEntity<Object> salvar(@RequestBody @Valid UsuarioDto usuarioDto) throws NoSuchAlgorithmException, UnsupportedEncodingException{
-		if(usuarioService.existsByUsuario(usuarioDto.getUsuario())){
+		if(usuarioService.existsByEmail(usuarioDto.getEmail())){
 			throw new ResponseConflictException("Usuário já existente.");
 		}
 		var usuarioModel = new UsuarioModel();
@@ -99,11 +99,11 @@ public class UsuarioController {
 	}
 	
 	@Operation(summary = "Faz login.")
-	@GetMapping("login/{usuario}/{senha}")
+	@GetMapping("login/{email}/{senha}")
 	@Retry(name = "default")
 	@CircuitBreaker(name = "default")
-	public ResponseEntity<UsuarioDto> login(@PathVariable(value = "usuario") String usuario, @PathVariable(value = "senha") String senha) throws NoSuchAlgorithmException, UnsupportedEncodingException{
-		Optional<UsuarioModel> usuarioModelOptional = usuarioService.findByUsuarioAndSenha(usuario, senha);
+	public ResponseEntity<UsuarioDto> login(@PathVariable(value = "email") String email, @PathVariable(value = "senha") String senha) throws NoSuchAlgorithmException, UnsupportedEncodingException{
+		Optional<UsuarioModel> usuarioModelOptional = usuarioService.findByEmailAndSenha(email, senha);
 		if(!usuarioModelOptional.isPresent()) {
 			throw new ResponseNotFoundException("Usuário ou senha inválidos.");
 		}
@@ -143,11 +143,11 @@ public class UsuarioController {
 	
 	@SecurityRequirement(name = "Bearer Authentication")
 	@Operation(summary = "Deleta um usuário.")
-	@DeleteMapping("deletar/{usuario}/{senha}")
+	@DeleteMapping("deletar/{email}/{senha}")
 	@Retry(name = "default")
 	@CircuitBreaker(name = "default")
-	public ResponseEntity<Object> deletar(@PathVariable(value = "usuario") String usuario, @PathVariable(value = "senha") String senha) throws NoSuchAlgorithmException, UnsupportedEncodingException{
-		Optional<UsuarioModel> usuarioModelOptional = usuarioService.findByUsuarioAndSenha(usuario, senha);
+	public ResponseEntity<Object> deletar(@PathVariable(value = "email") String email, @PathVariable(value = "senha") String senha) throws NoSuchAlgorithmException, UnsupportedEncodingException{
+		Optional<UsuarioModel> usuarioModelOptional = usuarioService.findByEmailAndSenha(email, senha);
 		if(!usuarioModelOptional.isPresent()) {
 			throw new ResponseNotFoundException("Usuário não encontrado.");
 		}
@@ -157,12 +157,12 @@ public class UsuarioController {
 	
 	@SecurityRequirement(name = "Bearer Authentication")
 	@Operation(summary = "Altera um usuario.")
-	@PutMapping("alterar/{usuario}/{senha}")
+	@PutMapping("alterar/{email}/{senha}")
 	@Retry(name = "default")
 	@CircuitBreaker(name = "default")
-	public ResponseEntity<UsuarioDto> alterar(@PathVariable(value = "usuario") String usuario, @PathVariable(value = "senha") String senha,
+	public ResponseEntity<UsuarioDto> alterar(@PathVariable(value = "email") String email, @PathVariable(value = "senha") String senha,
 			@RequestBody UsuarioDto usuarioDto) throws NoSuchAlgorithmException, UnsupportedEncodingException{
-		Optional<UsuarioModel> usuarioModelOptional = usuarioService.findByUsuarioAndSenha(usuario, senha);
+		Optional<UsuarioModel> usuarioModelOptional = usuarioService.findByEmailAndSenha(email, senha);
 		if(!usuarioModelOptional.isPresent()) {
 			throw new ResponseNotFoundException("Usuário não encontrado.");
 		}

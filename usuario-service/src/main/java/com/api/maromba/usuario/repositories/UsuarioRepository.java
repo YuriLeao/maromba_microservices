@@ -12,11 +12,11 @@ import com.api.maromba.usuario.models.UsuarioModel;
 
 public interface UsuarioRepository extends JpaRepository<UsuarioModel, UUID>{
 
-	boolean existsByUsuario(String usuario);
+	boolean existsByEmail(String email);
 
-	Optional<UsuarioModel> findByUsuarioAndSenha(String usuario, String senha);
+	Optional<UsuarioModel> findByEmailAndSenha(String email, String senha);
 
-	void deleteByUsuarioAndSenha(String usuario, String senha);
+	void deleteByEmailAndSenha(String email, String senha);
 	
 	@Query("SELECT u FROM UsuarioModel u WHERE LOWER(u.nome) LIKE LOWER(CONCAT('%',:nome,'%'))")
 	List<UsuarioModel> findByNomeLike(@Param("nome")  String nome);

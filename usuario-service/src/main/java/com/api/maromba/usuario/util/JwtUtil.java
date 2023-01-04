@@ -25,7 +25,7 @@ public class JwtUtil {
 		String token = JWT.create()
 				.withSubject(usuario.getId().toString())
 				.withIssuer(issuer)
-				.withClaim("usuario", usuario.getUsuario())
+				.withClaim("email", usuario.getEmail())
 				.withClaim("autorizacoes", usuario.getAutorizacoes())
 				.withIssuedAt(new Date(System.currentTimeMillis()))
 				.withExpiresAt(new Date(System.currentTimeMillis() + 5 * 60 * 1000))

@@ -27,23 +27,23 @@ public class UsuarioService {
 	
 	@Transactional
 	public UsuarioModel salvar(UsuarioModel usuarioModel) throws NoSuchAlgorithmException, UnsupportedEncodingException {
-		usuarioModel.setSenha(criptor.criptografarSenha(usuarioModel.getUsuario(), usuarioModel.getSenha()));
+		usuarioModel.setSenha(criptor.criptografarSenha(usuarioModel.getEmail(), usuarioModel.getSenha()));
 		return usuarioRepository.save(usuarioModel);
 	}
 	
-	public Boolean existsByUsuario(String usuario) {
-		return usuarioRepository.existsByUsuario(usuario);
+	public Boolean existsByEmail(String email) {
+		return usuarioRepository.existsByEmail(email);
 	}
 
-	public Optional<UsuarioModel> findByUsuarioAndSenha(String usuario, String senha) throws NoSuchAlgorithmException, UnsupportedEncodingException {
-		senha = criptor.criptografarSenha(usuario, senha);
-		return usuarioRepository.findByUsuarioAndSenha(usuario, senha);
+	public Optional<UsuarioModel> findByEmailAndSenha(String email, String senha) throws NoSuchAlgorithmException, UnsupportedEncodingException {
+		senha = criptor.criptografarSenha(email, senha);
+		return usuarioRepository.findByEmailAndSenha(email, senha);
 	}
 
 	@Transactional
 	public void deletar(UsuarioModel usuarioModel) throws NoSuchAlgorithmException, UnsupportedEncodingException {
-		usuarioModel.setSenha(criptor.criptografarSenha(usuarioModel.getUsuario(), usuarioModel.getSenha()));
-		usuarioRepository.deleteByUsuarioAndSenha(usuarioModel.getUsuario(), usuarioModel.getSenha());
+		usuarioModel.setSenha(criptor.criptografarSenha(usuarioModel.getEmail(), usuarioModel.getSenha()));
+		usuarioRepository.deleteByEmailAndSenha(usuarioModel.getEmail(), usuarioModel.getSenha());
 	}
 
 	public Page<UsuarioModel> findAll(Pageable pageable) {

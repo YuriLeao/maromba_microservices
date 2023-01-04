@@ -19,13 +19,11 @@ public class UsuarioDto {
 
 	private UUID id;
 	@NotBlank
-	private String usuario;
+	private String email;
 	@NotBlank
 	private String senha;
 	@NotBlank
 	private String nome;
-	@NotBlank
-	private String email;
 	@NotBlank
 	private String genero;
 	@NotBlank

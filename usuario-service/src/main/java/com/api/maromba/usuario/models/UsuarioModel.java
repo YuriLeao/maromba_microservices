@@ -35,13 +35,11 @@ public class UsuarioModel implements Serializable {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private UUID id;
 	@Column(nullable = false, unique = true)
-	private String usuario;
+	private String email;
 	@Column(nullable = false)
 	private String senha;
 	@Column(nullable = false)
 	private String nome;
-	@Column(nullable = false)
-	private String email;
 	@Column(nullable = false)
 	private String genero;
 	@Column(nullable = false)
