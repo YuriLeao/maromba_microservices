@@ -43,7 +43,7 @@ public class UsuarioModel implements Serializable {
 	@Column(nullable = false)
 	private String genero;
 	@Column(nullable = false)
-	private String telefone;
+	private String celular;
 	@Column(nullable = false)
 	private Double peso;
 	@Column(nullable = false)
