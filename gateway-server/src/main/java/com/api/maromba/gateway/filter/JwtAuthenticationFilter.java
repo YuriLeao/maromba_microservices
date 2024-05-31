@@ -109,6 +109,8 @@ public class JwtAuthenticationFilter implements GatewayFilter {
 				|| request.getURI().getPath().contains("/treino-service/obterTodos"))
 				&& decodedJWT.getClaim("autorizacoes").asList(String.class).contains("aluno")) {
 			throw new RoleException("Serviço não autorizado para esse usuário.");
+		} else if (!decodedJWT.getClaim("autorizacoes").asList(String.class).contains("admin")) {
+			throw new RoleException("Serviço não autorizado para esse usuário.");
 		}
 	}
 
