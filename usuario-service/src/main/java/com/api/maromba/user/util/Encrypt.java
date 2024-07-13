@@ -1,4 +1,4 @@
-package com.api.maromba.usuario.util;
+package com.api.maromba.user.util;
 
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
@@ -7,12 +7,12 @@ import java.security.NoSuchAlgorithmException;
 import org.springframework.stereotype.Component;
 
 @Component
-public class Criptor {
+public class Encrypt {
 
 	
-	public String criptografarSenha(String usuario, String senha) throws NoSuchAlgorithmException, UnsupportedEncodingException {
+	public String encryptPassword(String user, String password) throws NoSuchAlgorithmException, UnsupportedEncodingException {
 		MessageDigest algorithm = MessageDigest.getInstance("SHA-256");
-		byte messageDigest[] = algorithm.digest(usuario.concat(senha).getBytes("UTF-8"));
+		byte messageDigest[] = algorithm.digest(user.concat(password).getBytes("UTF-8"));
 
 		StringBuilder hexString = new StringBuilder();
 		for (byte b : messageDigest) {

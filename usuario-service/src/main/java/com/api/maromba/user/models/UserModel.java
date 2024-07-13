@@ -1,4 +1,4 @@
-package com.api.maromba.usuario.models;
+package com.api.maromba.user.models;
 
 import java.io.Serializable;
 import java.time.LocalDate;
@@ -25,9 +25,9 @@ import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 import lombok.Data;
 
 @Entity
-@Table(name = "tb_usuario")
+@Table(name = "tb_user")
 @Data
-public class UsuarioModel implements Serializable {
+public class UserModel implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
@@ -37,25 +37,25 @@ public class UsuarioModel implements Serializable {
 	@Column(nullable = false, unique = true)
 	private String email;
 	@Column(nullable = false)
-	private String senha;
+	private String password;
 	@Column(nullable = false)
-	private String nome;
+	private String name;
 	@Column(nullable = false)
-	private String genero;
+	private String gender;
 	@Column(nullable = false)
-	private String celular;
+	private String cellphone;
 	@Column(nullable = false)
-	private Double peso;
+	private Double weight;
 	@Column(nullable = false)
 	@ElementCollection
-	private List<String> autorizacoes;
+	private List<String> authorizations;
 	@Column(nullable = false)
-	private UUID empresaId;
+	private UUID companyId;
 	@Column(nullable = false)
 	@JsonSerialize(using = LocalDateSerializer.class)
 	@JsonDeserialize(using = LocalDateDeserializer.class)
 	@DateTimeFormat(iso = ISO.DATE)
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-	private LocalDate dataNascimento;
+	private LocalDate birthDate;
 
 }

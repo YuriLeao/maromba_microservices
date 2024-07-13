@@ -1,4 +1,4 @@
-package com.api.maromba.usuario.exception.handler;
+package com.api.maromba.user.exception.handler;
 
 import java.time.LocalDateTime;
 
@@ -12,10 +12,10 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import com.api.maromba.usuario.exception.ExceptionResponse;
-import com.api.maromba.usuario.exception.ResponseBadRequestException;
-import com.api.maromba.usuario.exception.ResponseConflictException;
-import com.api.maromba.usuario.exception.ResponseNotFoundException;
+import com.api.maromba.user.exception.ExceptionResponse;
+import com.api.maromba.user.exception.ResponseBadRequestException;
+import com.api.maromba.user.exception.ResponseConflictException;
+import com.api.maromba.user.exception.ResponseNotFoundException;
 
 @ControllerAdvice
 @RestController
@@ -26,28 +26,28 @@ public class CustomizedResponseEntityExceptionHandler extends ResponseEntityExce
 	@ExceptionHandler(Exception.class)
 	public final ResponseEntity<ExceptionResponse> handleAllException(Exception ex, WebRequest request){
 		ExceptionResponse exceptionResponse = new ExceptionResponse(LocalDateTime.now(), ex.getMessage(), request.getDescription(false));
-		logger.error("Erro na chamada: ".concat(request.getContextPath()), ex);
+		logger.error("Error call: ".concat(request.getContextPath()), ex);
 		return new ResponseEntity<>(exceptionResponse, HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 	
 	@ExceptionHandler(ResponseBadRequestException.class)
 	public final ResponseEntity<ExceptionResponse> handleBadRequestException(Exception ex, WebRequest request){
 		ExceptionResponse exceptionResponse = new ExceptionResponse(LocalDateTime.now(), ex.getMessage(), request.getDescription(false));
-		logger.error("Erro na chamada: ".concat(request.getContextPath()), ex);
+		logger.error("Error call: ".concat(request.getContextPath()), ex);
 		return new ResponseEntity<>(exceptionResponse, HttpStatus.BAD_REQUEST);
 	}
 	
 	@ExceptionHandler(ResponseConflictException.class)
 	public final ResponseEntity<ExceptionResponse> handleConflitException(Exception ex, WebRequest request){
 		ExceptionResponse exceptionResponse = new ExceptionResponse(LocalDateTime.now(), ex.getMessage(), request.getDescription(false));
-		logger.error("Erro na chamada: ".concat(request.getContextPath()), ex);
+		logger.error("Error call: ".concat(request.getContextPath()), ex);
 		return new ResponseEntity<>(exceptionResponse, HttpStatus.CONFLICT);
 	}
 	
 	@ExceptionHandler(ResponseNotFoundException.class)
 	public final ResponseEntity<ExceptionResponse> handleNotFoundException(Exception ex, WebRequest request){
 		ExceptionResponse exceptionResponse = new ExceptionResponse(LocalDateTime.now(), ex.getMessage(), request.getDescription(false));
-		logger.error("Erro na chamada: ".concat(request.getContextPath()), ex);
+		logger.error("Error call: ".concat(request.getContextPath()), ex);
 		return new ResponseEntity<>(exceptionResponse, HttpStatus.NOT_FOUND);
 	}
 }

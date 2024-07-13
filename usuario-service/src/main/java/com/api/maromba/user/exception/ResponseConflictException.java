@@ -1,4 +1,4 @@
-package com.api.maromba.usuario.exception;
+package com.api.maromba.user.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;

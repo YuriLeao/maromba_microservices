@@ -1,4 +1,4 @@
-package com.api.maromba.usuario.dtos;
+package com.api.maromba.user.dtos;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -15,28 +15,28 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class UsuarioDto {
+public class UserDto {
 
 	private UUID id;
 	@NotBlank
 	private String email;
 	@NotBlank
-	private String senha;
+	private String password;
 	@NotBlank
-	private String nome;
+	private String name;
 	@NotBlank
-	private String genero;
+	private String gender;
 	@NotBlank
-	private String celular;
+	private String cellphone;
 	@DecimalMin("30.00")
-	private Double peso;
+	private Double weight;
 	@NotNull
-	private List<String> autorizacoes;
+	private List<String> authorizations;
 	@NotNull
-	private UUID empresaId;
-	private String empresaNome;
+	private UUID companyId;
+	private String companyName;
 	@NotNull
-	private LocalDate dataNascimento;
+	private LocalDate birthDate;
 	private String token;
 	
 }

@@ -1,4 +1,4 @@
-package com.api.maromba.usuario.util;
+package com.api.maromba.user.util;
 
 import java.util.Date;
 
@@ -7,7 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import com.api.maromba.usuario.models.UsuarioModel;
+import com.api.maromba.user.models.UserModel;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
@@ -20,13 +20,13 @@ public class JwtUtil {
 	@Value("${jwt.secret}")
 	private String jwtSecret;
 	
-	public String generateToken(UsuarioModel usuario, String issuer) {
+	public String generateToken(UserModel user, String issuer) {
 		Algorithm algorithm = Algorithm.HMAC256(jwtSecret.getBytes());
 		String token = JWT.create()
-				.withSubject(usuario.getId().toString())
+				.withSubject(user.getId().toString())
 				.withIssuer(issuer)
-				.withClaim("email", usuario.getEmail())
-				.withClaim("autorizacoes", usuario.getAutorizacoes())
+				.withClaim("email", user.getEmail())
+				.withClaim("authorizations", user.getAuthorizations())
 				.withIssuedAt(new Date(System.currentTimeMillis()))
 				.withExpiresAt(new Date(System.currentTimeMillis() + 5 * 60 * 1000))
 				.sign(algorithm);
@@ -40,7 +40,7 @@ public class JwtUtil {
 		        .build();
 		    verifier.verify(token);
 		} catch (Exception exception){
-		    logger.error("Erro ao validar token: ", exception.getMessage());
+		    logger.error("Error validating token: ", exception.getMessage());
 		    throw exception;
 		}
 	}

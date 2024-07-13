@@ -1,4 +1,4 @@
-package com.api.maromba.usuario;
+package com.api.maromba.user;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -6,10 +6,10 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 
 @SpringBootApplication
 @EnableFeignClients
-public class LoginApplication {
+public class UserApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(LoginApplication.class, args);
+		SpringApplication.run(UserApplication.class, args);
 	}
 
 }
