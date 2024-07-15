@@ -1,4 +1,4 @@
-package com.api.maromba.exercise.exceptions;
+package com.api.maromba.workoutSheet.exceptions;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;

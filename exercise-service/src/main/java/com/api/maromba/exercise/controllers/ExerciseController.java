@@ -59,7 +59,7 @@ public class ExerciseController {
 		var exerciseModel = new ExerciseModel();
 		BeanUtils.copyProperties(exerciseDTO, exerciseModel);
 		exerciseService.save(exerciseModel);
-		return ResponseEntity.status(HttpStatus.CREATED).body("successfully created.");
+		return ResponseEntity.status(HttpStatus.CREATED).body("Successfully created.");
 	}
 	
 	@Operation(summary = "Gets all exercises.")
