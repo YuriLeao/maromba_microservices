@@ -142,11 +142,11 @@ public class UserController {
 	}
 	
 	@SecurityRequirement(name = "Bearer Authentication")
-	@Operation(summary = "Delet a user.")
-	@DeleteMapping("delet/{email}/{password}")
+	@Operation(summary = "Delete a user.")
+	@DeleteMapping("delete/{email}/{password}")
 	@Retry(name = "default")
 	@CircuitBreaker(name = "default")
-	public ResponseEntity<Object> delet(@PathVariable(value = "email") String email, @PathVariable(value = "password") String password) throws NoSuchAlgorithmException, UnsupportedEncodingException{
+	public ResponseEntity<Object> delete(@PathVariable(value = "email") String email, @PathVariable(value = "password") String password) throws NoSuchAlgorithmException, UnsupportedEncodingException{
 		Optional<UserModel> userModelOptional = userService.findByEmailAndPassword(email, password);
 		if(!userModelOptional.isPresent()) {
 			throw new ResponseNotFoundException("No users found.");

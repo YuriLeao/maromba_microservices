@@ -157,7 +157,7 @@ public class UserControllerTest {
 		when(userRepository.findByEmailAndPassword("tt@gmail.com", encrypt.encryptPassword("tt@gmail.com", "teste")))
 				.thenReturn(Optional.of(user)).thenReturn(null);
 
-		mockMvc.perform(delete("/user-service/delet/tt@gmail.com/teste").contentType("application/json"))
+		mockMvc.perform(delete("/user-service/delete/tt@gmail.com/teste").contentType("application/json"))
 				.andExpect(status().isOk());
 	}
 

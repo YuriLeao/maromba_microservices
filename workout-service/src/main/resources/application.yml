@@ -2,10 +2,8 @@ api:
   server:
     url: http://localhost:8765/
     descricao: dev
-jwt:
-  secret: birllMonstrao
 server:
-  port: 8000
+  port: 8500
 eureka:
   client:
     service-url:
@@ -20,7 +18,7 @@ resilience4j:
         enable-exponential-backoff: true
 spring:
   application:
-    name: user-service
+    name: workout-service
   config:
     import: optional:configserver:http://localhost:8888/
   cloud:
@@ -37,7 +35,7 @@ spring:
           lob:
             non-contextual-creation: true
   datasource:
-    url: jdbc:postgresql://localhost:5434/maromba-usuario?currentSchema=public
+    url: jdbc:postgresql://localhost:5438/maromba-treino?currentSchema=public
     username: postgres
     password: root
     driverClassName: org.postgresql.Driver
@@ -49,4 +47,4 @@ spring:
       probability: 1.0
 springdoc:
   api-docs:
-    path: /user-service/v3/api-docs
+    path: /workout-service/v3/api-docs
