@@ -23,7 +23,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.test.web.servlet.MockMvc;
 
-import com.api.maromba.user.dtos.UserDto;
+import com.api.maromba.user.dtos.UserDTO;
 import com.api.maromba.user.models.UserModel;
 import com.api.maromba.user.repositories.UserRepository;
 import com.api.maromba.user.util.Encrypt;
@@ -47,7 +47,7 @@ public class UserControllerTest {
 
 	@Test
 	public void include() throws Exception {
-		var userDto = new UserDto(null,"tt@gmail.com", "teste", "teste", "M", "99999999", 72.0,
+		var userDto = new UserDTO(null,"tt@gmail.com", "teste", "teste", "M", "99999999", 72.0,
 				new ArrayList<String>() {
 					private static final long serialVersionUID = 1L;
 
@@ -68,7 +68,7 @@ public class UserControllerTest {
 
 	@Test
 	public void update() throws Exception {
-		var userDto = new UserDto(UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a"), "tt@gmail.com", "teste", "teste", "M", "99999999", 72.0, new ArrayList<String>() {
+		var userDto = new UserDTO(UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a"), "tt@gmail.com", "teste", "teste", "M", "99999999", 72.0, new ArrayList<String>() {
 			private static final long serialVersionUID = 1L;
 
 			{
@@ -88,7 +88,7 @@ public class UserControllerTest {
 
 	@Test
 	public void login() throws Exception {
-		var userDto = new UserDto(UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a"), "teste", "teste", "teste", "M", "99999999", 72.0, new ArrayList<String>() {
+		var userDto = new UserDTO(UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a"), "teste", "teste", "teste", "M", "99999999", 72.0, new ArrayList<String>() {
 			private static final long serialVersionUID = 1L;
 
 			{
@@ -107,7 +107,7 @@ public class UserControllerTest {
 
 	@Test
 	public void getAll() throws Exception {
-		var userDto = new UserDto(UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a"), "tt@gmail.com", "teste", "teste", "M", "99999999", 72.0, new ArrayList<String>() {
+		var userDto = new UserDTO(UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a"), "tt@gmail.com", "teste", "teste", "M", "99999999", 72.0, new ArrayList<String>() {
 			private static final long serialVersionUID = 1L;
 
 			{
@@ -126,7 +126,7 @@ public class UserControllerTest {
 	
 	@Test
 	public void getByNameLike() throws Exception {
-		var userDto = new UserDto(UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a"), "tt@gmail.com", "teste", "teste", "M", "99999999", 72.0, new ArrayList<String>() {
+		var userDto = new UserDTO(UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a"), "tt@gmail.com", "teste", "teste", "M", "99999999", 72.0, new ArrayList<String>() {
 			private static final long serialVersionUID = 1L;
 
 			{
@@ -145,7 +145,7 @@ public class UserControllerTest {
 
 	@Test
 	public void delet() throws Exception {
-		var userDto = new UserDto(UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a"), "tt@gmail.com", "teste", "teste", "M", "99999999", 72.0, new ArrayList<String>() {
+		var userDto = new UserDTO(UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a"), "tt@gmail.com", "teste", "teste", "M", "99999999", 72.0, new ArrayList<String>() {
 			private static final long serialVersionUID = 1L;
 
 			{

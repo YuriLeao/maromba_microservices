@@ -3,6 +3,7 @@ package com.api.maromba.workout.dtos;
 import java.util.List;
 import java.util.UUID;
 
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
@@ -16,9 +17,19 @@ import lombok.NoArgsConstructor;
 public class WorkoutDTO {
 	
 	private UUID id;
-	@NotEmpty
-	private List<UUID> musclesGroup;
 	@NotNull
-	private UUID user;
+	private UUID idMovimento;
+	@NotNull
+	private Integer tempoDescanso;
+	@NotNull
+	private Integer qtdSeries;
+	@NotNull
+	private Integer qtdRepeticoes;
+	@NotNull
+	private Integer carga;
+	@NotNull
+	private Integer recordCarga;
+	@NotBlank
+	private String observacao;
 	
 }

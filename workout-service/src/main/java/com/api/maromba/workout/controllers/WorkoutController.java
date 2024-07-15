@@ -55,7 +55,7 @@ public class WorkoutController {
 		var workoutModel = new WorkoutModel();
 		BeanUtils.copyProperties(workoutDTO, workoutModel);
 		workoutService.save(workoutModel);
-		return ResponseEntity.status(HttpStatus.CREATED).body("successfully created.");
+		return ResponseEntity.status(HttpStatus.CREATED).body("Successfully created.");
 	}
 	
 	@Operation(summary = "Gets all users.")

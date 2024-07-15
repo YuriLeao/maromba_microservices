@@ -31,7 +31,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.api.maromba.user.dtos.UserDto;
+import com.api.maromba.user.dtos.UserDTO;
 import com.api.maromba.user.exception.ResponseConflictException;
 import com.api.maromba.user.exception.ResponseNotFoundException;
 import com.api.maromba.user.models.UserModel;
@@ -67,14 +67,14 @@ public class UserController {
 	@PostMapping("include")
 	@Retry(name = "default")
 	@CircuitBreaker(name = "default")
-	public ResponseEntity<Object> include(@RequestBody @Valid UserDto userDto) throws NoSuchAlgorithmException, UnsupportedEncodingException{
+	public ResponseEntity<Object> include(@RequestBody @Valid UserDTO userDto) throws NoSuchAlgorithmException, UnsupportedEncodingException{
 		if(userService.existsByEmail(userDto.getEmail())){
 			throw new ResponseConflictException("User already exists.");
 		}
 		var userModel = new UserModel();
 		BeanUtils.copyProperties(userDto, userModel);
 		userService.save(userModel);
-		return ResponseEntity.status(HttpStatus.CREATED).body("successfully created.");
+		return ResponseEntity.status(HttpStatus.CREATED).body("Successfully created.");
 	}
 	
 	@SecurityRequirement(name = "Bearer Authentication")
@@ -82,19 +82,19 @@ public class UserController {
 	@GetMapping("getAll")
 	@Retry(name = "default")
 	@CircuitBreaker(name = "default")
-	public ResponseEntity<Page<UserDto>> getAll(@PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.ASC) Pageable pageable){
+	public ResponseEntity<Page<UserDTO>> getAll(@PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.ASC) Pageable pageable){
 		Page<UserModel> userPages = userService.findAll(pageable);
 		if(userPages.isEmpty()) {
 			throw new ResponseNotFoundException("No users found.");
 		}
-		List<UserDto> usersDto = new ArrayList<UserDto>();
+		List<UserDTO> usersDto = new ArrayList<UserDTO>();
 		for (UserModel userModel : userPages) {
-			UserDto userDto = new UserDto();
+			UserDTO userDto = new UserDTO();
 			BeanUtils.copyProperties(userModel, userDto);
 			userDto.setPassword(null);
 			usersDto.add(userDto);
 		}
-		Page<UserDto> userDtoPages = new PageImpl<UserDto>(usersDto);
+		Page<UserDTO> userDtoPages = new PageImpl<UserDTO>(usersDto);
 		return ResponseEntity.status(HttpStatus.OK).body(userDtoPages);
 	}
 	
@@ -102,12 +102,12 @@ public class UserController {
 	@GetMapping("login/{email}/{password}")
 	@Retry(name = "default")
 	@CircuitBreaker(name = "default")
-	public ResponseEntity<UserDto> login(@PathVariable(value = "email") String email, @PathVariable(value = "password") String password) throws NoSuchAlgorithmException, UnsupportedEncodingException{
+	public ResponseEntity<UserDTO> login(@PathVariable(value = "email") String email, @PathVariable(value = "password") String password) throws NoSuchAlgorithmException, UnsupportedEncodingException{
 		Optional<UserModel> userModelOptional = userService.findByEmailAndPassword(email, password);
 		if(!userModelOptional.isPresent()) {
 			throw new ResponseNotFoundException("User or password invalid.");
 		}
-		UserDto userDto = new UserDto();
+		UserDTO userDto = new UserDTO();
 		BeanUtils.copyProperties(userModelOptional.get(), userDto);
 		try {
 			var response = companyProxy.getById(userDto.getCompanyId());
@@ -126,14 +126,14 @@ public class UserController {
 	@GetMapping("getByNameLike/{name}")
 	@Retry(name = "default")
 	@CircuitBreaker(name = "default")
-	public ResponseEntity<List<UserDto>> getByNameLike(@PathVariable(value = "name") String name){
+	public ResponseEntity<List<UserDTO>> getByNameLike(@PathVariable(value = "name") String name){
 		List<UserModel> userModels = userService.findByNameLike(name);
 		if(userModels == null || userModels.isEmpty()) {
 			throw new ResponseNotFoundException("No users found.");
 		}
-		List<UserDto> userDtos = new ArrayList<UserDto>();
+		List<UserDTO> userDtos = new ArrayList<UserDTO>();
 		for (UserModel userModel : userModels) {
-			UserDto userDto = new UserDto();
+			UserDTO userDto = new UserDTO();
 			BeanUtils.copyProperties(userModel, userDto);
 			userDto.setPassword(null);
 			userDtos.add(userDto);
@@ -160,8 +160,8 @@ public class UserController {
 	@PutMapping("update/{email}/{password}")
 	@Retry(name = "default")
 	@CircuitBreaker(name = "default")
-	public ResponseEntity<UserDto> update(@PathVariable(value = "email") String email, @PathVariable(value = "password") String password,
-			@RequestBody UserDto userDto) throws NoSuchAlgorithmException, UnsupportedEncodingException{
+	public ResponseEntity<UserDTO> update(@PathVariable(value = "email") String email, @PathVariable(value = "password") String password,
+			@RequestBody UserDTO userDto) throws NoSuchAlgorithmException, UnsupportedEncodingException{
 		Optional<UserModel> userModelOptional = userService.findByEmailAndPassword(email, password);
 		if(!userModelOptional.isPresent()) {
 			throw new ResponseNotFoundException("No users found.");

@@ -15,5 +15,4 @@ public class ExceptionResponse implements Serializable{
 	private LocalDateTime date;
 	private String menssage;
 	private String description;
-	
 }
