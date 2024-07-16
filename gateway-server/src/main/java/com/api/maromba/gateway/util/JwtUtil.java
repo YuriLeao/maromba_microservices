@@ -24,7 +24,7 @@ public class JwtUtil {
 		        .build();
 		   return verifier.verify(token);
 		} catch (Exception exception){
-		    logger.error("Erro ao validar token: ", exception.getMessage());
+		    logger.error("Error validating token: ", exception.getMessage());
 		    throw exception;
 		}
 	}

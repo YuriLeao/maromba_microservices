@@ -31,9 +31,9 @@ public class JwtAuthenticationFilter implements GatewayFilter {
 	public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
 		ServerHttpRequest request = (ServerHttpRequest) exchange.getRequest();
 
-		final List<String> apiEndpoints = List.of("/login", "/usuario-service/v3/api-docs",
-				"/empresa-service/v3/api-docs", "/exercicio-service/v3/api-docs", "/grupo-muscular-service/v3/api-docs",
-				"/movimento-service/v3/api-docs", "/treino-service/v3/api-docs");
+		final List<String> apiEndpoints = List.of("/login", "/user-service/v3/api-docs",
+				"/company-service/v3/api-docs", "/exercise-service/v3/api-docs", "/workout-sheet-service/v3/api-docs",
+				"/workout-service/v3/api-docs");
 
 		Predicate<ServerHttpRequest> isApiSecured = r -> apiEndpoints.stream()
 				.noneMatch(uri -> r.getURI().getPath().contains(uri));
@@ -45,7 +45,7 @@ public class JwtAuthenticationFilter implements GatewayFilter {
 				ServerHttpResponse response = exchange.getResponse();
 				response.setStatusCode(HttpStatus.UNAUTHORIZED);
 				response.getHeaders().add("error", "No authorization was recorded.");
-				String erro = "{\n	\"error_menssage\": \"No authorization was recorded.\"\n}";
+				String erro = "{\n	\"error_message\": \"No authorization was recorded.\"\n}";
 				byte[] bytes = erro.getBytes(StandardCharsets.UTF_8);
 				DataBuffer buffer = response.bufferFactory().wrap(bytes);
 				return response.writeWith(Flux.just(buffer));
@@ -54,15 +54,15 @@ public class JwtAuthenticationFilter implements GatewayFilter {
 			final String token = authorization.get(0).substring("Bearer ".length());
 
 			try {
-				DecodedJWT decodedJWT = jwtUtil.validateToken(token, "/usuario-service/login");
+				DecodedJWT decodedJWT = jwtUtil.validateToken(token, "/user-service/login");
 
 				roleFilter(request, decodedJWT);
 
 			} catch (RoleException exception) {
 				ServerHttpResponse response = exchange.getResponse();
 				response.setStatusCode(HttpStatus.FORBIDDEN);
-				response.getHeaders().add("error", exception.getDescricao());
-				String erro = "{\n	\"error_menssage\": \"".concat(exception.getDescricao()).concat("\"\n}");
+				response.getHeaders().add("error", exception.getDescription());
+				String erro = "{\n	\"error_message\": \"".concat(exception.getDescription()).concat("\"\n}");
 				byte[] bytes = erro.getBytes(StandardCharsets.UTF_8);
 				DataBuffer buffer = response.bufferFactory().wrap(bytes);
 				return response.writeWith(Flux.just(buffer));
@@ -70,7 +70,7 @@ public class JwtAuthenticationFilter implements GatewayFilter {
 				ServerHttpResponse response = exchange.getResponse();
 				response.setStatusCode(HttpStatus.FORBIDDEN);
 				response.getHeaders().add("error", exception.getMessage());
-				String erro = "{\n	\"error_menssage\": \"".concat(exception.getMessage()).concat("\"\n}");
+				String erro = "{\n	\"error_message\": \"".concat(exception.getMessage()).concat("\"\n}");
 				byte[] bytes = erro.getBytes(StandardCharsets.UTF_8);
 				DataBuffer buffer = response.bufferFactory().wrap(bytes);
 				return response.writeWith(Flux.just(buffer));
@@ -81,36 +81,33 @@ public class JwtAuthenticationFilter implements GatewayFilter {
 	}
 
 	private void roleFilter(ServerHttpRequest request, DecodedJWT decodedJWT) throws RoleException {
-		if (!(request.getURI().getPath().contains("/usuario-service/")
-				|| request.getURI().getPath().contains("/empresa-service/obterById")
-				|| request.getURI().getPath().contains("/empresa-service/alterar")
-				|| request.getURI().getPath().contains("/empresa-service/deletar"))
-				&& decodedJWT.getClaim("autorizacoes").asList(String.class).contains("empresa")) {
-			throw new RoleException("Serviço não autorizado para esse usuário.");
-		} else if (!(request.getURI().getPath().contains("/usuario-service/")
-				|| request.getURI().getPath().contains("/empresa-service/obterById")
-				|| request.getURI().getPath().contains("/exercicio-service/")
-				|| request.getURI().getPath().contains("/grupo-muscular-service/")
-				|| request.getURI().getPath().contains("/movimento-service/")
-				|| request.getURI().getPath().contains("/treino-service/"))
-				&& decodedJWT.getClaim("autorizacoes").asList(String.class).contains("professor")) {
-			throw new RoleException("Serviço não autorizado para esse usuário.");
-		} else if (!(request.getURI().getPath().contains("/usuario-service/alterar")
-				|| request.getURI().getPath().contains("/usuario-service/deletar")
-				|| request.getURI().getPath().contains("/usuario-service/login")
-				|| request.getURI().getPath().contains("/empresa-service/obterById")
-				|| request.getURI().getPath().contains("/exercicio-service/obterById")
-				|| request.getURI().getPath().contains("/exercicio-service/obterTodos")
-				|| request.getURI().getPath().contains("/grupo-muscular-service/obterById")
-				|| request.getURI().getPath().contains("/grupo-muscular-service/obterTodos")
-				|| request.getURI().getPath().contains("/movimento-service/obterById")
-				|| request.getURI().getPath().contains("/movimento-service/obterTodos")
-				|| request.getURI().getPath().contains("/treino-service/obterById")
-				|| request.getURI().getPath().contains("/treino-service/obterTodos"))
-				&& decodedJWT.getClaim("autorizacoes").asList(String.class).contains("aluno")) {
-			throw new RoleException("Serviço não autorizado para esse usuário.");
-		} else if (!decodedJWT.getClaim("autorizacoes").asList(String.class).contains("admin")) {
-			throw new RoleException("Serviço não autorizado para esse usuário.");
+		if (!(request.getURI().getPath().contains("/user-service/")
+				|| request.getURI().getPath().contains("/company-service/getById")
+				|| request.getURI().getPath().contains("/company-service/update")
+				|| request.getURI().getPath().contains("/company-service/delete"))
+				&& decodedJWT.getClaim("authorizations").asList(String.class).contains("empresa")) {
+			throw new RoleException("Service don't authorizate for this user.");
+		} else if (!(request.getURI().getPath().contains("/user-service/")
+				|| request.getURI().getPath().contains("/company-service/getById")
+				|| request.getURI().getPath().contains("/exercise-service/")
+				|| request.getURI().getPath().contains("/workout-sheet-service/")
+				|| request.getURI().getPath().contains("/workout-service/"))
+				&& decodedJWT.getClaim("authorizations").asList(String.class).contains("professor")) {
+			throw new RoleException("Service don't authorizate for this user.");
+		} else if (!(request.getURI().getPath().contains("/user-service/update")
+				|| request.getURI().getPath().contains("/user-service/delete")
+				|| request.getURI().getPath().contains("/user-service/login")
+				|| request.getURI().getPath().contains("/company-service/getById")
+				|| request.getURI().getPath().contains("/exercise-service/getById")
+				|| request.getURI().getPath().contains("/exercise-service/getAll")
+				|| request.getURI().getPath().contains("/workout-sheet-service/getById")
+				|| request.getURI().getPath().contains("/workout-sheet-service/getAll")
+				|| request.getURI().getPath().contains("/workout-service/getById")
+				|| request.getURI().getPath().contains("/workout-service/getAll"))
+				&& decodedJWT.getClaim("authorizations").asList(String.class).contains("aluno")) {
+			throw new RoleException("Service don't authorizate for this user.");
+		} else if (!decodedJWT.getClaim("authorizations").asList(String.class).contains("admin")) {
+			throw new RoleException("Service don't authorizate for this user.");
 		}
 	}
 
