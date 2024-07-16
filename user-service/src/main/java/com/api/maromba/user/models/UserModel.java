@@ -43,7 +43,7 @@ public class UserModel implements Serializable {
 	@Column(nullable = false)
 	private String gender;
 	@Column(nullable = false)
-	private String cellphone;
+	private String phoneNumber;
 	@Column(nullable = false)
 	private Double weight;
 	@Column(nullable = false)

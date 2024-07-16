@@ -64,15 +64,15 @@ public class UserController {
 	
 	@SecurityRequirement(name = "Bearer Authentication")
 	@Operation(summary = "Save a new user.")
-	@PostMapping("include")
+	@PostMapping("save")
 	@Retry(name = "default")
 	@CircuitBreaker(name = "default")
-	public ResponseEntity<Object> include(@RequestBody @Valid UserDTO userDto) throws NoSuchAlgorithmException, UnsupportedEncodingException{
-		if(userService.existsByEmail(userDto.getEmail())){
+	public ResponseEntity<Object> save(@RequestBody @Valid UserDTO userDTO) throws NoSuchAlgorithmException, UnsupportedEncodingException{
+		if(userService.existsByEmail(userDTO.getEmail())){
 			throw new ResponseConflictException("User already exists.");
 		}
 		var userModel = new UserModel();
-		BeanUtils.copyProperties(userDto, userModel);
+		BeanUtils.copyProperties(userDTO, userModel);
 		userService.save(userModel);
 		return ResponseEntity.status(HttpStatus.CREATED).body("Successfully created.");
 	}
@@ -87,15 +87,15 @@ public class UserController {
 		if(userPages.isEmpty()) {
 			throw new ResponseNotFoundException("No users found.");
 		}
-		List<UserDTO> usersDto = new ArrayList<UserDTO>();
+		List<UserDTO> usersDTO = new ArrayList<UserDTO>();
 		for (UserModel userModel : userPages) {
-			UserDTO userDto = new UserDTO();
-			BeanUtils.copyProperties(userModel, userDto);
-			userDto.setPassword(null);
-			usersDto.add(userDto);
+			UserDTO userDTO = new UserDTO();
+			BeanUtils.copyProperties(userModel, userDTO);
+			userDTO.setPassword(null);
+			usersDTO.add(userDTO);
 		}
-		Page<UserDTO> userDtoPages = new PageImpl<UserDTO>(usersDto);
-		return ResponseEntity.status(HttpStatus.OK).body(userDtoPages);
+		Page<UserDTO> userDTOPages = new PageImpl<UserDTO>(usersDTO);
+		return ResponseEntity.status(HttpStatus.OK).body(userDTOPages);
 	}
 	
 	@Operation(summary = "Login.")
@@ -107,18 +107,18 @@ public class UserController {
 		if(!userModelOptional.isPresent()) {
 			throw new ResponseNotFoundException("User or password invalid.");
 		}
-		UserDTO userDto = new UserDTO();
-		BeanUtils.copyProperties(userModelOptional.get(), userDto);
+		UserDTO userDTO = new UserDTO();
+		BeanUtils.copyProperties(userModelOptional.get(), userDTO);
 		try {
-			var response = companyProxy.getById(userDto.getCompanyId());
+			var response = companyProxy.getById(userDTO.getCompanyId());
 			LinkedHashMap<String, Object> linkedHashMap = (LinkedHashMap<String, Object>)response.getBody();
-			userDto.setCompanyName(linkedHashMap.get("name").toString());
+			userDTO.setCompanyName(linkedHashMap.get("name").toString());
 		} catch (Exception e) {
 			logger.error("Error getting company name.");
 		}
-		userDto.setToken(jwtUtil.generateToken(userModelOptional.get(), "/user-service/login"));
-		userDto.setPassword(null);
-		return ResponseEntity.status(HttpStatus.OK).body(userDto);
+		userDTO.setToken(jwtUtil.generateToken(userModelOptional.get(), "/user-service/login"));
+		userDTO.setPassword(null);
+		return ResponseEntity.status(HttpStatus.OK).body(userDTO);
 	}
 	
 	@SecurityRequirement(name = "Bearer Authentication")
@@ -131,14 +131,14 @@ public class UserController {
 		if(userModels == null || userModels.isEmpty()) {
 			throw new ResponseNotFoundException("No users found.");
 		}
-		List<UserDTO> userDtos = new ArrayList<UserDTO>();
+		List<UserDTO> userDTOs = new ArrayList<UserDTO>();
 		for (UserModel userModel : userModels) {
-			UserDTO userDto = new UserDTO();
-			BeanUtils.copyProperties(userModel, userDto);
-			userDto.setPassword(null);
-			userDtos.add(userDto);
+			UserDTO userDTO = new UserDTO();
+			BeanUtils.copyProperties(userModel, userDTO);
+			userDTO.setPassword(null);
+			userDTOs.add(userDTO);
 		}
-		return ResponseEntity.status(HttpStatus.OK).body(userDtos);
+		return ResponseEntity.status(HttpStatus.OK).body(userDTOs);
 	}
 	
 	@SecurityRequirement(name = "Bearer Authentication")
@@ -161,18 +161,18 @@ public class UserController {
 	@Retry(name = "default")
 	@CircuitBreaker(name = "default")
 	public ResponseEntity<UserDTO> update(@PathVariable(value = "email") String email, @PathVariable(value = "password") String password,
-			@RequestBody UserDTO userDto) throws NoSuchAlgorithmException, UnsupportedEncodingException{
+			@RequestBody UserDTO userDTO) throws NoSuchAlgorithmException, UnsupportedEncodingException{
 		Optional<UserModel> userModelOptional = userService.findByEmailAndPassword(email, password);
 		if(!userModelOptional.isPresent()) {
 			throw new ResponseNotFoundException("No users found.");
 		}
 		var userModel = new UserModel();
 		UUID id = userModelOptional.get().getId();
-		BeanUtils.copyProperties(userDto, userModelOptional.get());
+		BeanUtils.copyProperties(userDTO, userModelOptional.get());
 		userModelOptional.get().setId(id);
 		userModel = userService.save(userModelOptional.get());
-		BeanUtils.copyProperties(userModel, userDto);
-		userDto.setPassword(null);
-		return ResponseEntity.status(HttpStatus.CREATED).body(userDto);
+		BeanUtils.copyProperties(userModel, userDTO);
+		userDTO.setPassword(null);
+		return ResponseEntity.status(HttpStatus.CREATED).body(userDTO);
 	}
 }	

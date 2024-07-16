@@ -20,7 +20,7 @@ import io.swagger.v3.oas.models.info.License;
 		version = "V1",
 		contact = 
 			@Contact(
-				name = "Yuri", email = "yuri.leao95@hotmail.com"
+				name = "Yuri", email = "ydomingosleao@gmail.com"
 			),
 		license =
 			@io.swagger.v3.oas.annotations.info.License(

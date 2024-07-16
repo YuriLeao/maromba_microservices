@@ -13,6 +13,6 @@ public class ExceptionResponse implements Serializable{
 	private static final long serialVersionUID = 1L;
 
 	private LocalDateTime date;
-	private String menssage;
+	private String message;
 	private String description;
 }

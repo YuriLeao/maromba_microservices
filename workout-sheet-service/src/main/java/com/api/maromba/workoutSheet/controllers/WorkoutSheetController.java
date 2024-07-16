@@ -48,13 +48,13 @@ public class WorkoutSheetController {
 	private WorkoutSheetService workoutSheetService;
 	
 	@Operation(summary = "Save a new workout sheet.")
-	@PostMapping("include")
+	@PostMapping("save")
 	@Retry(name = "default")
 	@CircuitBreaker(name = "default")
-	public ResponseEntity<Object> include(@RequestBody @Valid WorkoutSheetDTO workoutSheetDTO){
+	public ResponseEntity<Object> save(@RequestBody @Valid WorkoutSheetDTO workoutSheetDTO){
 		var workoutSheetModel = new WorkoutSheetModel();
 		BeanUtils.copyProperties(workoutSheetDTO, workoutSheetModel);
-		workoutSheetService.include(workoutSheetModel);
+		workoutSheetService.save(workoutSheetModel);
 		return ResponseEntity.status(HttpStatus.CREATED).body("Successfully created.");
 	}
 	
@@ -118,7 +118,7 @@ public class WorkoutSheetController {
 		UUID idemp = workoutSheetModelOptional.get().getId();
 		BeanUtils.copyProperties(workoutSheetDTO, workoutSheetModelOptional.get());
 		workoutSheetModelOptional.get().setId(idemp);
-		workoutSheetModel = workoutSheetService.include(workoutSheetModelOptional.get());
+		workoutSheetModel = workoutSheetService.save(workoutSheetModelOptional.get());
 		BeanUtils.copyProperties(workoutSheetModel, workoutSheetDTO);
 		return ResponseEntity.status(HttpStatus.CREATED).body(workoutSheetDTO);
 	}

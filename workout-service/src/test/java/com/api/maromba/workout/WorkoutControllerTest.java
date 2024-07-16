@@ -43,7 +43,7 @@ public class WorkoutControllerTest {
 	private WorkoutRepository workoutRepository;
 
 	@Test
-	public void include() throws Exception {
+	public void save() throws Exception {
 		List<UUID> exercises = new ArrayList<UUID>();
 		exercises.add(UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a"));
 		
@@ -56,7 +56,7 @@ public class WorkoutControllerTest {
 		BeanUtils.copyProperties(workoutDTO, workout);
 		when(workoutRepository.save(workout)).thenReturn(workout);
 
-		mockMvc.perform(post("/workout-service/include").contentType("application/json")
+		mockMvc.perform(post("/workout-service/save").contentType("application/json")
 				.content(objectMapper.writeValueAsString(workoutDTO))).andExpect(status().isCreated());
 	}
 

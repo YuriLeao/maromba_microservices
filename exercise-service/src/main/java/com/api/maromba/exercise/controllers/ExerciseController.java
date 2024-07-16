@@ -49,10 +49,10 @@ public class ExerciseController {
 	private ExerciseService exerciseService;
 	
 	@Operation(summary = "Salva um novo exercise.")
-	@PostMapping("include")
+	@PostMapping("save")
 	@Retry(name = "default")
 	@CircuitBreaker(name = "default")
-	public ResponseEntity<Object> include(@RequestBody @Valid ExerciseDTO exerciseDTO){
+	public ResponseEntity<Object> save(@RequestBody @Valid ExerciseDTO exerciseDTO){
 		if(exerciseService.existsByName(exerciseDTO.getNome())){
 			throw new ResponseConflictException("Exercise already exists.");
 		}

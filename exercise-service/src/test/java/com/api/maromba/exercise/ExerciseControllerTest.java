@@ -42,39 +42,39 @@ public class ExerciseControllerTest {
 	private ExerciseRepository exerciseRepository;
 
 	@Test
-	public void include() throws Exception {
-		var exerciseDto = new ExerciseDTO(null, "teste",
+	public void save() throws Exception {
+		var exerciseDTO = new ExerciseDTO(null, "teste",
 				"video");
 		var exercise = new ExerciseModel();
-		BeanUtils.copyProperties(exerciseDto, exercise);
+		BeanUtils.copyProperties(exerciseDTO, exercise);
 		when(exerciseRepository.existsByName("teste")).thenReturn(false);
 		when(exerciseRepository.save(exercise)).thenReturn(exercise);
 
-		mockMvc.perform(post("/exercise-service/include").contentType("application/json")
-				.content(objectMapper.writeValueAsString(exerciseDto))).andExpect(status().isCreated());
+		mockMvc.perform(post("/exercise-service/save").contentType("application/json")
+				.content(objectMapper.writeValueAsString(exerciseDTO))).andExpect(status().isCreated());
 	}
 
 	@Test
 	public void update() throws Exception {
-		var exerciseDto = new ExerciseDTO(UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a"), "teste",
+		var exerciseDTO = new ExerciseDTO(UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a"), "teste",
 				"video");
 		var exercise = new ExerciseModel();
-		BeanUtils.copyProperties(exerciseDto, exercise);
+		BeanUtils.copyProperties(exerciseDTO, exercise);
 		when(exerciseRepository.findById(UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a")))
 				.thenReturn(Optional.of(exercise));
 		when(exerciseRepository.save(exercise)).thenReturn(exercise);
 
 		mockMvc.perform(put("/exercise-service/update/" + UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a"))
-				.contentType("application/json").content(objectMapper.writeValueAsString(exerciseDto)))
+				.contentType("application/json").content(objectMapper.writeValueAsString(exerciseDTO)))
 				.andExpect(status().isCreated());
 	}
 
 	@Test
 	public void getAll() throws Exception {
-		var exerciseDto = new ExerciseDTO(UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a"), "teste",
+		var exerciseDTO = new ExerciseDTO(UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a"), "teste",
 				"video");
 		var exercise = new ExerciseModel();
-		BeanUtils.copyProperties(exerciseDto, exercise);
+		BeanUtils.copyProperties(exerciseDTO, exercise);
 		List<ExerciseModel> lista = new ArrayList<ExerciseModel>();
 		lista.add(exercise);
 		when(exerciseRepository.findAll(PageRequest.of(0, 10).withSort(Sort.by(Sort.Direction.ASC, "id"))))
@@ -85,10 +85,10 @@ public class ExerciseControllerTest {
 
 	@Test
 	public void getById() throws Exception {
-		var exerciseDto = new ExerciseDTO(UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a"), "teste",
+		var exerciseDTO = new ExerciseDTO(UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a"), "teste",
 				"video");
 		var exercise = new ExerciseModel();
-		BeanUtils.copyProperties(exerciseDto, exercise);
+		BeanUtils.copyProperties(exerciseDTO, exercise);
 		when(exerciseRepository.findById(UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a")))
 				.thenReturn(Optional.of(exercise));
 
@@ -98,10 +98,10 @@ public class ExerciseControllerTest {
 
 	@Test
 	public void delet() throws Exception {
-		var exerciseDto = new ExerciseDTO(UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a"), "teste",
+		var exerciseDTO = new ExerciseDTO(UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a"), "teste",
 				"video");
 		var exercise = new ExerciseModel();
-		BeanUtils.copyProperties(exerciseDto, exercise);
+		BeanUtils.copyProperties(exerciseDTO, exercise);
 		when(exerciseRepository.findById(UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a")))
 				.thenReturn(Optional.of(exercise)).thenReturn(null);
 

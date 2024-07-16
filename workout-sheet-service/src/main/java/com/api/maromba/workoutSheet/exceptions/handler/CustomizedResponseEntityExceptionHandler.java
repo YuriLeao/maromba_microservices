@@ -26,28 +26,28 @@ public class CustomizedResponseEntityExceptionHandler extends ResponseEntityExce
 	@ExceptionHandler(Exception.class)
 	public final ResponseEntity<ExceptionResponse> handleAllException(Exception ex, WebRequest request){
 		ExceptionResponse exceptionResponse = new ExceptionResponse(LocalDateTime.now(), ex.getMessage(), request.getDescription(false));
-		logger.error("Error call: ".concat(request.getContextPath()), ex);
+		logger.error("Call error: ".concat(request.getContextPath()), ex);
 		return new ResponseEntity<>(exceptionResponse, HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 	
 	@ExceptionHandler(ResponseBadRequestException.class)
 	public final ResponseEntity<ExceptionResponse> handleBadRequestException(Exception ex, WebRequest request){
 		ExceptionResponse exceptionResponse = new ExceptionResponse(LocalDateTime.now(), ex.getMessage(), request.getDescription(false));
-		logger.error("Error call: ".concat(request.getContextPath()), ex);
+		logger.error("Call error: ".concat(request.getContextPath()), ex);
 		return new ResponseEntity<>(exceptionResponse, HttpStatus.BAD_REQUEST);
 	}
 	
 	@ExceptionHandler(ResponseConflictException.class)
 	public final ResponseEntity<ExceptionResponse> handleConflitException(Exception ex, WebRequest request){
 		ExceptionResponse exceptionResponse = new ExceptionResponse(LocalDateTime.now(), ex.getMessage(), request.getDescription(false));
-		logger.error("Error call: ".concat(request.getContextPath()), ex);
+		logger.error("Call error: ".concat(request.getContextPath()), ex);
 		return new ResponseEntity<>(exceptionResponse, HttpStatus.CONFLICT);
 	}
 	
 	@ExceptionHandler(ResponseNotFoundException.class)
 	public final ResponseEntity<ExceptionResponse> handleNotFoundException(Exception ex, WebRequest request){
 		ExceptionResponse exceptionResponse = new ExceptionResponse(LocalDateTime.now(), ex.getMessage(), request.getDescription(false));
-		logger.error("Error call: ".concat(request.getContextPath()), ex);
+		logger.error("Call error: ".concat(request.getContextPath()), ex);
 		return new ResponseEntity<>(exceptionResponse, HttpStatus.NOT_FOUND);
 	}
 }

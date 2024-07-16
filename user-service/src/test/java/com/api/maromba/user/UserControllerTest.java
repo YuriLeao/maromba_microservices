@@ -46,8 +46,8 @@ public class UserControllerTest {
 	private Encrypt encrypt;
 
 	@Test
-	public void include() throws Exception {
-		var userDto = new UserDTO(null,"tt@gmail.com", "teste", "teste", "M", "99999999", 72.0,
+	public void save() throws Exception {
+		var userDTO = new UserDTO(null,"tt@gmail.com", "teste", "teste", "M", "99999999", 72.0,
 				new ArrayList<String>() {
 					private static final long serialVersionUID = 1L;
 
@@ -57,18 +57,18 @@ public class UserControllerTest {
 				}, UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a"), "company", java.time.LocalDate.now(), null);
 
 		var user = new UserModel();
-		BeanUtils.copyProperties(userDto, user);
+		BeanUtils.copyProperties(userDTO, user);
 		user.setPassword(encrypt.encryptPassword("tt@gmail.com", "teste"));
 		when(userRepository.existsByEmail("tt@gmail.com")).thenReturn(false);
 		when(userRepository.save(user)).thenReturn(user);
 
-		mockMvc.perform(post("/user-service/include").contentType("application/json")
-				.content(objectMapper.writeValueAsString(userDto))).andExpect(status().isCreated());
+		mockMvc.perform(post("/user-service/save").contentType("application/json")
+				.content(objectMapper.writeValueAsString(userDTO))).andExpect(status().isCreated());
 	}
 
 	@Test
 	public void update() throws Exception {
-		var userDto = new UserDTO(UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a"), "tt@gmail.com", "teste", "teste", "M", "99999999", 72.0, new ArrayList<String>() {
+		var userDTO = new UserDTO(UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a"), "tt@gmail.com", "teste", "teste", "M", "99999999", 72.0, new ArrayList<String>() {
 			private static final long serialVersionUID = 1L;
 
 			{
@@ -76,19 +76,19 @@ public class UserControllerTest {
 			}
 		}, UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a"), "company", java.time.LocalDate.now(), null);
 		var user = new UserModel();
-		BeanUtils.copyProperties(userDto, user);
+		BeanUtils.copyProperties(userDTO, user);
 		user.setPassword(encrypt.encryptPassword("tt@gmail.com", "teste"));
 		when(userRepository.findByEmailAndPassword("tt@gmail.com", encrypt.encryptPassword("tt@gmail.com", "teste")))
 				.thenReturn(Optional.of(user));
 		when(userRepository.save(user)).thenReturn(user);
 
 		mockMvc.perform(put("/user-service/update/tt@gmail.com/teste").contentType("application/json")
-				.content(objectMapper.writeValueAsString(userDto))).andExpect(status().isCreated());
+				.content(objectMapper.writeValueAsString(userDTO))).andExpect(status().isCreated());
 	}
 
 	@Test
 	public void login() throws Exception {
-		var userDto = new UserDTO(UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a"), "teste", "teste", "teste", "M", "99999999", 72.0, new ArrayList<String>() {
+		var userDTO = new UserDTO(UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a"), "teste", "teste", "teste", "M", "99999999", 72.0, new ArrayList<String>() {
 			private static final long serialVersionUID = 1L;
 
 			{
@@ -96,7 +96,7 @@ public class UserControllerTest {
 			}
 		}, UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a"), "company", java.time.LocalDate.now(), null);
 		var user = new UserModel();
-		BeanUtils.copyProperties(userDto, user);
+		BeanUtils.copyProperties(userDTO, user);
 		user.setPassword(encrypt.encryptPassword("tt@gmail.com", "teste"));
 		when(userRepository.findByEmailAndPassword("tt@gmail.com", encrypt.encryptPassword("tt@gmail.com", "teste")))
 				.thenReturn(Optional.of(user));
@@ -107,7 +107,7 @@ public class UserControllerTest {
 
 	@Test
 	public void getAll() throws Exception {
-		var userDto = new UserDTO(UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a"), "tt@gmail.com", "teste", "teste", "M", "99999999", 72.0, new ArrayList<String>() {
+		var userDTO = new UserDTO(UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a"), "tt@gmail.com", "teste", "teste", "M", "99999999", 72.0, new ArrayList<String>() {
 			private static final long serialVersionUID = 1L;
 
 			{
@@ -115,7 +115,7 @@ public class UserControllerTest {
 			}
 		}, UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a"), "company", java.time.LocalDate.now(), null);
 		var user = new UserModel();
-		BeanUtils.copyProperties(userDto, user);
+		BeanUtils.copyProperties(userDTO, user);
 		List<UserModel> list = new ArrayList<UserModel>();
 		list.add(user);
 		when(userRepository.findAll(PageRequest.of(0, 10).withSort(Sort.by(Sort.Direction.ASC, "id"))))
@@ -126,7 +126,7 @@ public class UserControllerTest {
 	
 	@Test
 	public void getByNameLike() throws Exception {
-		var userDto = new UserDTO(UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a"), "tt@gmail.com", "teste", "teste", "M", "99999999", 72.0, new ArrayList<String>() {
+		var userDTO = new UserDTO(UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a"), "tt@gmail.com", "teste", "teste", "M", "99999999", 72.0, new ArrayList<String>() {
 			private static final long serialVersionUID = 1L;
 
 			{
@@ -134,10 +134,10 @@ public class UserControllerTest {
 			}
 		}, UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a"), "company", java.time.LocalDate.now(), null);
 		var user = new UserModel();
-		BeanUtils.copyProperties(userDto, user);
+		BeanUtils.copyProperties(userDTO, user);
 		List<UserModel> list = new ArrayList<UserModel>();
 		list.add(user);
-		when(userRepository.findByNameLike(userDto.getName()))
+		when(userRepository.findByNameLike(userDTO.getName()))
 				.thenReturn(list);
 
 		mockMvc.perform(get("/user-service/getByNameLike/teste").contentType("application/json")).andExpect(status().isOk());
@@ -145,7 +145,7 @@ public class UserControllerTest {
 
 	@Test
 	public void delet() throws Exception {
-		var userDto = new UserDTO(UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a"), "tt@gmail.com", "teste", "teste", "M", "99999999", 72.0, new ArrayList<String>() {
+		var userDTO = new UserDTO(UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a"), "tt@gmail.com", "teste", "teste", "M", "99999999", 72.0, new ArrayList<String>() {
 			private static final long serialVersionUID = 1L;
 
 			{
@@ -153,7 +153,7 @@ public class UserControllerTest {
 			}
 		}, UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a"), "company", java.time.LocalDate.now(), null);
 		var user = new UserModel();
-		BeanUtils.copyProperties(userDto, user);
+		BeanUtils.copyProperties(userDTO, user);
 		when(userRepository.findByEmailAndPassword("tt@gmail.com", encrypt.encryptPassword("tt@gmail.com", "teste")))
 				.thenReturn(Optional.of(user)).thenReturn(null);
 

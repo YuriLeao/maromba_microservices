@@ -27,7 +27,7 @@ public class UserDTO {
 	@NotBlank
 	private String gender;
 	@NotBlank
-	private String cellphone;
+	private String phoneNumber;
 	@DecimalMin("30.00")
 	private Double weight;
 	@NotNull

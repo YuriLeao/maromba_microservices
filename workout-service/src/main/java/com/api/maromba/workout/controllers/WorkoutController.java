@@ -48,10 +48,10 @@ public class WorkoutController {
 	private WorkoutService workoutService;
 	
 	@Operation(summary = "Save a new workout.")
-	@PostMapping("include")
+	@PostMapping("save")
 	@Retry(name = "default")
 	@CircuitBreaker(name = "default")
-	public ResponseEntity<Object> include(@RequestBody @Valid WorkoutDTO workoutDTO){
+	public ResponseEntity<Object> save(@RequestBody @Valid WorkoutDTO workoutDTO){
 		var workoutModel = new WorkoutModel();
 		BeanUtils.copyProperties(workoutDTO, workoutModel);
 		workoutService.save(workoutModel);

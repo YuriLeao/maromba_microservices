@@ -20,7 +20,7 @@ public class WorkoutSheetService {
 	WorkoutSheetRepository exercicioRepository;
 	
 	@Transactional
-	public WorkoutSheetModel include(WorkoutSheetModel exercicioModel) {
+	public WorkoutSheetModel save(WorkoutSheetModel exercicioModel) {
 		return exercicioRepository.save(exercicioModel);
 		
 	}
