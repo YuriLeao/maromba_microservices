@@ -15,7 +15,7 @@ public class ExerciseDTO {
 
 	private UUID id;
 	@NotBlank
-	private String nome;
+	private String name;
 	@NotBlank
 	private String gif;
 	

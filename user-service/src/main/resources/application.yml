@@ -1,7 +1,7 @@
 api:
   server:
     url: http://localhost:8765/
-    descricao: dev
+    description: dev
 jwt:
   secret: birllMonstrao
 server:
@@ -37,7 +37,7 @@ spring:
           lob:
             non-contextual-creation: true
   datasource:
-    url: jdbc:postgresql://localhost:5434/maromba-usuario?currentSchema=public
+    url: jdbc:postgresql://localhost:5434/maromba-user?currentSchema=public
     username: postgres
     password: root
     driverClassName: org.postgresql.Driver

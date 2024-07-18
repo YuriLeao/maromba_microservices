@@ -48,12 +48,12 @@ public class ExerciseController {
 	@Autowired
 	private ExerciseService exerciseService;
 	
-	@Operation(summary = "Salva um novo exercise.")
+	@Operation(summary = "Save a new exercise.")
 	@PostMapping("save")
 	@Retry(name = "default")
 	@CircuitBreaker(name = "default")
 	public ResponseEntity<Object> save(@RequestBody @Valid ExerciseDTO exerciseDTO){
-		if(exerciseService.existsByName(exerciseDTO.getNome())){
+		if(exerciseService.existsByName(exerciseDTO.getName())){
 			throw new ResponseConflictException("Exercise already exists.");
 		}
 		var exerciseModel = new ExerciseModel();

@@ -1,7 +1,7 @@
 api:
   server:
     url: http://localhost:8765/
-    descricao: dev
+    description: dev
 server:
   port: 8100
 eureka:
@@ -35,7 +35,7 @@ spring:
           lob:
             non-contextual-creation: true
   datasource:
-    url: jdbc:postgresql://localhost:5433/maromba-empresa?currentSchema=public
+    url: jdbc:postgresql://localhost:5433/maromba-company?currentSchema=public
     username: postgres
     password: root
     driverClassName: org.postgresql.Driver

@@ -1,7 +1,6 @@
 package com.api.maromba.company;
 
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -96,7 +95,7 @@ public class CompanyControllerTest {
 	}
 
 	@Test
-	public void delet() throws Exception {
+	public void delete() throws Exception {
 		var companyDTO = new CompanyDTO(UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a"), "teste",
 				"99999999999999", "tt@gmail.com", "1234", "99999999");
 		var company = new CompanyModel();
@@ -104,7 +103,7 @@ public class CompanyControllerTest {
 		when(companyRepository.findById(UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a")))
 				.thenReturn(Optional.of(company)).thenReturn(null);
 
-		mockMvc.perform(delete("/company-service/delete/" + UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a"))
+		mockMvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete("/company-service/delete/" + UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a"))
 				.contentType("application/json")).andExpect(status().isOk());
 	}
 

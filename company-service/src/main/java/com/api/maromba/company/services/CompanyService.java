@@ -25,8 +25,8 @@ public class CompanyService {
 		
 	}
 	
-	public boolean exists(String nome) {
-		return companyRepository.existsByName(nome);
+	public boolean exists(String name) {
+		return companyRepository.existsByName(name);
 	}
 	
 	public Optional<CompanyModel> findById(UUID id) {

@@ -50,8 +50,8 @@ public class UserService {
 		return userRepository.findAll(pageable);
 	}
 	
-	public List<UserModel> findByNameLike(String nome) {
-		return userRepository.findByNameLike(nome);
+	public List<UserModel> findByNameLike(String name) {
+		return userRepository.findByNameLike(name);
 	}
 
 }

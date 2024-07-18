@@ -13,7 +13,7 @@ import javax.persistence.Table;
 import lombok.Data;
 
 @Entity
-@Table(name = "tb_movimento")
+@Table(name = "tb_exercise")
 @Data
 public class ExerciseModel implements Serializable {
 
@@ -23,7 +23,7 @@ public class ExerciseModel implements Serializable {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private UUID id;
 	@Column(nullable = false, unique = true)
-	private String nome;
+	private String name;
 	@Column(nullable = false)
 	private String gif;
 
