@@ -1,9 +1,9 @@
 package com.api.maromba.workoutSheet.dtos;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.UUID;
  
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 import lombok.AllArgsConstructor;
@@ -17,12 +17,10 @@ public class WorkoutSheetDTO {
 	
 	private UUID id;
 	@NotNull
-	private UUID idUser;
+	private List<UUID> idUser;
 	@NotNull
 	private UUID idWorkout;
-	@NotNull
 	private LocalDate dateRegister;
-	@NotNull
 	private Boolean active;
 	@NotNull
 	private String name;
