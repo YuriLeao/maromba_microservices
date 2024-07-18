@@ -7,6 +7,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,6 +26,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.test.web.servlet.MockMvc;
 
 import com.api.maromba.workout.dtos.WorkoutDTO;
+import com.api.maromba.workout.dtos.WorkoutItemDTO;
+import com.api.maromba.workout.models.WorkoutItemModel;
 import com.api.maromba.workout.models.WorkoutModel;
 import com.api.maromba.workout.repositories.WorkoutRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -44,14 +47,13 @@ public class WorkoutControllerTest {
 
 	@Test
 	public void save() throws Exception {
-		List<UUID> exercises = new ArrayList<UUID>();
-		exercises.add(UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a"));
-		
-		List<LocalDate> daysPerformed = new ArrayList<LocalDate>();
-		daysPerformed.add(LocalDate.now());
-		
-		var workoutDTO = new WorkoutDTO(null, List.of(UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a")),
-				UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a"));
+
+		WorkoutItemDTO itemDTO = new WorkoutItemDTO(null, UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a"), 12,
+				4, new BigDecimal(90.00), "dropset", new BigDecimal(90.00), 150);
+		List<WorkoutItemDTO> itemsDTO = new ArrayList<WorkoutItemDTO>();
+		itemsDTO.add(itemDTO);
+
+		var workoutDTO = new WorkoutDTO(null, "treino a", LocalDate.now(), itemsDTO);
 		var workout = new WorkoutModel();
 		BeanUtils.copyProperties(workoutDTO, workout);
 		when(workoutRepository.save(workout)).thenReturn(workout);
@@ -62,86 +64,107 @@ public class WorkoutControllerTest {
 
 	@Test
 	public void update() throws Exception {
-		List<UUID> exercises = new ArrayList<UUID>();
-		exercises.add(UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a"));
-		
-		List<LocalDate> daysPerformed = new ArrayList<LocalDate>();
-		daysPerformed.add(LocalDate.now());
-		
-		var workoutDTO = new WorkoutDTO(UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a"), List.of(UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a")),
-				UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a"));
+
+		WorkoutItemDTO itemDTO = new WorkoutItemDTO(null, UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a"), 12,
+				4, new BigDecimal(90.00), "dropset", new BigDecimal(90.00), 150);
+		List<WorkoutItemDTO> itemsDTO = new ArrayList<WorkoutItemDTO>();
+		itemsDTO.add(itemDTO);
+
+		var workoutDTO = new WorkoutDTO(UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a"), "treino a",
+				LocalDate.now(), itemsDTO);
 		var workout = new WorkoutModel();
 		BeanUtils.copyProperties(workoutDTO, workout);
+		
+		workout.setWorkoutItems(new ArrayList<WorkoutItemModel>());
+		WorkoutItemModel workoutItemModel = new WorkoutItemModel();
+		for (WorkoutItemDTO workoutItemDTO : workoutDTO.getWorkoutItems()) {
+			workoutItemModel = new WorkoutItemModel();
+			BeanUtils.copyProperties(workoutItemDTO, workoutItemModel);
+			
+			workout.getWorkoutItems().add(workoutItemModel);
+		}
+		
 		when(workoutRepository.findById(UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a")))
 				.thenReturn(Optional.of(workout));
 		when(workoutRepository.save(workout)).thenReturn(workout);
 
-		mockMvc.perform(
-				put("/workout-service/update/" + UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a"))
-						.contentType("application/json").content(objectMapper.writeValueAsString(workoutDTO)))
+		mockMvc.perform(put("/workout-service/update/" + UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a"))
+				.contentType("application/json").content(objectMapper.writeValueAsString(workoutDTO)))
 				.andExpect(status().isCreated());
 	}
 
 	@Test
 	public void getAll() throws Exception {
-		List<UUID> exercises = new ArrayList<UUID>();
-		exercises.add(UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a"));
-		
-		List<LocalDate> daysPerformed = new ArrayList<LocalDate>();
-		daysPerformed.add(LocalDate.now());
-		
-		var workoutDTO = new WorkoutDTO(UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a"), List.of(UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a")),
-				UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a"));
+		WorkoutItemDTO itemDTO = new WorkoutItemDTO(null, UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a"), 12,
+				4, new BigDecimal(90.00), "dropset", new BigDecimal(90.00), 150);
+		List<WorkoutItemDTO> itemsDTO = new ArrayList<WorkoutItemDTO>();
+		itemsDTO.add(itemDTO);
+
+		var workoutDTO = new WorkoutDTO(UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a"), "treino a",
+				LocalDate.now(), itemsDTO);
 		var workout = new WorkoutModel();
 		BeanUtils.copyProperties(workoutDTO, workout);
-		List<WorkoutModel> lista = new ArrayList<WorkoutModel>();
-		lista.add(workout);
+		
+		workout.setWorkoutItems(new ArrayList<WorkoutItemModel>());
+		WorkoutItemModel workoutItemModel = new WorkoutItemModel();
+		for (WorkoutItemDTO workoutItemDTO : workoutDTO.getWorkoutItems()) {
+			workoutItemModel = new WorkoutItemModel();
+			BeanUtils.copyProperties(workoutItemDTO, workoutItemModel);
+			
+			workout.getWorkoutItems().add(workoutItemModel);
+		}
+		List<WorkoutModel> list = new ArrayList<WorkoutModel>();
+		list.add(workout);
 		when(workoutRepository.findAll(PageRequest.of(0, 10).withSort(Sort.by(Sort.Direction.ASC, "id"))))
-				.thenReturn(new PageImpl<WorkoutModel>(lista));
+				.thenReturn(new PageImpl<WorkoutModel>(list));
 
 		mockMvc.perform(get("/workout-service/getAll").contentType("application/json")).andExpect(status().isOk());
 	}
 
 	@Test
 	public void getById() throws Exception {
-		List<UUID> exercises = new ArrayList<UUID>();
-		exercises.add(UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a"));
-		
-		List<LocalDate> daysPerformed = new ArrayList<LocalDate>();
-		daysPerformed.add(LocalDate.now());
-		
-		var workoutDTO = new WorkoutDTO(UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a"), List.of(UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a")),
-				UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a"));
+		WorkoutItemDTO itemDTO = new WorkoutItemDTO(null, UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a"), 12,
+				4, new BigDecimal(90.00), "dropset", new BigDecimal(90.00), 150);
+		List<WorkoutItemDTO> itemsDTO = new ArrayList<WorkoutItemDTO>();
+		itemsDTO.add(itemDTO);
+
+		var workoutDTO = new WorkoutDTO(UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a"), "treino a",
+				LocalDate.now(), itemsDTO);
 		var workout = new WorkoutModel();
 		BeanUtils.copyProperties(workoutDTO, workout);
+		
+		workout.setWorkoutItems(new ArrayList<WorkoutItemModel>());
+		WorkoutItemModel workoutItemModel = new WorkoutItemModel();
+		for (WorkoutItemDTO workoutItemDTO : workoutDTO.getWorkoutItems()) {
+			workoutItemModel = new WorkoutItemModel();
+			BeanUtils.copyProperties(workoutItemDTO, workoutItemModel);
+			
+			workout.getWorkoutItems().add(workoutItemModel);
+		}
+		
 		when(workoutRepository.findById(UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a")))
 				.thenReturn(Optional.of(workout));
 
-		mockMvc.perform(
-				get("/workout-service/getById/" + UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a"))
-						.contentType("application/json"))
-				.andExpect(status().isOk());
+		mockMvc.perform(get("/workout-service/getById/" + UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a"))
+				.contentType("application/json")).andExpect(status().isOk());
 	}
 
 	@Test
 	public void delet() throws Exception {
-		List<UUID> exercises = new ArrayList<UUID>();
-		exercises.add(UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a"));
-		
-		List<LocalDate> daysPerformed = new ArrayList<LocalDate>();
-		daysPerformed.add(LocalDate.now());
-		
-		var workoutDTO = new WorkoutDTO(UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a"), List.of(UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a")),
-				UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a"));
+		WorkoutItemDTO itemDTO = new WorkoutItemDTO(null, UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a"), 12,
+				4, new BigDecimal(90.00), "dropset", new BigDecimal(90.00), 150);
+		List<WorkoutItemDTO> itemsDTO = new ArrayList<WorkoutItemDTO>();
+		itemsDTO.add(itemDTO);
+
+		var workoutDTO = new WorkoutDTO(UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a"), "treino a",
+				LocalDate.now(), itemsDTO);
 		var workout = new WorkoutModel();
 		BeanUtils.copyProperties(workoutDTO, workout);
 		when(workoutRepository.findById(UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a")))
 				.thenReturn(Optional.of(workout)).thenReturn(null);
 
-		mockMvc.perform(
-				delete("/workout-service/delete/" + UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a"))
-						.contentType("application/json"))
-				.andExpect(status().isOk());
+		mockMvc.perform(delete("/workout-service/delete/" + UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a"))
+				.contentType("application/json")).andExpect(status().isOk());
 	}
 
 }

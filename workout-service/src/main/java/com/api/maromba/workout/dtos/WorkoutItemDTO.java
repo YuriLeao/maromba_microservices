@@ -1,6 +1,6 @@
 package com.api.maromba.workout.dtos;
 
-import java.time.LocalDate;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 
@@ -15,13 +15,19 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class WorkoutDTO {
+public class WorkoutItemDTO {
 	
 	private UUID id;
 	@NotNull
-	private String name;
-	private LocalDate dateDone;
+	private UUID idExercise;
 	@NotNull
-	private List<WorkoutItemDTO> workoutItems;
+	private Integer reps;
+	@NotNull
+	private Integer sets;
+	private BigDecimal weight;
+	private String observation;
+	private BigDecimal recordWeight;
+	@NotNull
+	private Integer coolDown;
 	
 }

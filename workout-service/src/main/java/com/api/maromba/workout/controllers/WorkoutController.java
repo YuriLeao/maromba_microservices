@@ -27,7 +27,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.api.maromba.workout.dtos.WorkoutDTO;
+import com.api.maromba.workout.dtos.WorkoutItemDTO;
 import com.api.maromba.workout.exceptions.ResponseNotFoundException;
+import com.api.maromba.workout.models.WorkoutItemModel;
 import com.api.maromba.workout.models.WorkoutModel;
 import com.api.maromba.workout.services.WorkoutService;
 
@@ -43,83 +45,142 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RequestMapping("/workout-service")
 public class WorkoutController {
-	
+
 	@Autowired
 	private WorkoutService workoutService;
-	
+
 	@Operation(summary = "Save a new workout.")
 	@PostMapping("save")
 	@Retry(name = "default")
 	@CircuitBreaker(name = "default")
-	public ResponseEntity<Object> save(@RequestBody @Valid WorkoutDTO workoutDTO){
+	public ResponseEntity<Object> save(@RequestBody @Valid WorkoutDTO workoutDTO) {
 		var workoutModel = new WorkoutModel();
 		BeanUtils.copyProperties(workoutDTO, workoutModel);
+
+		WorkoutItemModel workoutItemModel = new WorkoutItemModel();
+		workoutModel.setWorkoutItems(new ArrayList<WorkoutItemModel>());
+		for (WorkoutItemDTO workoutItemDTO : workoutDTO.getWorkoutItems()) {
+			BeanUtils.copyProperties(workoutItemDTO, workoutItemModel);
+			workoutModel.getWorkoutItems().add(workoutItemModel);
+		}
+
 		workoutService.save(workoutModel);
 		return ResponseEntity.status(HttpStatus.CREATED).body("Successfully created.");
 	}
-	
+
 	@Operation(summary = "Gets all users.")
 	@GetMapping("getAll")
 	@Retry(name = "default")
 	@CircuitBreaker(name = "default")
-	public ResponseEntity<Page<WorkoutDTO>> getAll(@PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.ASC) Pageable pageable){
+	public ResponseEntity<Page<WorkoutDTO>> getAll(
+			@PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.ASC) Pageable pageable) {
 		Page<WorkoutModel> workoutPages = workoutService.findAll(pageable);
-		if(workoutPages.isEmpty()) {
+		if (workoutPages.isEmpty()) {
 			throw new ResponseNotFoundException("No workout found.");
 		}
+
 		List<WorkoutDTO> workoutsDTO = new ArrayList<WorkoutDTO>();
+		WorkoutDTO workoutDTO = new WorkoutDTO();
+		WorkoutItemDTO workoutItemDTO = new WorkoutItemDTO();
+
 		for (WorkoutModel workout : workoutPages) {
-			WorkoutDTO workoutDTO = new WorkoutDTO();
+			workoutDTO = new WorkoutDTO();
 			BeanUtils.copyProperties(workout, workoutDTO);
+			workoutDTO.setWorkoutItems(new ArrayList<WorkoutItemDTO>());
+			if (workout.getWorkoutItems() != null) {
+
+				for (WorkoutItemModel workoutItemModel : workout.getWorkoutItems()) {
+					workoutItemDTO = new WorkoutItemDTO();
+					BeanUtils.copyProperties(workoutItemModel, workoutItemDTO);
+					workoutDTO.getWorkoutItems().add(workoutItemDTO);
+				}
+			}
+
 			workoutsDTO.add(workoutDTO);
 		}
+
 		Page<WorkoutDTO> workoutDTOPages = new PageImpl<WorkoutDTO>(workoutsDTO);
 		return ResponseEntity.status(HttpStatus.OK).body(workoutDTOPages);
 	}
-	
-	@Operation(summary = "Get one workout.")
+
+	@Operation(summary = "Get a workout.")
 	@GetMapping("getById/{id}")
 	@Retry(name = "default")
 	@CircuitBreaker(name = "default")
-	public ResponseEntity<WorkoutDTO> getById(@PathVariable(value = "id") UUID id){
+	public ResponseEntity<WorkoutDTO> getById(@PathVariable(value = "id") UUID id) {
 		Optional<WorkoutModel> workoutModelOptional = workoutService.findById(id);
-		if(!workoutModelOptional.isPresent()) {
+		if (!workoutModelOptional.isPresent()) {
 			throw new ResponseNotFoundException("No workout found.");
 		}
 		WorkoutDTO workoutDTO = new WorkoutDTO();
 		BeanUtils.copyProperties(workoutModelOptional.get(), workoutDTO);
+
+		workoutDTO.setWorkoutItems(new ArrayList<WorkoutItemDTO>());
+		WorkoutItemDTO workoutItemDTO = new WorkoutItemDTO();
+		for (WorkoutItemModel workoutItemModel : workoutModelOptional.get().getWorkoutItems()) {
+			workoutItemDTO = new WorkoutItemDTO();
+			BeanUtils.copyProperties(workoutItemModel, workoutItemDTO);
+			workoutDTO.getWorkoutItems().add(workoutItemDTO);
+		}
+
 		return ResponseEntity.status(HttpStatus.OK).body(workoutDTO);
 	}
-	
+
 	@Operation(summary = "Delete a workout.")
 	@DeleteMapping("delete/{id}")
 	@Retry(name = "default")
 	@CircuitBreaker(name = "default")
-	public ResponseEntity<Object> delete(@PathVariable(value = "id") UUID id){
+	public ResponseEntity<Object> delete(@PathVariable(value = "id") UUID id) {
 		Optional<WorkoutModel> workoutModelOptional = workoutService.findById(id);
-		if(!workoutModelOptional.isPresent()) {
+		if (!workoutModelOptional.isPresent()) {
 			throw new ResponseNotFoundException("No workout found.");
 		}
 		workoutService.delete(workoutModelOptional.get());
 		return ResponseEntity.status(HttpStatus.OK).body("Workout deleted successfully.");
 	}
-	
+
 	@Operation(summary = "Update a workout.")
 	@PutMapping("update/{id}")
 	@Retry(name = "default")
 	@CircuitBreaker(name = "default")
-	public ResponseEntity<Object> update(@PathVariable(value = "id") UUID id, @RequestBody WorkoutDTO workoutDTO){
+	public ResponseEntity<Object> update(@PathVariable(value = "id") UUID id, @RequestBody WorkoutDTO workoutDTO) {
 		Optional<WorkoutModel> workoutModelOptional = workoutService.findById(id);
-		if(!workoutModelOptional.isPresent()) {
+		if (!workoutModelOptional.isPresent()) {
 			throw new ResponseNotFoundException("No workout found.");
 		}
-		
+
 		var workoutModel = new WorkoutModel();
 		UUID idemp = workoutModelOptional.get().getId();
 		BeanUtils.copyProperties(workoutDTO, workoutModelOptional.get());
 		workoutModelOptional.get().setId(idemp);
+
+		workoutModelOptional.get().getWorkoutItems().removeIf(item -> !workoutDTO.getWorkoutItems().contains(item));
+
+		WorkoutItemModel workoutItemModel = new WorkoutItemModel();
+		for (WorkoutItemDTO workoutItemDTO : workoutDTO.getWorkoutItems()) {
+			BeanUtils.copyProperties(workoutItemDTO, workoutItemModel);
+			workoutItemModel.setWorkout(workoutModelOptional.get());
+
+			if (workoutModelOptional.get().getWorkoutItems().contains(workoutItemModel)) {
+				WorkoutItemModel existingItem = workoutModelOptional.get().getWorkoutItems()
+						.get(workoutModelOptional.get().getWorkoutItems().indexOf(workoutItemModel));
+				BeanUtils.copyProperties(workoutItemModel, existingItem);
+			} else {
+				workoutModelOptional.get().getWorkoutItems().add(workoutItemModel);
+			}
+		}
+
 		workoutModel = workoutService.save(workoutModelOptional.get());
 		BeanUtils.copyProperties(workoutModel, workoutDTO);
+
+		workoutDTO.setWorkoutItems(new ArrayList<WorkoutItemDTO>());
+		WorkoutItemDTO workoutItemDTO = new WorkoutItemDTO();
+		for (WorkoutItemModel itemModel : workoutModel.getWorkoutItems()) {
+			workoutItemDTO = new WorkoutItemDTO();
+			BeanUtils.copyProperties(itemModel, workoutItemDTO);
+			workoutDTO.getWorkoutItems().add(workoutItemDTO);
+		}
+
 		return ResponseEntity.status(HttpStatus.CREATED).body(workoutDTO);
 	}
-}	
+}

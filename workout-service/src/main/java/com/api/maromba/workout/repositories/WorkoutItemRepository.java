@@ -9,14 +9,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import com.api.maromba.workout.models.WorkoutItemModel;
 import com.api.maromba.workout.models.WorkoutModel;
 
 @Repository
-public interface WorkoutRepository extends JpaRepository<WorkoutModel, UUID>{
-
-	void deleteById(UUID id);
-	
-	@EntityGraph(attributePaths = "workoutItems")
-	Page<WorkoutModel> findAll(@Param("pageable")  Pageable pageable);
+public interface WorkoutItemRepository extends JpaRepository<WorkoutItemModel, UUID>{
 
 }
