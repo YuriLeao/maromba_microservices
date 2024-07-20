@@ -13,8 +13,6 @@ import com.api.maromba.workout.models.WorkoutModel;
 
 @Repository
 public interface WorkoutRepository extends JpaRepository<WorkoutModel, UUID>{
-
-	void deleteById(UUID id);
 	
 	@EntityGraph(attributePaths = "workoutItems")
 	Page<WorkoutModel> findAll(@Param("pageable")  Pageable pageable);

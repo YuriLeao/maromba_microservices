@@ -1,16 +1,11 @@
 package com.api.maromba.exercise.controllers;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 import javax.validation.Valid;
 
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
@@ -27,9 +22,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.api.maromba.exercise.dtos.ExerciseDTO;
-import com.api.maromba.exercise.exceptions.ResponseConflictException;
-import com.api.maromba.exercise.exceptions.ResponseNotFoundException;
-import com.api.maromba.exercise.models.ExerciseModel;
 import com.api.maromba.exercise.services.ExerciseService;
 
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
@@ -52,13 +44,8 @@ public class ExerciseController {
 	@PostMapping("save")
 	@Retry(name = "default")
 	@CircuitBreaker(name = "default")
-	public ResponseEntity<Object> save(@RequestBody @Valid ExerciseDTO exerciseDTO){
-		if(exerciseService.existsByName(exerciseDTO.getName())){
-			throw new ResponseConflictException("Exercise already exists.");
-		}
-		var exerciseModel = new ExerciseModel();
-		BeanUtils.copyProperties(exerciseDTO, exerciseModel);
-		exerciseService.save(exerciseModel);
+	public ResponseEntity<String> save(@RequestBody @Valid ExerciseDTO exerciseDTO){
+		exerciseService.save(exerciseDTO);
 		return ResponseEntity.status(HttpStatus.CREATED).body("Successfully created.");
 	}
 	
@@ -67,17 +54,7 @@ public class ExerciseController {
 	@Retry(name = "default")
 	@CircuitBreaker(name = "default")
 	public ResponseEntity<Page<ExerciseDTO>> getAll(@PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.ASC) Pageable pageable){
-		Page<ExerciseModel> exercisePages = exerciseService.findAll(pageable);
-		if(exercisePages.isEmpty()) {
-			throw new ResponseNotFoundException("No exercise found.");
-		}
-		List<ExerciseDTO> exercisesDTO = new ArrayList<ExerciseDTO>();
-		for (ExerciseModel exercise : exercisePages) {
-			ExerciseDTO exerciseDTO = new ExerciseDTO();
-			BeanUtils.copyProperties(exercise, exerciseDTO);
-			exercisesDTO.add(exerciseDTO);
-		}
-		Page<ExerciseDTO> exerciseDTOPages = new PageImpl<ExerciseDTO>(exercisesDTO);
+		Page<ExerciseDTO> exerciseDTOPages = exerciseService.getAll(pageable);
 		return ResponseEntity.status(HttpStatus.OK).body(exerciseDTOPages);
 	}
 	
@@ -86,12 +63,7 @@ public class ExerciseController {
 	@Retry(name = "default")
 	@CircuitBreaker(name = "default")
 	public ResponseEntity<ExerciseDTO> getById(@PathVariable(value = "id") UUID id){
-		Optional<ExerciseModel> exerciseModelOptional = exerciseService.findById(id);
-		if(!exerciseModelOptional.isPresent()) {
-			throw new ResponseNotFoundException("No exercise found.");
-		}
-		ExerciseDTO exerciseDTO = new ExerciseDTO();
-		BeanUtils.copyProperties(exerciseModelOptional.get(), exerciseDTO);
+		ExerciseDTO exerciseDTO = exerciseService.getById(id);
 		return ResponseEntity.status(HttpStatus.OK).body(exerciseDTO);
 	}
 	
@@ -99,12 +71,8 @@ public class ExerciseController {
 	@DeleteMapping("delete/{id}")
 	@Retry(name = "default")
 	@CircuitBreaker(name = "default")
-	public ResponseEntity<Object> delete(@PathVariable(value = "id") UUID id){
-		Optional<ExerciseModel> exerciseModelOptional = exerciseService.findById(id);
-		if(!exerciseModelOptional.isPresent()) {
-			throw new ResponseNotFoundException("No exercise found.");
-		}
-		exerciseService.delete(exerciseModelOptional.get());
+	public ResponseEntity<String> delete(@PathVariable(value = "id") UUID id){
+		exerciseService.delete(id);
 		return ResponseEntity.status(HttpStatus.OK).body("Exercise deleted successfully.");
 	}
 	
@@ -112,18 +80,9 @@ public class ExerciseController {
 	@PutMapping("update/{id}")
 	@Retry(name = "default")
 	@CircuitBreaker(name = "default")
-	public ResponseEntity<Object> update(@PathVariable(value = "id") UUID id, @RequestBody ExerciseDTO exerciseDTO){
-		Optional<ExerciseModel> exerciseModelOptional = exerciseService.findById(id);
-		if(!exerciseModelOptional.isPresent()) {
-			throw new ResponseNotFoundException("No exercise found.");
-		}
-		
-		var exerciseModel = new ExerciseModel();
-		UUID idemp = exerciseModelOptional.get().getId();
-		BeanUtils.copyProperties(exerciseDTO, exerciseModelOptional.get());
-		exerciseModelOptional.get().setId(idemp);
-		exerciseModel = exerciseService.save(exerciseModelOptional.get());
-		BeanUtils.copyProperties(exerciseModel, exerciseDTO);
+	public ResponseEntity<ExerciseDTO> update(@PathVariable(value = "id") UUID id, @RequestBody ExerciseDTO exerciseDTO){
+		exerciseDTO = exerciseService.update(id, exerciseDTO);
 		return ResponseEntity.status(HttpStatus.CREATED).body(exerciseDTO);
 	}
+	
 }	

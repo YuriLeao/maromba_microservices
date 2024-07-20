@@ -17,9 +17,9 @@ public class WorkoutSheetDTO {
 	
 	private UUID id;
 	@NotNull
-	private List<UUID> idUser;
+	private UUID idUser;
 	@NotNull
-	private UUID idWorkout;
+	private List<UUID> idWorkouts;
 	private LocalDate dateRegister;
 	private Boolean active;
 	@NotNull

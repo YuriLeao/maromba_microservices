@@ -38,7 +38,7 @@ public class WorkoutSheetModel implements Serializable {
 	private UUID idUser;
 	@Column(nullable = false)
 	@ElementCollection
-	private List<UUID> idWorkout;
+	private List<UUID> idWorkouts;
 	@Column(nullable = false)
 	@JsonSerialize(using = LocalDateSerializer.class)
 	@JsonDeserialize(using = LocalDateDeserializer.class)

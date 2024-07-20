@@ -26,5 +26,7 @@ public class ExerciseModel implements Serializable {
 	private String name;
 	@Column(nullable = false)
 	private String gif;
+	@Column(nullable = false)
+	private String muscleGroup;
 
 }

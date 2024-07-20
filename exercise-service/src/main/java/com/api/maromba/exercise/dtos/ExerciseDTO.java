@@ -18,5 +18,7 @@ public class ExerciseDTO {
 	private String name;
 	@NotBlank
 	private String gif;
+	@NotBlank
+	private String muscleGroup;
 	
 }

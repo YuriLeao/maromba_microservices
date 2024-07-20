@@ -1,16 +1,11 @@
 package com.api.maromba.company.controllers;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 import javax.validation.Valid;
 
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
@@ -27,9 +22,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.api.maromba.company.dtos.CompanyDTO;
-import com.api.maromba.company.exceptions.ResponseConflictException;
-import com.api.maromba.company.exceptions.ResponseNotFoundException;
-import com.api.maromba.company.models.CompanyModel;
 import com.api.maromba.company.services.CompanyService;
 
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
@@ -52,13 +44,8 @@ public class CompanyController {
 	@PostMapping("save")
 	@Retry(name = "default")
 	@CircuitBreaker(name = "default")
-	public ResponseEntity<Object> save(@RequestBody @Valid CompanyDTO companyDTO){
-		if(companyService.exists(companyDTO.getName())){
-			throw new ResponseConflictException("Company already exists.");
-		}
-		var companyModel = new CompanyModel();
-		BeanUtils.copyProperties(companyDTO, companyModel);
-		companyService.save(companyModel);
+	public ResponseEntity<String> save(@RequestBody @Valid CompanyDTO companyDTO){
+		companyService.save(companyDTO);
 		return ResponseEntity.status(HttpStatus.CREATED).body("Successfully created.");
 	}
 	
@@ -67,18 +54,8 @@ public class CompanyController {
 	@Retry(name = "default")
 	@CircuitBreaker(name = "default")
 	public ResponseEntity<Page<CompanyDTO>> getAll(@PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.ASC) Pageable pageable){
-		Page<CompanyModel> companyPages = companyService.findAll(pageable);
-		if(companyPages.isEmpty()) {
-			throw new ResponseNotFoundException("No company found.");
-		}
-		List<CompanyDTO> companysDTO = new ArrayList<CompanyDTO>();
-		for (CompanyModel company : companyPages) {
-			CompanyDTO companyDTO = new CompanyDTO();
-			BeanUtils.copyProperties(company, companyDTO);
-			companysDTO.add(companyDTO);
-		}
-		Page<CompanyDTO> companyDTOPages = new PageImpl<CompanyDTO>(companysDTO);
-		return ResponseEntity.status(HttpStatus.OK).body(companyDTOPages);
+		Page<CompanyDTO> companysDTOPages = companyService.getAll(pageable);
+		return ResponseEntity.status(HttpStatus.OK).body(companysDTOPages);
 	}
 	
 	@Operation(summary = "Get a company.")
@@ -86,12 +63,7 @@ public class CompanyController {
 	@Retry(name = "default")
 	@CircuitBreaker(name = "default")
 	public ResponseEntity<CompanyDTO> getById(@PathVariable(value = "id") UUID id){
-		Optional<CompanyModel> companyModelOptional = companyService.findById(id);
-		if(!companyModelOptional.isPresent()) {
-			throw new ResponseNotFoundException("No company found.");
-		}
-		CompanyDTO companyDTO = new CompanyDTO();
-		BeanUtils.copyProperties(companyModelOptional.get(), companyDTO);
+		CompanyDTO companyDTO = companyService.getById(id);
 		return ResponseEntity.status(HttpStatus.OK).body(companyDTO);
 	}
 	
@@ -99,12 +71,8 @@ public class CompanyController {
 	@DeleteMapping("delete/{id}")
 	@Retry(name = "default")
 	@CircuitBreaker(name = "default")
-	public ResponseEntity<Object> delete(@PathVariable(value = "id") UUID id){
-		Optional<CompanyModel> companyModelOptional = companyService.findById(id);
-		if(!companyModelOptional.isPresent()) {
-			throw new ResponseNotFoundException("No company found.");
-		}
-		companyService.delete(companyModelOptional.get());
+	public ResponseEntity<String> delete(@PathVariable(value = "id") UUID id){
+		companyService.delete(id);
 		return ResponseEntity.status(HttpStatus.OK).body("Company deleted successfully.");
 	}
 	
@@ -112,18 +80,10 @@ public class CompanyController {
 	@PutMapping("update/{id}")
 	@Retry(name = "default")
 	@CircuitBreaker(name = "default")
-	public ResponseEntity<Object> update(@PathVariable(value = "id") UUID id, @RequestBody CompanyDTO companyDTO){
-		Optional<CompanyModel> companyModelOptional = companyService.findById(id);
-		if(!companyModelOptional.isPresent()) {
-			throw new ResponseNotFoundException("No company found.");
-		}
-		
-		var companyModel = new CompanyModel();
-		UUID idemp = companyModelOptional.get().getId();
-		BeanUtils.copyProperties(companyDTO, companyModelOptional.get());
-		companyModelOptional.get().setId(idemp);
-		companyModel = companyService.save(companyModelOptional.get());
-		BeanUtils.copyProperties(companyModel, companyDTO);
+	public ResponseEntity<CompanyDTO> update(@PathVariable(value = "id") UUID id, @RequestBody CompanyDTO companyDTO){
+		companyDTO = companyService.update(id, companyDTO);
 		return ResponseEntity.status(HttpStatus.CREATED).body(companyDTO);
 	}
+	
+	
 }	

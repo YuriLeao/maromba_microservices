@@ -42,8 +42,8 @@ import io.swagger.v3.oas.models.info.License;
 )
 public class OpenApiConfiguration {
 
-	@Bean
-	public OpenAPI customOpenAPI() {
+    @Bean
+    OpenAPI customOpenAPI() {
 		return new OpenAPI()
 				.components(new Components())
 				.info(new io.swagger.v3.oas.models.info.Info()

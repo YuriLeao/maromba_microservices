@@ -43,7 +43,7 @@ public class ExerciseControllerTest {
 	@Test
 	public void save() throws Exception {
 		var exerciseDTO = new ExerciseDTO(null, "teste",
-				"video");
+				"video", "peito");
 		var exercise = new ExerciseModel();
 		BeanUtils.copyProperties(exerciseDTO, exercise);
 		when(exerciseRepository.existsByName("teste")).thenReturn(false);
@@ -56,7 +56,7 @@ public class ExerciseControllerTest {
 	@Test
 	public void update() throws Exception {
 		var exerciseDTO = new ExerciseDTO(UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a"), "teste",
-				"video");
+				"video", "peito");
 		var exercise = new ExerciseModel();
 		BeanUtils.copyProperties(exerciseDTO, exercise);
 		when(exerciseRepository.findById(UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a")))
@@ -71,7 +71,7 @@ public class ExerciseControllerTest {
 	@Test
 	public void getAll() throws Exception {
 		var exerciseDTO = new ExerciseDTO(UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a"), "teste",
-				"video");
+				"video", "peito");
 		var exercise = new ExerciseModel();
 		BeanUtils.copyProperties(exerciseDTO, exercise);
 		List<ExerciseModel> list = new ArrayList<ExerciseModel>();
@@ -85,7 +85,7 @@ public class ExerciseControllerTest {
 	@Test
 	public void getById() throws Exception {
 		var exerciseDTO = new ExerciseDTO(UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a"), "teste",
-				"video");
+				"video", "peito");
 		var exercise = new ExerciseModel();
 		BeanUtils.copyProperties(exerciseDTO, exercise);
 		when(exerciseRepository.findById(UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a")))
@@ -98,7 +98,7 @@ public class ExerciseControllerTest {
 	@Test
 	public void delete() throws Exception {
 		var exerciseDTO = new ExerciseDTO(UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a"), "teste",
-				"video");
+				"video", "peito");
 		var exercise = new ExerciseModel();
 		BeanUtils.copyProperties(exerciseDTO, exercise);
 		when(exerciseRepository.findById(UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a")))

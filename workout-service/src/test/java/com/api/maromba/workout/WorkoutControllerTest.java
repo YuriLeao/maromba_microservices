@@ -1,7 +1,6 @@
 package com.api.maromba.workout;
 
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -74,16 +73,16 @@ public class WorkoutControllerTest {
 				LocalDate.now(), itemsDTO);
 		var workout = new WorkoutModel();
 		BeanUtils.copyProperties(workoutDTO, workout);
-		
+
 		workout.setWorkoutItems(new ArrayList<WorkoutItemModel>());
 		WorkoutItemModel workoutItemModel = new WorkoutItemModel();
 		for (WorkoutItemDTO workoutItemDTO : workoutDTO.getWorkoutItems()) {
 			workoutItemModel = new WorkoutItemModel();
 			BeanUtils.copyProperties(workoutItemDTO, workoutItemModel);
-			
+
 			workout.getWorkoutItems().add(workoutItemModel);
 		}
-		
+
 		when(workoutRepository.findById(UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a")))
 				.thenReturn(Optional.of(workout));
 		when(workoutRepository.save(workout)).thenReturn(workout);
@@ -104,13 +103,13 @@ public class WorkoutControllerTest {
 				LocalDate.now(), itemsDTO);
 		var workout = new WorkoutModel();
 		BeanUtils.copyProperties(workoutDTO, workout);
-		
+
 		workout.setWorkoutItems(new ArrayList<WorkoutItemModel>());
 		WorkoutItemModel workoutItemModel = new WorkoutItemModel();
 		for (WorkoutItemDTO workoutItemDTO : workoutDTO.getWorkoutItems()) {
 			workoutItemModel = new WorkoutItemModel();
 			BeanUtils.copyProperties(workoutItemDTO, workoutItemModel);
-			
+
 			workout.getWorkoutItems().add(workoutItemModel);
 		}
 		List<WorkoutModel> list = new ArrayList<WorkoutModel>();
@@ -132,16 +131,16 @@ public class WorkoutControllerTest {
 				LocalDate.now(), itemsDTO);
 		var workout = new WorkoutModel();
 		BeanUtils.copyProperties(workoutDTO, workout);
-		
+
 		workout.setWorkoutItems(new ArrayList<WorkoutItemModel>());
 		WorkoutItemModel workoutItemModel = new WorkoutItemModel();
 		for (WorkoutItemDTO workoutItemDTO : workoutDTO.getWorkoutItems()) {
 			workoutItemModel = new WorkoutItemModel();
 			BeanUtils.copyProperties(workoutItemDTO, workoutItemModel);
-			
+
 			workout.getWorkoutItems().add(workoutItemModel);
 		}
-		
+
 		when(workoutRepository.findById(UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a")))
 				.thenReturn(Optional.of(workout));
 
@@ -150,7 +149,7 @@ public class WorkoutControllerTest {
 	}
 
 	@Test
-	public void delet() throws Exception {
+	public void delete() throws Exception {
 		WorkoutItemDTO itemDTO = new WorkoutItemDTO(null, UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a"), 12,
 				4, new BigDecimal(90.00), "dropset", new BigDecimal(90.00), 150);
 		List<WorkoutItemDTO> itemsDTO = new ArrayList<WorkoutItemDTO>();
@@ -163,7 +162,8 @@ public class WorkoutControllerTest {
 		when(workoutRepository.findById(UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a")))
 				.thenReturn(Optional.of(workout)).thenReturn(null);
 
-		mockMvc.perform(delete("/workout-service/delete/" + UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a"))
+		mockMvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders
+				.delete("/workout-service/delete/" + UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a"))
 				.contentType("application/json")).andExpect(status().isOk());
 	}
 

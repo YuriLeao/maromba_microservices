@@ -8,6 +8,5 @@ import com.api.maromba.workoutSheet.models.WorkoutSheetModel;
 
 public interface WorkoutSheetRepository extends JpaRepository<WorkoutSheetModel, UUID>{
 
-	void deleteById(UUID id);
 
 }

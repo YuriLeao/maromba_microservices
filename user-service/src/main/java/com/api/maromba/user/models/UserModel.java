@@ -40,6 +40,8 @@ public class UserModel implements Serializable {
 	private String password;
 	@Column(nullable = false)
 	private String name;
+	@Column(nullable = false, unique = true)
+	private String cpf;
 	@Column(nullable = false)
 	private String gender;
 	@Column(nullable = false)

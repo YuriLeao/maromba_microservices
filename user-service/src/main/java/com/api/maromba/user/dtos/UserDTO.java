@@ -25,6 +25,8 @@ public class UserDTO {
 	@NotBlank
 	private String name;
 	@NotBlank
+	private String cpf;
+	@NotBlank
 	private String gender;
 	@NotBlank
 	private String phoneNumber;

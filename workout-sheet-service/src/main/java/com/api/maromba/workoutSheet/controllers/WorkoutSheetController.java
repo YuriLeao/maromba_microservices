@@ -1,16 +1,11 @@
 package com.api.maromba.workoutSheet.controllers;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 import javax.validation.Valid;
 
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
@@ -27,8 +22,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.api.maromba.workoutSheet.dtos.WorkoutSheetDTO;
-import com.api.maromba.workoutSheet.exceptions.ResponseNotFoundException;
-import com.api.maromba.workoutSheet.models.WorkoutSheetModel;
 import com.api.maromba.workoutSheet.services.WorkoutSheetService;
 
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
@@ -51,10 +44,8 @@ public class WorkoutSheetController {
 	@PostMapping("save")
 	@Retry(name = "default")
 	@CircuitBreaker(name = "default")
-	public ResponseEntity<Object> save(@RequestBody @Valid WorkoutSheetDTO workoutSheetDTO){
-		var workoutSheetModel = new WorkoutSheetModel();
-		BeanUtils.copyProperties(workoutSheetDTO, workoutSheetModel);
-		workoutSheetService.save(workoutSheetModel);
+	public ResponseEntity<String> save(@RequestBody @Valid WorkoutSheetDTO workoutSheetDTO){
+		workoutSheetService.save(workoutSheetDTO);
 		return ResponseEntity.status(HttpStatus.CREATED).body("Successfully created.");
 	}
 	
@@ -63,18 +54,8 @@ public class WorkoutSheetController {
 	@Retry(name = "default")
 	@CircuitBreaker(name = "default")
 	public ResponseEntity<Page<WorkoutSheetDTO>> getAll(@PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.ASC) Pageable pageable){
-		Page<WorkoutSheetModel> workoutSheetPages = workoutSheetService.findAll(pageable);
-		if(workoutSheetPages.isEmpty()) {
-			throw new ResponseNotFoundException("No workout sheet found.");
-		}
-		List<WorkoutSheetDTO> workoutSheetsDTO = new ArrayList<WorkoutSheetDTO>();
-		for (WorkoutSheetModel workoutSheet : workoutSheetPages) {
-			WorkoutSheetDTO workoutSheetDTO = new WorkoutSheetDTO();
-			BeanUtils.copyProperties(workoutSheet, workoutSheetDTO);
-			workoutSheetsDTO.add(workoutSheetDTO);
-		}
-		Page<WorkoutSheetDTO> workoutSheetDTOPages = new PageImpl<WorkoutSheetDTO>(workoutSheetsDTO);
-		return ResponseEntity.status(HttpStatus.OK).body(workoutSheetDTOPages);
+		Page<WorkoutSheetDTO> workoutSheetDTOPage = workoutSheetService.getAll(pageable);
+		return ResponseEntity.status(HttpStatus.OK).body(workoutSheetDTOPage);
 	}
 	
 	@Operation(summary = "Get a workout sheet.")
@@ -82,12 +63,7 @@ public class WorkoutSheetController {
 	@Retry(name = "default")
 	@CircuitBreaker(name = "default")
 	public ResponseEntity<WorkoutSheetDTO> getById(@PathVariable(value = "id") UUID id){
-		Optional<WorkoutSheetModel> workoutSheetModelOptional = workoutSheetService.findById(id);
-		if(!workoutSheetModelOptional.isPresent()) {
-			throw new ResponseNotFoundException("No workout sheet found.");
-		}
-		WorkoutSheetDTO workoutSheetDTO = new WorkoutSheetDTO();
-		BeanUtils.copyProperties(workoutSheetModelOptional.get(), workoutSheetDTO);
+		WorkoutSheetDTO workoutSheetDTO = workoutSheetService.getById(id);
 		return ResponseEntity.status(HttpStatus.OK).body(workoutSheetDTO);
 	}
 	
@@ -95,12 +71,8 @@ public class WorkoutSheetController {
 	@DeleteMapping("delete/{id}")
 	@Retry(name = "default")
 	@CircuitBreaker(name = "default")
-	public ResponseEntity<Object> delete(@PathVariable(value = "id") UUID id){
-		Optional<WorkoutSheetModel> workoutSheetModelOptional = workoutSheetService.findById(id);
-		if(!workoutSheetModelOptional.isPresent()) {
-			throw new ResponseNotFoundException("No workout sheet found.");
-		}
-		workoutSheetService.delete(workoutSheetModelOptional.get());
+	public ResponseEntity<String> delete(@PathVariable(value = "id") UUID id){
+		workoutSheetService.delete(id);
 		return ResponseEntity.status(HttpStatus.OK).body("Workout sheet deleted successfully.");
 	}
 	
@@ -108,18 +80,8 @@ public class WorkoutSheetController {
 	@PutMapping("update/{id}")
 	@Retry(name = "default")
 	@CircuitBreaker(name = "default")
-	public ResponseEntity<Object> update(@PathVariable(value = "id") UUID id, @RequestBody WorkoutSheetDTO workoutSheetDTO){
-		Optional<WorkoutSheetModel> workoutSheetModelOptional = workoutSheetService.findById(id);
-		if(!workoutSheetModelOptional.isPresent()) {
-			throw new ResponseNotFoundException("No workout sheet found.");
-		}
-		
-		var workoutSheetModel = new WorkoutSheetModel();
-		UUID idemp = workoutSheetModelOptional.get().getId();
-		BeanUtils.copyProperties(workoutSheetDTO, workoutSheetModelOptional.get());
-		workoutSheetModelOptional.get().setId(idemp);
-		workoutSheetModel = workoutSheetService.save(workoutSheetModelOptional.get());
-		BeanUtils.copyProperties(workoutSheetModel, workoutSheetDTO);
+	public ResponseEntity<WorkoutSheetDTO> update(@PathVariable(value = "id") UUID id, @RequestBody WorkoutSheetDTO workoutSheetDTO){
+		workoutSheetDTO = workoutSheetService.update(id, workoutSheetDTO);
 		return ResponseEntity.status(HttpStatus.CREATED).body(workoutSheetDTO);
 	}
 }	

@@ -1,49 +1,97 @@
 package com.api.maromba.company.services;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 import javax.transaction.Transactional;
 
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import com.api.maromba.company.dtos.CompanyDTO;
+import com.api.maromba.company.exceptions.ResponseConflictException;
+import com.api.maromba.company.exceptions.ResponseNotFoundException;
 import com.api.maromba.company.models.CompanyModel;
 import com.api.maromba.company.repositories.CompanyRepository;
 
 @Service
 public class CompanyService {
-	
+
 	@Autowired
 	CompanyRepository companyRepository;
+
+	@Transactional
+	public CompanyDTO save(CompanyDTO companyDTO) {
+		if(companyRepository.existsByName(companyDTO.getName())){
+			throw new ResponseConflictException("Company already exists.");
+		}
+		var companyModel = convertDTOToModel(companyDTO);
+		return convertModelToDTO(companyRepository.save(companyModel));
+
+	}
 	
 	@Transactional
-	public CompanyModel save(CompanyModel empresaModel) {
-		return companyRepository.save(empresaModel);
+	public CompanyDTO update(UUID id, CompanyDTO companyDTO) {
+		Optional<CompanyModel> companyModelOptional = companyRepository.findById(id);
+		if(!companyModelOptional.isPresent()) {
+			throw new ResponseNotFoundException("No company found.");
+		}
 		
-	}
-	
-	public boolean exists(String name) {
-		return companyRepository.existsByName(name);
-	}
-	
-	public Optional<CompanyModel> findById(UUID id) {
-		return companyRepository.findById(id);
+		UUID idemp = companyModelOptional.get().getId();
+		var companyModel = convertDTOToModel(companyDTO);
+		companyModel.setId(idemp);
+		companyModel = companyRepository.save(companyModel);
+		return convertModelToDTO(companyModel);
 	}
 
-	public Optional<CompanyModel> findByName(String name) {
-		return companyRepository.findByName(name);
+	public CompanyDTO getById(UUID id) {
+		Optional<CompanyModel> companyModelOptional = companyRepository.findById(id);
+		if(!companyModelOptional.isPresent()) {
+			throw new ResponseNotFoundException("No company found.");
+		}
+		
+		return convertModelToDTO(companyModelOptional.get());
 	}
 
 	@Transactional
-	public void delete(CompanyModel companyModel) {
-		companyRepository.deleteById(companyModel.getId());
+	public void delete(UUID id) {
+		Optional<CompanyModel> companyModelOptional = companyRepository.findById(id);
+		if(!companyModelOptional.isPresent()) {
+			throw new ResponseNotFoundException("No company found.");
+		}
+		companyRepository.delete(companyModelOptional.get());
 	}
 
-	public Page<CompanyModel> findAll(Pageable pageable) {
-		return companyRepository.findAll(pageable);
+	public Page<CompanyDTO> getAll(Pageable pageable) {
+		Page<CompanyModel> companyPages = companyRepository.findAll(pageable);
+		if(companyPages.isEmpty()) {
+			throw new ResponseNotFoundException("No company found.");
+		}
+		
+		List<CompanyDTO> companysDTO = new ArrayList<CompanyDTO>();
+		for (CompanyModel company : companyPages) {
+			CompanyDTO companyDTO = convertModelToDTO(company);
+			companysDTO.add(companyDTO);
+		}
+		return new PageImpl<CompanyDTO>(companysDTO);
+	}
+	
+	private CompanyModel convertDTOToModel(CompanyDTO companyDTO) {
+		var companyModel = new CompanyModel();
+		BeanUtils.copyProperties(companyDTO, companyModel);
+		return companyModel;
+	}
+	
+	private CompanyDTO convertModelToDTO(CompanyModel company) {
+		CompanyDTO companyDTO = new CompanyDTO();
+		BeanUtils.copyProperties(company, companyDTO);
+		return companyDTO;
 	}
 
 }

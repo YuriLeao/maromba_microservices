@@ -1,7 +1,6 @@
 package com.api.maromba.workoutSheet;
 
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -46,8 +45,8 @@ public class WorkoutSheetControllerTest {
 		List<UUID> workouts = new ArrayList<UUID>();
 		workouts.add(UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a"));
 
-		var workoutSheetDTO = new WorkoutSheetDTO(null, workouts,
-				UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a"), java.time.LocalDate.now(), true, "dsfs");
+		var workoutSheetDTO = new WorkoutSheetDTO(null, UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a"),
+				workouts, java.time.LocalDate.now(), true, "dsfs");
 		var workoutSheet = new WorkoutSheetModel();
 		BeanUtils.copyProperties(workoutSheetDTO, workoutSheet);
 		when(workoutSheetRepository.save(workoutSheet)).thenReturn(workoutSheet);
@@ -60,10 +59,10 @@ public class WorkoutSheetControllerTest {
 	public void update() throws Exception {
 		List<UUID> workouts = new ArrayList<UUID>();
 		workouts.add(UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a"));
-		
+
 		var workoutSheetDTO = new WorkoutSheetDTO(UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a"),
-				workouts,
-				UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a"), java.time.LocalDate.now(), true, "dsfs");
+				UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a"), workouts, java.time.LocalDate.now(), true,
+				"dsfs");
 		var workoutSheet = new WorkoutSheetModel();
 		BeanUtils.copyProperties(workoutSheetDTO, workoutSheet);
 		when(workoutSheetRepository.findById(UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a")))
@@ -79,10 +78,10 @@ public class WorkoutSheetControllerTest {
 	public void getAll() throws Exception {
 		List<UUID> workouts = new ArrayList<UUID>();
 		workouts.add(UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a"));
-		
+
 		var workoutSheetDTO = new WorkoutSheetDTO(UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a"),
-				workouts,
-				UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a"), java.time.LocalDate.now(), true, "dsfs");
+				UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a"), workouts, java.time.LocalDate.now(), true,
+				"dsfs");
 		var workoutSheet = new WorkoutSheetModel();
 		BeanUtils.copyProperties(workoutSheetDTO, workoutSheet);
 		List<WorkoutSheetModel> list = new ArrayList<WorkoutSheetModel>();
@@ -98,10 +97,10 @@ public class WorkoutSheetControllerTest {
 	public void getById() throws Exception {
 		List<UUID> workouts = new ArrayList<UUID>();
 		workouts.add(UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a"));
-		
+
 		var workoutSheetDTO = new WorkoutSheetDTO(UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a"),
-				workouts,
-				UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a"), java.time.LocalDate.now(), true, "dsfs");
+				UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a"), workouts, java.time.LocalDate.now(), true,
+				"dsfs");
 		var workoutSheet = new WorkoutSheetModel();
 		BeanUtils.copyProperties(workoutSheetDTO, workoutSheet);
 		when(workoutSheetRepository.findById(UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a")))
@@ -112,22 +111,21 @@ public class WorkoutSheetControllerTest {
 	}
 
 	@Test
-	public void delet() throws Exception {
+	public void delete() throws Exception {
 		List<UUID> workouts = new ArrayList<UUID>();
 		workouts.add(UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a"));
-		
+
 		var workoutSheetDTO = new WorkoutSheetDTO(UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a"),
-				workouts,
-				UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a"), java.time.LocalDate.now(), true, "dsfs");
+				UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a"), workouts, java.time.LocalDate.now(), true,
+				"dsfs");
 		var workoutSheet = new WorkoutSheetModel();
 		BeanUtils.copyProperties(workoutSheetDTO, workoutSheet);
 		when(workoutSheetRepository.findById(UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a")))
 				.thenReturn(Optional.of(workoutSheet)).thenReturn(null);
 
-		mockMvc.perform(
-				delete("/workout-sheet-service/delete/" + UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a"))
-						.contentType("application/json"))
-				.andExpect(status().isOk());
+		mockMvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders
+				.delete("/workout-sheet-service/delete/" + UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a"))
+				.contentType("application/json")).andExpect(status().isOk());
 	}
 
 }
