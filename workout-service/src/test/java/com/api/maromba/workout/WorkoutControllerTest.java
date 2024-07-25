@@ -1,5 +1,6 @@
 package com.api.maromba.workout;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -55,7 +56,7 @@ public class WorkoutControllerTest {
 		var workoutDTO = new WorkoutDTO(null, "treino a", LocalDate.now(), itemsDTO);
 		var workout = new WorkoutModel();
 		BeanUtils.copyProperties(workoutDTO, workout);
-		when(workoutRepository.save(workout)).thenReturn(workout);
+		when(workoutRepository.save(any(WorkoutModel.class))).thenReturn(workout);
 
 		mockMvc.perform(post("/workout-service/save").contentType("application/json")
 				.content(objectMapper.writeValueAsString(workoutDTO))).andExpect(status().isCreated());
@@ -85,7 +86,7 @@ public class WorkoutControllerTest {
 
 		when(workoutRepository.findById(UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a")))
 				.thenReturn(Optional.of(workout));
-		when(workoutRepository.save(workout)).thenReturn(workout);
+		when(workoutRepository.save(any(WorkoutModel.class))).thenReturn(workout);
 
 		mockMvc.perform(put("/workout-service/update/" + UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a"))
 				.contentType("application/json").content(objectMapper.writeValueAsString(workoutDTO)))

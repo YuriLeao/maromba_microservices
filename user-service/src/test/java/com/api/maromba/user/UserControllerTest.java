@@ -1,5 +1,6 @@
 package com.api.maromba.user;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -80,7 +81,7 @@ public class UserControllerTest {
 		user.setPassword(encrypt.encryptPassword("tt@gmail.com", "teste"));
 		when(userRepository.findById(UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a")))
 				.thenReturn(Optional.of(user));
-		when(userRepository.save(user)).thenReturn(user);
+		when(userRepository.save(any(UserModel.class))).thenReturn(user);
 
 		mockMvc.perform(put("/user-service/update/6abc9768-d3c7-47e0-845e-241a084ab34a").contentType("application/json")
 				.content(objectMapper.writeValueAsString(userDTO))).andExpect(status().isCreated());
