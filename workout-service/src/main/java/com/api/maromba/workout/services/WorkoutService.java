@@ -2,7 +2,6 @@ package com.api.maromba.workout.services;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 import javax.transaction.Transactional;
@@ -23,68 +22,63 @@ import com.api.maromba.workout.repositories.WorkoutRepository;
 
 @Service
 public class WorkoutService {
-	
+
 	@Autowired
 	WorkoutRepository workoutRepository;
-	
+
 	@Transactional
 	public WorkoutDTO save(WorkoutDTO workoutDTO) {
 		var workoutModel = convertDTOToModel(workoutDTO);
-		
-        for (WorkoutItemModel item : workoutModel.getWorkoutItems()) {
-            item.setWorkout(workoutModel);
-        }
-		
-		return convertModelToDTO(workoutRepository.save(workoutModel));
-		
-	}
-	
-	@Transactional
-	public WorkoutDTO update(UUID id, WorkoutDTO workoutDTO) {
-		Optional<WorkoutModel> workoutModelOptional = workoutRepository.findById(id);
-		if (!workoutModelOptional.isPresent()) {
-			throw new ResponseNotFoundException("No workout found.");
+
+		for (WorkoutItemModel item : workoutModel.getWorkoutItems()) {
+			item.setWorkout(workoutModel);
 		}
 
-		UUID idemp = workoutModelOptional.get().getId();
-		BeanUtils.copyProperties(workoutDTO, workoutModelOptional.get());
-		workoutModelOptional.get().setId(idemp);
+		return convertModelToDTO(workoutRepository.save(workoutModel));
 
-		workoutModelOptional.get().getWorkoutItems().removeIf(item -> !workoutDTO.getWorkoutItems().contains(item));
+	}
+
+	@Transactional
+	public WorkoutDTO update(UUID id, WorkoutDTO workoutDTO) {
+		WorkoutModel workoutModel = workoutRepository.findById(id)
+				.orElseThrow(() -> new ResponseNotFoundException("No workout found."));
+
+		UUID idemp = workoutModel.getId();
+		BeanUtils.copyProperties(workoutDTO, workoutModel);
+		workoutModel.setId(idemp);
+
+		workoutModel.getWorkoutItems().removeIf(item -> !workoutDTO.getWorkoutItems().contains(item));
 
 		WorkoutItemModel workoutItemModel = new WorkoutItemModel();
 		for (WorkoutItemDTO workoutItemDTO : workoutDTO.getWorkoutItems()) {
 			BeanUtils.copyProperties(workoutItemDTO, workoutItemModel);
-			workoutItemModel.setWorkout(workoutModelOptional.get());
+			workoutItemModel.setWorkout(workoutModel);
 
-			if (workoutModelOptional.get().getWorkoutItems().contains(workoutItemModel)) {
-				WorkoutItemModel existingItem = workoutModelOptional.get().getWorkoutItems()
-						.get(workoutModelOptional.get().getWorkoutItems().indexOf(workoutItemModel));
+			if (workoutModel.getWorkoutItems().contains(workoutItemModel)) {
+				WorkoutItemModel existingItem = workoutModel.getWorkoutItems()
+						.get(workoutModel.getWorkoutItems().indexOf(workoutItemModel));
 				BeanUtils.copyProperties(workoutItemModel, existingItem);
 			} else {
-				workoutModelOptional.get().getWorkoutItems().add(workoutItemModel);
+				workoutModel.getWorkoutItems().add(workoutItemModel);
 			}
 		}
 
-		return convertModelToDTO(workoutRepository.save(workoutModelOptional.get()));
+		return convertModelToDTO(workoutRepository.save(workoutModel));
 	}
-	
-	public WorkoutDTO getById(UUID id) {
-		Optional<WorkoutModel> workoutModelOptional = workoutRepository.findById(id);
-		if (!workoutModelOptional.isPresent()) {
-			throw new ResponseNotFoundException("No workout found.");
-		}
 
-		return convertModelToDTO(workoutModelOptional.get());
+	public WorkoutDTO getById(UUID id) {
+		WorkoutModel workoutModel = workoutRepository.findById(id)
+				.orElseThrow(() -> new ResponseNotFoundException("No workout found."));
+
+		return convertModelToDTO(workoutModel);
 	}
 
 	@Transactional
 	public void delete(UUID id) {
-		Optional<WorkoutModel> workoutModelOptional = workoutRepository.findById(id);
-		if (!workoutModelOptional.isPresent()) {
-			throw new ResponseNotFoundException("No workout found.");
-		}
-		workoutRepository.delete(workoutModelOptional.get());
+		WorkoutModel workoutModel = workoutRepository.findById(id)
+				.orElseThrow(() -> new ResponseNotFoundException("No workout found."));
+
+		workoutRepository.delete(workoutModel);
 	}
 
 	public Page<WorkoutDTO> getAll(Pageable pageable) {
@@ -103,7 +97,7 @@ public class WorkoutService {
 
 		return new PageImpl<WorkoutDTO>(workoutsDTO);
 	}
-	
+
 	private WorkoutDTO convertModelToDTO(WorkoutModel workout) {
 		WorkoutDTO workoutDTO;
 		WorkoutItemDTO workoutItemDTO;
@@ -111,7 +105,6 @@ public class WorkoutService {
 		BeanUtils.copyProperties(workout, workoutDTO);
 		workoutDTO.setWorkoutItems(new ArrayList<WorkoutItemDTO>());
 		if (workout.getWorkoutItems() != null) {
-
 			for (WorkoutItemModel workoutItemModel : workout.getWorkoutItems()) {
 				workoutItemDTO = new WorkoutItemDTO();
 				BeanUtils.copyProperties(workoutItemModel, workoutItemDTO);

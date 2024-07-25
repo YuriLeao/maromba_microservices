@@ -2,7 +2,6 @@ package com.api.maromba.workoutSheet.services;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 import javax.transaction.Transactional;
@@ -21,51 +20,45 @@ import com.api.maromba.workoutSheet.repositories.WorkoutSheetRepository;
 
 @Service
 public class WorkoutSheetService {
-	
+
 	@Autowired
 	WorkoutSheetRepository workoutSheetRepository;
-	
+
 	@Transactional
 	public WorkoutSheetDTO save(WorkoutSheetDTO workoutSheetDTO) {
 		var workoutSheetModel = convertDTOToModel(workoutSheetDTO);
 		return convertModelToDTO(workoutSheetRepository.save(workoutSheetModel));
 	}
-	
+
 	@Transactional
 	public WorkoutSheetDTO update(UUID id, WorkoutSheetDTO workoutSheetDTO) {
-		Optional<WorkoutSheetModel> workoutSheetModelOptional = workoutSheetRepository.findById(id);
-		if(!workoutSheetModelOptional.isPresent()) {
-			throw new ResponseNotFoundException("No workout sheet found.");
-		}
-		
-		UUID idemp = workoutSheetModelOptional.get().getId();
-		var workoutSheetModel = convertDTOToModel(workoutSheetDTO);
+		WorkoutSheetModel workoutSheetModel = workoutSheetRepository.findById(id)
+				.orElseThrow(() -> new ResponseNotFoundException("No workout sheet found."));
+
+		UUID idemp = workoutSheetModel.getId();
+		workoutSheetModel = convertDTOToModel(workoutSheetDTO);
 		workoutSheetModel.setId(idemp);
 		return convertModelToDTO(workoutSheetRepository.save(workoutSheetModel));
 	}
-	
-	public WorkoutSheetDTO getById(UUID id) {
-		Optional<WorkoutSheetModel> workoutSheetModelOptional = workoutSheetRepository.findById(id);
-		if(!workoutSheetModelOptional.isPresent()) {
-			throw new ResponseNotFoundException("No workout sheet found.");
-		}
 
-		return convertModelToDTO(workoutSheetModelOptional.get());
+	public WorkoutSheetDTO getById(UUID id) {
+		WorkoutSheetModel workoutSheetModel = workoutSheetRepository.findById(id)
+				.orElseThrow(() -> new ResponseNotFoundException("No workout sheet found."));
+
+		return convertModelToDTO(workoutSheetModel);
 	}
 
 	@Transactional
 	public void delete(UUID id) {
-		Optional<WorkoutSheetModel> workoutSheetModelOptional = workoutSheetRepository.findById(id);
-		if(!workoutSheetModelOptional.isPresent()) {
-			throw new ResponseNotFoundException("No workout sheet found.");
-		}
-		
-		workoutSheetRepository.delete(workoutSheetModelOptional.get());
+		WorkoutSheetModel workoutSheetModel = workoutSheetRepository.findById(id)
+				.orElseThrow(() -> new ResponseNotFoundException("No workout sheet found."));
+
+		workoutSheetRepository.delete(workoutSheetModel);
 	}
 
 	public Page<WorkoutSheetDTO> getAll(Pageable pageable) {
 		Page<WorkoutSheetModel> workoutSheetPages = workoutSheetRepository.findAll(pageable);
-		if(workoutSheetPages.isEmpty()) {
+		if (workoutSheetPages.isEmpty()) {
 			throw new ResponseNotFoundException("No workout sheet found.");
 		}
 		List<WorkoutSheetDTO> workoutSheetsDTO = new ArrayList<WorkoutSheetDTO>();
@@ -75,7 +68,7 @@ public class WorkoutSheetService {
 		}
 		return new PageImpl<WorkoutSheetDTO>(workoutSheetsDTO);
 	}
-	
+
 	private WorkoutSheetModel convertDTOToModel(WorkoutSheetDTO workoutSheetDTO) {
 		var workoutSheetModel = new WorkoutSheetModel();
 		BeanUtils.copyProperties(workoutSheetDTO, workoutSheetModel);

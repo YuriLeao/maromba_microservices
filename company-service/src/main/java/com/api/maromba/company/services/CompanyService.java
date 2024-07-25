@@ -2,7 +2,6 @@ package com.api.maromba.company.services;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 import javax.transaction.Transactional;
@@ -28,52 +27,47 @@ public class CompanyService {
 
 	@Transactional
 	public CompanyDTO save(CompanyDTO companyDTO) {
-		if(companyRepository.existsByName(companyDTO.getName())){
+		if (companyRepository.existsByName(companyDTO.getName())) {
 			throw new ResponseConflictException("Company already exists.");
 		}
 		var companyModel = convertDTOToModel(companyDTO);
 		return convertModelToDTO(companyRepository.save(companyModel));
 
 	}
-	
+
 	@Transactional
 	public CompanyDTO update(UUID id, CompanyDTO companyDTO) {
-		Optional<CompanyModel> companyModelOptional = companyRepository.findById(id);
-		if(!companyModelOptional.isPresent()) {
-			throw new ResponseNotFoundException("No company found.");
-		}
-		
-		UUID idemp = companyModelOptional.get().getId();
-		var companyModel = convertDTOToModel(companyDTO);
+		CompanyModel companyModel = companyRepository.findById(id)
+				.orElseThrow(() -> new ResponseNotFoundException("No company found."));
+
+		UUID idemp = companyModel.getId();
+		companyModel = convertDTOToModel(companyDTO);
 		companyModel.setId(idemp);
 		companyModel = companyRepository.save(companyModel);
 		return convertModelToDTO(companyModel);
 	}
 
 	public CompanyDTO getById(UUID id) {
-		Optional<CompanyModel> companyModelOptional = companyRepository.findById(id);
-		if(!companyModelOptional.isPresent()) {
-			throw new ResponseNotFoundException("No company found.");
-		}
-		
-		return convertModelToDTO(companyModelOptional.get());
+		CompanyModel companyModel = companyRepository.findById(id)
+				.orElseThrow(() -> new ResponseNotFoundException("No company found."));
+
+		return convertModelToDTO(companyModel);
 	}
 
 	@Transactional
 	public void delete(UUID id) {
-		Optional<CompanyModel> companyModelOptional = companyRepository.findById(id);
-		if(!companyModelOptional.isPresent()) {
-			throw new ResponseNotFoundException("No company found.");
-		}
-		companyRepository.delete(companyModelOptional.get());
+		CompanyModel companyModel = companyRepository.findById(id)
+				.orElseThrow(() -> new ResponseNotFoundException("No company found."));
+
+		companyRepository.delete(companyModel);
 	}
 
 	public Page<CompanyDTO> getAll(Pageable pageable) {
 		Page<CompanyModel> companyPages = companyRepository.findAll(pageable);
-		if(companyPages.isEmpty()) {
+		if (companyPages.isEmpty()) {
 			throw new ResponseNotFoundException("No company found.");
 		}
-		
+
 		List<CompanyDTO> companysDTO = new ArrayList<CompanyDTO>();
 		for (CompanyModel company : companyPages) {
 			CompanyDTO companyDTO = convertModelToDTO(company);
@@ -81,13 +75,13 @@ public class CompanyService {
 		}
 		return new PageImpl<CompanyDTO>(companysDTO);
 	}
-	
+
 	private CompanyModel convertDTOToModel(CompanyDTO companyDTO) {
 		var companyModel = new CompanyModel();
 		BeanUtils.copyProperties(companyDTO, companyModel);
 		return companyModel;
 	}
-	
+
 	private CompanyDTO convertModelToDTO(CompanyModel company) {
 		CompanyDTO companyDTO = new CompanyDTO();
 		BeanUtils.copyProperties(company, companyDTO);

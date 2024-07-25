@@ -5,7 +5,6 @@ import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 import javax.transaction.Transactional;
@@ -31,13 +30,13 @@ import com.api.maromba.user.util.JwtUtil;
 
 @Service
 public class UserService {
-	
+
 	@Autowired
 	private UserRepository userRepository;
-	
+
 	@Autowired
 	private Encrypt criptor;
-	
+
 	@Autowired
 	private CompanyProxy companyProxy;
 
@@ -45,7 +44,7 @@ public class UserService {
 	private JwtUtil jwtUtil;
 
 	private Logger logger = LoggerFactory.getLogger(UserController.class);
-	
+
 	@Transactional
 	public UserDTO save(UserDTO userDTO) throws NoSuchAlgorithmException, UnsupportedEncodingException {
 		if (userRepository.existsByEmail(userDTO.getEmail())) {
@@ -55,29 +54,25 @@ public class UserService {
 		userModel.setPassword(criptor.encryptPassword(userModel.getEmail(), userModel.getPassword()));
 		return convertModelToDTO(userRepository.save(userModel));
 	}
-	
+
 	@Transactional
 	public UserDTO update(UUID id, UserDTO userDTO) throws NoSuchAlgorithmException, UnsupportedEncodingException {
-		Optional<UserModel> userModelOptional = userRepository.findById(id);
-		if (!userModelOptional.isPresent()) {
-			throw new ResponseNotFoundException("No users found.");
-		}
+		UserModel userModel = userRepository.findById(id)
+				.orElseThrow(() -> new ResponseNotFoundException("No users found."));
 
-		UUID idemp = userModelOptional.get().getId();
-		var userModel = convertDTOToModel(userDTO);
+		UUID idemp = userModel.getId();
+		userModel = convertDTOToModel(userDTO);
 		userModel.setId(idemp);
 		return convertModelToDTO(userRepository.save(userModel));
 	}
-	
+
 	public UserDTO login(String email, String password) throws NoSuchAlgorithmException, UnsupportedEncodingException {
 		password = criptor.encryptPassword(email, password);
-		Optional<UserModel> userModelOptional = userRepository.findByEmailAndPassword(email, password);
-		if (!userModelOptional.isPresent()) {
-			throw new ResponseNotFoundException("User or password invalid.");
-		}
+		UserModel userModel = userRepository.findByEmailAndPassword(email, password)
+				.orElseThrow(() -> new ResponseNotFoundException("User or password invalid."));
 
-		UserDTO userDTO = convertModelToDTO(userModelOptional.get());
-		userDTO.setToken(jwtUtil.generateToken(userModelOptional.get(), "/user-service/login"));
+		UserDTO userDTO = convertModelToDTO(userModel);
+		userDTO.setToken(jwtUtil.generateToken(userModel, "/user-service/login"));
 
 		try {
 			var response = companyProxy.getById(userDTO.getCompanyId());
@@ -86,19 +81,16 @@ public class UserService {
 		} catch (Exception e) {
 			logger.error("Error getting company name.");
 		}
-		
+
 		return userDTO;
 	}
 
 	@Transactional
 	public void delete(UUID id) throws NoSuchAlgorithmException, UnsupportedEncodingException {
-		
-		Optional<UserModel> userModelOptional = userRepository.findById(id);
-		if (!userModelOptional.isPresent()) {
-			throw new ResponseNotFoundException("No user found.");
-		}
-		
-		userRepository.delete(userModelOptional.get());
+		UserModel userModel = userRepository.findById(id)
+				.orElseThrow(() -> new ResponseNotFoundException("No users found."));
+
+		userRepository.delete(userModel);
 	}
 
 	public Page<UserDTO> getAll(Pageable pageable) {
@@ -106,29 +98,31 @@ public class UserService {
 		if (userPages.isEmpty()) {
 			throw new ResponseNotFoundException("No users found.");
 		}
+
 		List<UserDTO> usersDTO = new ArrayList<UserDTO>();
 		for (UserModel userModel : userPages) {
 			UserDTO userDTO = convertModelToDTO(userModel);
 			usersDTO.add(userDTO);
 		}
+
 		return new PageImpl<UserDTO>(usersDTO);
 	}
-	
+
 	public Page<UserDTO> getByNameLike(Pageable pageable, String name) {
 		Page<UserModel> userModels = userRepository.findByNameLike(pageable, name);
 		if (userModels == null || userModels.isEmpty()) {
 			throw new ResponseNotFoundException("No users found.");
 		}
-		
+
 		List<UserDTO> usersDTO = new ArrayList<UserDTO>();
 		for (UserModel userModel : userModels) {
 			UserDTO userDTO = convertModelToDTO(userModel);
 			usersDTO.add(userDTO);
 		}
-		
+
 		return new PageImpl<UserDTO>(usersDTO);
 	}
-	
+
 	private UserModel convertDTOToModel(UserDTO userDTO) {
 		var userModel = new UserModel();
 		BeanUtils.copyProperties(userDTO, userModel);
