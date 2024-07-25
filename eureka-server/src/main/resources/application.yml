@@ -3,6 +3,8 @@ server:
 spring:
   application:
     name: eureka-server
+  cache:
+    type: caffeine
 eureka:
   client:
     register-with-eureka: false

@@ -8,7 +8,6 @@ eureka:
   client:
     service-url:
       defaultZone: http://localhost:8761/eureka
-rabbit_url: amqp://guest:guest@rabbit-mq:5672
 resilience4j:
   retry:
     instances:
@@ -19,12 +18,10 @@ resilience4j:
 spring:
   application:
     name: workout-sheet-service
-  config:
-    import: optional:configserver:http://localhost:8888/
-  cloud:
-    config:
-      profile: dev
+  cache:
+    type: caffeine
   jpa:
+    open-in-view: true
     database: POSTGRESQL
     show-sql: true
     hibernate:
@@ -45,6 +42,6 @@ spring:
   sleuth:
     sampler:
       probability: 1.0
-springdoc:
-  api-docs:
-    path: /workout-sheet-service/v3/api-docs
+  zipkin:
+    sender:
+      type: rabbit
