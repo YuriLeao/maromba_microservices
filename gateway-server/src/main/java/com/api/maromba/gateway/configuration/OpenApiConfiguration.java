@@ -20,9 +20,9 @@ public class OpenApiConfiguration {
 
         definition.stream()
                 .filter(routeDefinition -> routeDefinition.getId()
-                        .matches(".*-SERVICE"))
+                        .matches(".*-service"))
                 .forEach(routeDefinition -> {
-                            String name = routeDefinition.getId().replace("ReactiveCompositeDiscoveryClient_", "").toLowerCase();
+                            String name = routeDefinition.getId();
                             config.addGroup(name);
                             GroupedOpenApi.builder()
                                     .pathsToMatch("/" + name + "/**")

@@ -1,7 +1,5 @@
 package com.api.maromba.gateway.exception;
 
-
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
