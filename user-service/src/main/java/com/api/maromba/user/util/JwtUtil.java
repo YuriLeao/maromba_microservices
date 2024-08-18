@@ -11,6 +11,7 @@ import com.api.maromba.user.models.UserModel;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.interfaces.DecodedJWT;
 
 @Component
 public class JwtUtil {
@@ -26,19 +27,19 @@ public class JwtUtil {
 				.withSubject(user.getId().toString())
 				.withIssuer(issuer)
 				.withClaim("email", user.getEmail())
-				.withClaim("authorizations", user.getAuthorizations())
+				.withClaim("authorization", user.getAuthorization().getId())
 				.withIssuedAt(new Date(System.currentTimeMillis()))
 				.withExpiresAt(new Date(System.currentTimeMillis() + 5 * 60 * 1000))
 				.sign(algorithm);
 		return token;
 	}
 
-	public void validateToken(final String token, String issuer) {
+	public DecodedJWT validateToken(final String token, String issuer) {
 		try {
 		    Algorithm algorithm = Algorithm.HMAC256(jwtSecret.getBytes());
 		    JWTVerifier verifier = JWT.require(algorithm).withIssuer(issuer)
 		        .build();
-		    verifier.verify(token);
+		    return verifier.verify(token);
 		} catch (Exception exception){
 		    logger.error("Error validating token: ", exception.getMessage());
 		    throw exception;

@@ -2,6 +2,7 @@ package com.api.maromba.user.controllers;
 
 import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
+import java.util.List;
 import java.util.UUID;
 
 import javax.validation.Valid;
@@ -13,16 +14,18 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.api.maromba.user.dtos.AuthorizationDTO;
+import com.api.maromba.user.dtos.GenderDTO;
 import com.api.maromba.user.dtos.UserDTO;
 import com.api.maromba.user.services.UserService;
 
@@ -34,7 +37,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 
 @Tag(name = "User Service API")
 @RestController
-@CrossOrigin(origins = "*", maxAge = 3600)
 @RequestMapping("/user-service")
 public class UserController {
 
@@ -75,6 +77,18 @@ public class UserController {
 	}
 
 	@SecurityRequirement(name = "Bearer Authentication")
+	@Operation(summary = "Get a list of users by id company and authorization.")
+	@GetMapping("getByCompanyIdAuthorization/{companyId}")
+	@Retry(name = "default")
+	@CircuitBreaker(name = "default")
+	public ResponseEntity<Page<UserDTO>> getByCompanyIdAuthorization(@RequestHeader("Authorization") String authorization,
+			@PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.ASC) Pageable pageable,
+			@PathVariable(value = "companyId") UUID companyId) {
+		Page<UserDTO> usersDTOPage = userService.getByCompanyIdAndInAuthorization(pageable, companyId, authorization);
+		return ResponseEntity.status(HttpStatus.OK).body(usersDTOPage);
+	}
+
+	@SecurityRequirement(name = "Bearer Authentication")
 	@Operation(summary = "Get a list of users with part of their name.")
 	@GetMapping("getByNameLike/{name}")
 	@Retry(name = "default")
@@ -106,6 +120,26 @@ public class UserController {
 			throws NoSuchAlgorithmException, UnsupportedEncodingException {
 		userDTO = userService.update(id, userDTO);
 		return ResponseEntity.status(HttpStatus.CREATED).body(userDTO);
+	}
+	
+	@SecurityRequirement(name = "Bearer Authentication")
+	@Operation(summary = "Gets all genders.")
+	@GetMapping("getAllGenders")
+	@Retry(name = "default")
+	@CircuitBreaker(name = "default")
+	public ResponseEntity<List<GenderDTO>> getAllGenders() {
+		List<GenderDTO> genderDTOPage = userService.getAllGenders();
+		return ResponseEntity.status(HttpStatus.OK).body(genderDTOPage);
+	}
+	
+	@SecurityRequirement(name = "Bearer Authentication")
+	@Operation(summary = "Gets all genders.")
+	@GetMapping("getAllAuthorizations")
+	@Retry(name = "default")
+	@CircuitBreaker(name = "default")
+	public ResponseEntity<List<AuthorizationDTO>> getAllAuthorizations() {
+		List<AuthorizationDTO> genderDTOPage = userService.getAllAuthorizations();
+		return ResponseEntity.status(HttpStatus.OK).body(genderDTOPage);
 	}
 
 }

@@ -2,7 +2,6 @@ package com.api.maromba.user.models;
 
 import java.io.Serializable;
 import java.time.LocalDate;
-import java.util.List;
 import java.util.UUID;
 
 import javax.persistence.Column;
@@ -11,6 +10,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import org.springframework.format.annotation.DateTimeFormat;
@@ -42,22 +42,21 @@ public class UserModel implements Serializable {
 	private String name;
 	@Column(nullable = false, unique = true)
 	private String cpf;
-	@Column(nullable = false)
-	private String gender;
+	@OneToOne
+	private GenderModel gender;
 	@Column(nullable = false)
 	private String phoneNumber;
 	@Column(nullable = false)
 	private Double weight;
-	@Column(nullable = false)
-	@ElementCollection
-	private List<String> authorizations;
+	@OneToOne
+	private AuthorizationModel authorization;
 	@Column(nullable = false)
 	private UUID companyId;
 	@Column(nullable = false)
 	@JsonSerialize(using = LocalDateSerializer.class)
 	@JsonDeserialize(using = LocalDateDeserializer.class)
 	@DateTimeFormat(iso = ISO.DATE)
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
 	private LocalDate birthDate;
 
 }
