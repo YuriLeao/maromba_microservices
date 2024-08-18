@@ -5,8 +5,9 @@ import java.util.List;
 import java.util.function.Predicate;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
+import org.springframework.cloud.gateway.filter.GlobalFilter;
+import org.springframework.core.annotation.Order;
 import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpRequest;
@@ -22,7 +23,8 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Component
-public class JwtAuthenticationFilter implements GatewayFilter {
+@Order(1)
+public class JwtAuthenticationFilter implements GlobalFilter {
 
 	@Autowired
 	private JwtUtil jwtUtil;
@@ -82,20 +84,21 @@ public class JwtAuthenticationFilter implements GatewayFilter {
 
 	private void roleFilter(ServerHttpRequest request, DecodedJWT decodedJWT) throws RoleException {
 		if (!(request.getURI().getPath().contains("/user-service/")
-				|| request.getURI().getPath().contains("/company-service/getById")
 				|| request.getURI().getPath().contains("/company-service/update")
-				|| request.getURI().getPath().contains("/company-service/delete"))
-				&& decodedJWT.getClaim("authorizations").asList(String.class).contains("empresa")) {
+				|| request.getURI().getPath().contains("/company-service/getById")
+				|| request.getURI().getPath().contains("/exercise-service/")
+				|| request.getURI().getPath().contains("/workout-service/")
+				|| request.getURI().getPath().contains("/workout-sheet-service/"))
+				&& decodedJWT.getClaim("authorization").asString().contains("E")) {
 			throw new RoleException("Service don't authorizate for this user.");
 		} else if (!(request.getURI().getPath().contains("/user-service/")
 				|| request.getURI().getPath().contains("/company-service/getById")
 				|| request.getURI().getPath().contains("/exercise-service/")
 				|| request.getURI().getPath().contains("/workout-sheet-service/")
 				|| request.getURI().getPath().contains("/workout-service/"))
-				&& decodedJWT.getClaim("authorizations").asList(String.class).contains("professor")) {
+				&& decodedJWT.getClaim("authorization").asString().contains("P")) {
 			throw new RoleException("Service don't authorizate for this user.");
 		} else if (!(request.getURI().getPath().contains("/user-service/update")
-				|| request.getURI().getPath().contains("/user-service/delete")
 				|| request.getURI().getPath().contains("/user-service/login")
 				|| request.getURI().getPath().contains("/company-service/getById")
 				|| request.getURI().getPath().contains("/exercise-service/getById")
@@ -104,9 +107,9 @@ public class JwtAuthenticationFilter implements GatewayFilter {
 				|| request.getURI().getPath().contains("/workout-sheet-service/getAll")
 				|| request.getURI().getPath().contains("/workout-service/getById")
 				|| request.getURI().getPath().contains("/workout-service/getAll"))
-				&& decodedJWT.getClaim("authorizations").asList(String.class).contains("aluno")) {
+				&& decodedJWT.getClaim("authorization").asString().contains("AL")) {
 			throw new RoleException("Service don't authorizate for this user.");
-		} else if (!decodedJWT.getClaim("authorizations").asList(String.class).contains("admin")) {
+		} else if (!decodedJWT.getClaim("authorization").asString().contains("A")) {
 			throw new RoleException("Service don't authorizate for this user.");
 		}
 	}
