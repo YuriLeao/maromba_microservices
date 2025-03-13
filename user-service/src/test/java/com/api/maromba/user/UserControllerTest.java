@@ -194,6 +194,10 @@ public class UserControllerTest {
 		when(userRepository.findByCompanyIdAndInAuthorization(
 				PageRequest.of(0, 10).withSort(Sort.by(Sort.Direction.ASC, "id")), userDTO.getId(), authorizations))
 				.thenReturn(new PageImpl<UserModel>(list));
+		
+		when(userRepository.findAll(
+				PageRequest.of(0, 10).withSort(Sort.by(Sort.Direction.ASC, "id"))))
+				.thenReturn(new PageImpl<UserModel>(list));
 
 		var token = jwtUtil.generateToken(user, "/user-service/login");
 

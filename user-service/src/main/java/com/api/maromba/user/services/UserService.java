@@ -5,6 +5,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import javax.transaction.Transactional;
@@ -124,8 +125,16 @@ public class UserService {
 	public Page<UserDTO> getByCompanyIdAndInAuthorization(Pageable pageable, UUID companyId, String token) {
 		List<AuthorizationModel> authorizations = authorizationValidation(token);
 
-		Page<UserModel> userModels = userRepository.findByCompanyIdAndInAuthorization(pageable, companyId,
-				authorizations);
+		Optional<AuthorizationModel> adminOptional = authorizations.stream().filter(auth -> "A".equals(auth.getId())).findFirst();
+		Page<UserModel> userModels;
+		
+		if(adminOptional.isPresent()) {
+			userModels = userRepository.findAll(pageable);
+		} else {
+			userModels = userRepository.findByCompanyIdAndInAuthorization(pageable, companyId,
+					authorizations);
+		}
+
 		if (userModels == null || userModels.isEmpty()) {
 			throw new ResponseNotFoundException("No users found.");
 		}
