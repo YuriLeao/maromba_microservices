@@ -132,6 +132,8 @@ services:
     build: 
       context: .
       dockerfile: eureka-server/Dockerfile
+    environment:
+      JAVA_TOOL_OPTIONS: "-XX:+UnlockExperimentalVMOptions -XX:-UseContainerSupport"
     ports:
       - 8761:8761
     networks:
@@ -157,6 +159,7 @@ services:
       SPRING.DATASOURCE.DRIVECLASSNAME: org.postgresql.Driver
       API.SERVER.URL: http://localhost:8765/
       API.SERVER.DESCRIPTION: dev
+      JAVA_TOOL_OPTIONS: "-XX:+UnlockExperimentalVMOptions -XX:-UseContainerSupport"
     depends_on:
       - user-db
       - rabbit-mq
@@ -184,6 +187,7 @@ services:
       SPRING.DATASOURCE.DRIVECLASSNAME: org.postgresql.Driver
       API.SERVER.URL: http://localhost:8765/
       API.SERVER.DESCRIPTION: dev
+      JAVA_TOOL_OPTIONS: "-XX:+UnlockExperimentalVMOptions -XX:-UseContainerSupport"
     depends_on:
       - company-db
       - rabbit-mq
@@ -211,6 +215,7 @@ services:
       SPRING.DATASOURCE.DRIVECLASSNAME: org.postgresql.Driver
       API.SERVER.URL: http://localhost:8765/
       API.SERVER.DESCRIPTION: dev
+      JAVA_TOOL_OPTIONS: "-XX:+UnlockExperimentalVMOptions -XX:-UseContainerSupport"
     depends_on:
       - workout-db
       - rabbit-mq
@@ -238,6 +243,7 @@ services:
       SPRING.DATASOURCE.DRIVECLASSNAME: org.postgresql.Driver
       API.SERVER.URL: http://localhost:8765/
       API.SERVER.DESCRIPTION: dev
+      JAVA_TOOL_OPTIONS: "-XX:+UnlockExperimentalVMOptions -XX:-UseContainerSupport"
     depends_on:
       - exercise-db
       - rabbit-mq
@@ -265,6 +271,7 @@ services:
       SPRING.DATASOURCE.DRIVECLASSNAME: org.postgresql.Driver
       API.SERVER.URL: http://localhost:8765/
       API.SERVER.DESCRIPTION: dev
+      JAVA_TOOL_OPTIONS: "-XX:+UnlockExperimentalVMOptions -XX:-UseContainerSupport"
     depends_on:
       - workout-sheet-db
       - rabbit-mq
@@ -283,6 +290,7 @@ services:
       RABBIT_URI: amqp://guest:guest@rabbit-mq:5672
       SPRING_RABBITMQ_HOST: rabbit-mq
       SPRING_ZIPKIN_SENDER_TYPE: rabbit
+      JAVA_TOOL_OPTIONS: "-XX:+UnlockExperimentalVMOptions -XX:-UseContainerSupport"
     ports:
       - 8765:8765
     depends_on:
