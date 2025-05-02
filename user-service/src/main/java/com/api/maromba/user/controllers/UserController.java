@@ -2,7 +2,6 @@ package com.api.maromba.user.controllers;
 
 import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
-import java.util.List;
 import java.util.UUID;
 
 import javax.validation.Valid;
@@ -24,8 +23,6 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.api.maromba.user.dtos.AuthorizationDTO;
-import com.api.maromba.user.dtos.GenderDTO;
 import com.api.maromba.user.dtos.UserDTO;
 import com.api.maromba.user.services.UserService;
 
@@ -120,26 +117,6 @@ public class UserController {
 			throws NoSuchAlgorithmException, UnsupportedEncodingException {
 		userDTO = userService.update(id, userDTO);
 		return ResponseEntity.status(HttpStatus.CREATED).body(userDTO);
-	}
-	
-	@SecurityRequirement(name = "Bearer Authentication")
-	@Operation(summary = "Gets all genders.")
-	@GetMapping("getAllGenders")
-	@Retry(name = "default")
-	@CircuitBreaker(name = "default")
-	public ResponseEntity<List<GenderDTO>> getAllGenders() {
-		List<GenderDTO> genderDTOPage = userService.getAllGenders();
-		return ResponseEntity.status(HttpStatus.OK).body(genderDTOPage);
-	}
-	
-	@SecurityRequirement(name = "Bearer Authentication")
-	@Operation(summary = "Gets all genders.")
-	@GetMapping("getAllAuthorizations")
-	@Retry(name = "default")
-	@CircuitBreaker(name = "default")
-	public ResponseEntity<List<AuthorizationDTO>> getAllAuthorizations() {
-		List<AuthorizationDTO> genderDTOPage = userService.getAllAuthorizations();
-		return ResponseEntity.status(HttpStatus.OK).body(genderDTOPage);
 	}
 
 }

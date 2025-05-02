@@ -19,7 +19,8 @@ public class OpenApiConfiguration {
         var definition = locator.getRouteDefinitions().collectList().block();
 
         definition.stream()
-                .filter(routeDefinition -> routeDefinition.getId()
+                .filter(
+                		routeDefinition -> routeDefinition.getId()
                         .matches(".*-service"))
                 .forEach(routeDefinition -> {
                             String name = routeDefinition.getId();

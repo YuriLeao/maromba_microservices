@@ -14,9 +14,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.api.maromba.exercise.dtos.ExerciseDTO;
+import com.api.maromba.exercise.dtos.MuscleGroupDTO;
 import com.api.maromba.exercise.exceptions.ResponseConflictException;
 import com.api.maromba.exercise.exceptions.ResponseNotFoundException;
 import com.api.maromba.exercise.models.ExerciseModel;
+import com.api.maromba.exercise.models.MuscleGroupModel;
 import com.api.maromba.exercise.repositories.ExerciseRepository;
 
 @Service
@@ -77,13 +79,27 @@ public class ExerciseService {
 	private ExerciseModel convertDTOToModel(ExerciseDTO exerciseDTO) {
 		var exerciseModel = new ExerciseModel();
 		BeanUtils.copyProperties(exerciseDTO, exerciseModel);
+		exerciseModel.setMuscleGroup(convertMuscleGroupDTOToModel(exerciseDTO.getMuscleGroup()));
 		return exerciseModel;
 	}
 
 	private ExerciseDTO convertModelToDTO(ExerciseModel exercise) {
 		ExerciseDTO exerciseDTO = new ExerciseDTO();
 		BeanUtils.copyProperties(exercise, exerciseDTO);
+		exerciseDTO.setMuscleGroup(convertMuscleGroupModelToDTO(exercise.getMuscleGroup()));
 		return exerciseDTO;
+	}
+	
+	private MuscleGroupDTO convertMuscleGroupModelToDTO(MuscleGroupModel muscleGroup) {
+		MuscleGroupDTO muscleGroupDTO = new MuscleGroupDTO();
+		BeanUtils.copyProperties(muscleGroup, muscleGroupDTO);
+		return muscleGroupDTO;
+	}
+	
+	private MuscleGroupModel convertMuscleGroupDTOToModel(MuscleGroupDTO muscleGroupDTO) {
+		MuscleGroupModel muscleGroupModel = new MuscleGroupModel();
+		BeanUtils.copyProperties(muscleGroupDTO, muscleGroupModel);
+		return muscleGroupModel;
 	}
 
 }

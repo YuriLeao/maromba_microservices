@@ -23,7 +23,9 @@ import org.springframework.data.domain.Sort;
 import org.springframework.test.web.servlet.MockMvc;
 
 import com.api.maromba.exercise.dtos.ExerciseDTO;
+import com.api.maromba.exercise.dtos.MuscleGroupDTO;
 import com.api.maromba.exercise.models.ExerciseModel;
+import com.api.maromba.exercise.models.MuscleGroupModel;
 import com.api.maromba.exercise.repositories.ExerciseRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -43,9 +45,12 @@ public class ExerciseControllerTest {
 	@Test
 	public void save() throws Exception {
 		var exerciseDTO = new ExerciseDTO(null, "teste",
-				"video", "peito");
+				"video", new MuscleGroupDTO("P", "Peito"));
 		var exercise = new ExerciseModel();
 		BeanUtils.copyProperties(exerciseDTO, exercise);
+		exercise.setMuscleGroup(new MuscleGroupModel());
+		BeanUtils.copyProperties(exerciseDTO.getMuscleGroup(), exercise.getMuscleGroup());
+		
 		when(exerciseRepository.existsByName("teste")).thenReturn(false);
 		when(exerciseRepository.save(exercise)).thenReturn(exercise);
 
@@ -56,9 +61,12 @@ public class ExerciseControllerTest {
 	@Test
 	public void update() throws Exception {
 		var exerciseDTO = new ExerciseDTO(UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a"), "teste",
-				"video", "peito");
+				"video", new MuscleGroupDTO("P", "Peito"));
 		var exercise = new ExerciseModel();
 		BeanUtils.copyProperties(exerciseDTO, exercise);
+		exercise.setMuscleGroup(new MuscleGroupModel());
+		BeanUtils.copyProperties(exerciseDTO.getMuscleGroup(), exercise.getMuscleGroup());
+		
 		when(exerciseRepository.findById(UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a")))
 				.thenReturn(Optional.of(exercise));
 		when(exerciseRepository.save(exercise)).thenReturn(exercise);
@@ -71,11 +79,14 @@ public class ExerciseControllerTest {
 	@Test
 	public void getAll() throws Exception {
 		var exerciseDTO = new ExerciseDTO(UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a"), "teste",
-				"video", "peito");
+				"video", new MuscleGroupDTO("P", "Peito"));
 		var exercise = new ExerciseModel();
 		BeanUtils.copyProperties(exerciseDTO, exercise);
+		exercise.setMuscleGroup(new MuscleGroupModel());
+		BeanUtils.copyProperties(exerciseDTO.getMuscleGroup(), exercise.getMuscleGroup());
 		List<ExerciseModel> list = new ArrayList<ExerciseModel>();
 		list.add(exercise);
+		
 		when(exerciseRepository.findAll(PageRequest.of(0, 10).withSort(Sort.by(Sort.Direction.ASC, "id"))))
 				.thenReturn(new PageImpl<ExerciseModel>(list));
 
@@ -85,9 +96,12 @@ public class ExerciseControllerTest {
 	@Test
 	public void getById() throws Exception {
 		var exerciseDTO = new ExerciseDTO(UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a"), "teste",
-				"video", "peito");
+				"video", new MuscleGroupDTO("P", "Peito"));
 		var exercise = new ExerciseModel();
 		BeanUtils.copyProperties(exerciseDTO, exercise);
+		exercise.setMuscleGroup(new MuscleGroupModel());
+		BeanUtils.copyProperties(exerciseDTO.getMuscleGroup(), exercise.getMuscleGroup());
+		
 		when(exerciseRepository.findById(UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a")))
 				.thenReturn(Optional.of(exercise));
 
@@ -98,7 +112,7 @@ public class ExerciseControllerTest {
 	@Test
 	public void delete() throws Exception {
 		var exerciseDTO = new ExerciseDTO(UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a"), "teste",
-				"video", "peito");
+				"video", new MuscleGroupDTO("P", "Peito"));
 		var exercise = new ExerciseModel();
 		BeanUtils.copyProperties(exerciseDTO, exercise);
 		when(exerciseRepository.findById(UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a")))

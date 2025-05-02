@@ -33,8 +33,9 @@ public class JwtAuthenticationFilter implements GlobalFilter {
 	public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
 		ServerHttpRequest request = (ServerHttpRequest) exchange.getRequest();
 
-		final List<String> apiEndpoints = List.of("/login", "/user-service/v3/api-docs",
-				"/company-service/v3/api-docs", "/exercise-service/v3/api-docs", "/workout-sheet-service/v3/api-docs",
+		final List<String> apiEndpoints = List.of("/login", "/v3/api-docs", "/user-service/v3/api-docs", "/gender-service/v3/api-docs",
+				"/authorization-service/v3/api-docs", "/company-service/v3/api-docs", "/exercise-service/v3/api-docs",
+				"/muscleGroup-service/v3/api-docs", "/workout-sheet-service/v3/api-docs",
 				"/workout-service/v3/api-docs");
 
 		Predicate<ServerHttpRequest> isApiSecured = r -> apiEndpoints.stream()
@@ -84,25 +85,33 @@ public class JwtAuthenticationFilter implements GlobalFilter {
 
 	private void roleFilter(ServerHttpRequest request, DecodedJWT decodedJWT) throws RoleException {
 		if (!(request.getURI().getPath().contains("/user-service/")
+				|| request.getURI().getPath().contains("/gender-service/")
+				|| request.getURI().getPath().contains("/authorization-service/")
 				|| request.getURI().getPath().contains("/company-service/update")
 				|| request.getURI().getPath().contains("/company-service/getById")
 				|| request.getURI().getPath().contains("/exercise-service/")
+				|| request.getURI().getPath().contains("/muscleGroup-service/")
 				|| request.getURI().getPath().contains("/workout-service/")
 				|| request.getURI().getPath().contains("/workout-sheet-service/"))
 				&& decodedJWT.getClaim("authorization").asString().contains("E")) {
 			throw new RoleException("Service don't authorizate for this user.");
 		} else if (!(request.getURI().getPath().contains("/user-service/")
+				|| request.getURI().getPath().contains("/gender-service/")
+				|| request.getURI().getPath().contains("/authorization-service/")
 				|| request.getURI().getPath().contains("/company-service/getById")
 				|| request.getURI().getPath().contains("/exercise-service/")
+				|| request.getURI().getPath().contains("/muscleGroup-service/")
 				|| request.getURI().getPath().contains("/workout-sheet-service/")
 				|| request.getURI().getPath().contains("/workout-service/"))
 				&& decodedJWT.getClaim("authorization").asString().contains("P")) {
 			throw new RoleException("Service don't authorizate for this user.");
 		} else if (!(request.getURI().getPath().contains("/user-service/update")
 				|| request.getURI().getPath().contains("/user-service/login")
+				|| request.getURI().getPath().contains("/gender-service/")
 				|| request.getURI().getPath().contains("/company-service/getById")
 				|| request.getURI().getPath().contains("/exercise-service/getById")
 				|| request.getURI().getPath().contains("/exercise-service/getAll")
+				|| request.getURI().getPath().contains("/muscleGroup-service/")
 				|| request.getURI().getPath().contains("/workout-sheet-service/getById")
 				|| request.getURI().getPath().contains("/workout-sheet-service/getAll")
 				|| request.getURI().getPath().contains("/workout-service/getById")

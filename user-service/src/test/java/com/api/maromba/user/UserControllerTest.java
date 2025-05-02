@@ -30,8 +30,6 @@ import com.api.maromba.user.dtos.UserDTO;
 import com.api.maromba.user.models.AuthorizationModel;
 import com.api.maromba.user.models.GenderModel;
 import com.api.maromba.user.models.UserModel;
-import com.api.maromba.user.repositories.AuthorizationRepository;
-import com.api.maromba.user.repositories.GenderRepository;
 import com.api.maromba.user.repositories.UserRepository;
 import com.api.maromba.user.util.Encrypt;
 import com.api.maromba.user.util.JwtUtil;
@@ -49,12 +47,6 @@ public class UserControllerTest {
 
 	@MockBean
 	private UserRepository userRepository;
-
-	@MockBean
-	private GenderRepository genderRepository;
-
-	@MockBean
-	private AuthorizationRepository authorizationRepository;
 
 	@Autowired
 	private Encrypt encrypt;
@@ -249,35 +241,6 @@ public class UserControllerTest {
 
 		mockMvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 				.delete("/user-service/delete/6abc9768-d3c7-47e0-845e-241a084ab34a").contentType("application/json"))
-				.andExpect(status().isOk());
-	}
-
-	@Test
-	public void getAllGenders() throws Exception {
-		var genderDTO = new GenderDTO("M", "Monstro");
-
-		var gender = new GenderModel();
-		BeanUtils.copyProperties(genderDTO, gender);
-		List<GenderModel> list = new ArrayList<GenderModel>();
-		list.add(gender);
-
-		when(genderRepository.findAll()).thenReturn(list);
-
-		mockMvc.perform(get("/user-service/getAllGenders").contentType("application/json")).andExpect(status().isOk());
-	}
-
-	@Test
-	public void getAllAuthorizations() throws Exception {
-		var authorizationDTO = new AuthorizationDTO("AL", "Aluno");
-
-		var authorization = new AuthorizationModel();
-		BeanUtils.copyProperties(authorizationDTO, authorization);
-		List<AuthorizationModel> list = new ArrayList<AuthorizationModel>();
-		list.add(authorization);
-
-		when(authorizationRepository.findAll()).thenReturn(list);
-
-		mockMvc.perform(get("/user-service/getAllAuthorizations").contentType("application/json"))
 				.andExpect(status().isOk());
 	}
 

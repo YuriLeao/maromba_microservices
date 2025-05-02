@@ -1,9 +1,6 @@
 package com.api.maromba.exercise.dtos;
 
-import java.util.UUID;
-
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -12,14 +9,10 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ExerciseDTO {
+public class MuscleGroupDTO {
 
-	private UUID id;
+	private String id;
 	@NotBlank
-	private String name;
-	@NotBlank
-	private String gif;
-	@NotNull
-	private MuscleGroupDTO muscleGroup;
+	private String description;
 	
 }

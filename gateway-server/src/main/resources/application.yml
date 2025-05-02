@@ -18,29 +18,57 @@ spring:
       - id: user-service
         uri: lb://user-service
         predicates:
-        - Path=/user-service/**
+            - Path=/user-service/**
+        filters:
+            - RewritePath=/user-service/v3/api-docs, /v3/api-docs
+      - id: gender-service
+        uri: lb://user-service
+        predicates:
+            - Path=/gender-service/**
+        filters:
+            - RewritePath=/gender-service/v3/api-docs, /v3/api-docs
+      - id: authorization-service
+        uri: lb://user-service
+        predicates:
+            - Path=/authorization-service/**
+        filters:
+            - RewritePath=/authorization-service/v3/api-docs, /v3/api-docs
       - id: company-service
         uri: lb://company-service
         predicates:
-        - Path=/company-service/**
+           - Path=/company-service/**
+        filters:
+           - RewritePath=/company-service/v3/api-docs, /v3/api-docs
       - id: exercise-service
         uri: lb://exercise-service
         predicates:
-        - Path=/exercise-service/**
+           - Path=/exercise-service/**
+        filters:
+           - RewritePath=/exercise-service/v3/api-docs, /v3/api-docs
+      - id: muscleGroup-service
+        uri: lb://exercise-service
+        predicates:
+           - Path=/muscleGroup-service/**
+        filters:
+           - RewritePath=/muscleGroup-service/v3/api-docs, /v3/api-docs
       - id: workout-service
         uri: lb://workout-service
         predicates:
-        - Path=/workout-service/**
+           - Path=/workout-service/**
+        filters:
+           - RewritePath=/workout-service/v3/api-docs, /v3/api-docs
       - id: workout-sheet-service
         uri: lb://workout-sheet-service
         predicates:
-        - Path=/workout-sheet-service/**
+           - Path=/workout-sheet-service/**
+        filters:
+           - RewritePath=/workout-sheet-service/v3/api-docs, /v3/api-docs
       - id: openapi
         uri: lb://gateway-server
         predicates:
-        - Path=/v3/api-docs/**
+           - Path=/v3/api-docs/**
         filters:
-        - RewritePath=/v3/api-docs/(?<path>.*), /$\{path}/v3/api-docs
+           - RewritePath=/v3/api-docs/(?<path>.*), /$\{path}/v3/api-docs
   sleuth:
     sampler:
       probability: 1.0

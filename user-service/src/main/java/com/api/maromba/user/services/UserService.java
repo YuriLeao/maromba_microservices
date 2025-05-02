@@ -3,7 +3,6 @@ package com.api.maromba.user.services;
 import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -19,7 +18,6 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import com.api.maromba.user.controllers.UserController;
 import com.api.maromba.user.dtos.AuthorizationDTO;
 import com.api.maromba.user.dtos.GenderDTO;
 import com.api.maromba.user.dtos.UserDTO;
@@ -29,8 +27,6 @@ import com.api.maromba.user.models.AuthorizationModel;
 import com.api.maromba.user.models.GenderModel;
 import com.api.maromba.user.models.UserModel;
 import com.api.maromba.user.proxy.CompanyProxy;
-import com.api.maromba.user.repositories.AuthorizationRepository;
-import com.api.maromba.user.repositories.GenderRepository;
 import com.api.maromba.user.repositories.UserRepository;
 import com.api.maromba.user.util.Encrypt;
 import com.api.maromba.user.util.JwtUtil;
@@ -41,12 +37,6 @@ public class UserService {
 
 	@Autowired
 	private UserRepository userRepository;
-	
-	@Autowired
-	private GenderRepository genderRepository;
-	
-	@Autowired
-	private AuthorizationRepository authorizationRepository;
 
 	@Autowired
 	private Encrypt criptor;
@@ -57,7 +47,7 @@ public class UserService {
 	@Autowired
 	private JwtUtil jwtUtil;
 
-	private Logger logger = LoggerFactory.getLogger(UserController.class);
+	private Logger logger = LoggerFactory.getLogger(UserService.class);
 
 	@Transactional
 	public UserDTO save(UserDTO userDTO) throws NoSuchAlgorithmException, UnsupportedEncodingException {
@@ -208,36 +198,6 @@ public class UserService {
 		}
 
 		return new PageImpl<UserDTO>(usersDTO);
-	}
-	
-	public List<GenderDTO> getAllGenders() {
-		List<GenderModel> genderModels = genderRepository.findAll();
-		if (genderModels == null || genderModels.isEmpty()) {
-			throw new ResponseNotFoundException("No genders found.");
-		}
-
-		List<GenderDTO> gendersDTO = new ArrayList<GenderDTO>();
-		for (GenderModel genderrModel : genderModels) {
-			GenderDTO genderDTO = convertGenderModelToDTO(genderrModel);
-			gendersDTO.add(genderDTO);
-		}
-
-		return gendersDTO;
-	}
-	
-	public List<AuthorizationDTO> getAllAuthorizations() {
-		List<AuthorizationModel> authorizationsModel = authorizationRepository.findAll();
-		if (authorizationsModel == null || authorizationsModel.isEmpty()) {
-			throw new ResponseNotFoundException("No authorizations found.");
-		}
-
-		List<AuthorizationDTO> authorizationsDTO = new ArrayList<AuthorizationDTO>();
-		for (AuthorizationModel authorizationModel : authorizationsModel) {
-			AuthorizationDTO authorizationDTO = convertAuthorizationModelToDTO(authorizationModel);
-			authorizationsDTO.add(authorizationDTO);
-		}
-
-		return authorizationsDTO;
 	}
 
 	private GenderModel convertGenderDTOToModel(GenderDTO genderDTO) {

@@ -8,7 +8,9 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+
 
 import lombok.Data;
 
@@ -26,7 +28,7 @@ public class ExerciseModel implements Serializable {
 	private String name;
 	@Column(nullable = false)
 	private String gif;
-	@Column(nullable = false)
-	private String muscleGroup;
+	@ManyToOne
+	private MuscleGroupModel muscleGroup;
 
 }
