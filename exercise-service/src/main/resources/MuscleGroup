@@ -1,30 +1,28 @@
 INSERT INTO public.tb_muscle_group(id,
 	 description)
-	VALUES (uuid_generate_v4(), 'Peito');
+	VALUES ('P', 'Peito');
 	INSERT INTO public.tb_muscle_group(id,
 	 description)
-	VALUES (uuid_generate_v4(), 'Ombro');
+	VALUES ('O', 'Ombro');
 	INSERT INTO public.tb_muscle_group(id,
 	 description)
-	VALUES (uuid_generate_v4(), 'Costas');
+	VALUES ('C', 'Costas');
 	INSERT INTO public.tb_muscle_group(id,
 	 description)
-	VALUES (uuid_generate_v4(), 'Quadríceps');
+	VALUES ('Q', 'Quadríceps');
 		INSERT INTO public.tb_muscle_group(id,
 	 description)
-	VALUES (uuid_generate_v4(), 'Posterior');
+	VALUES ('PO', 'Posterior');
 		INSERT INTO public.tb_muscle_group(id,
 	 description)
-	VALUES (uuid_generate_v4(), 'Bíceps');
+	VALUES ('B', 'Bíceps');
 			INSERT INTO public.tb_muscle_group(id,
 	 description)
-	VALUES (uuid_generate_v4(), 'Tríceps');
+	VALUES ('T', 'Tríceps');
 			INSERT INTO public.tb_muscle_group(id,
 	 description)
-	VALUES (uuid_generate_v4(), 'Glúteo');
+	VALUES ('G', 'Glúteo');
 		INSERT INTO public.tb_muscle_group(id,
 	 description)
-	VALUES (uuid_generate_v4(), 'Abdômen');
+	VALUES ('A', 'Abdômen');
 	
-
-	CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
