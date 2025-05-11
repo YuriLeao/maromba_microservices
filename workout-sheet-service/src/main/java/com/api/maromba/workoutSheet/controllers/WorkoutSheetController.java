@@ -30,56 +30,57 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 @SecurityRequirement(name = "Bearer Authentication")
-@Tag(name = "Workout Sheet Service API endpoint")
+@Tag(name = "Workout Service API endpoint")
 @RestController
 @RequestMapping("/workout-sheet-service")
 public class WorkoutSheetController {
-	
+
 	@Autowired
 	private WorkoutSheetService workoutSheetService;
-	
+
 	@Operation(summary = "Save a new workout sheet.")
 	@PostMapping("save")
 	@Retry(name = "default")
 	@CircuitBreaker(name = "default")
-	public ResponseEntity<String> save(@RequestBody @Valid WorkoutSheetDTO workoutSheetDTO){
+	public ResponseEntity<String> save(@RequestBody @Valid WorkoutSheetDTO workoutSheetDTO) {
 		workoutSheetService.save(workoutSheetDTO);
 		return ResponseEntity.status(HttpStatus.CREATED).body("Successfully created.");
 	}
-	
-	@Operation(summary = "Get all the workout sheets.")
+
+	@Operation(summary = "Gets all workouts sheet.")
 	@GetMapping("getAll")
 	@Retry(name = "default")
 	@CircuitBreaker(name = "default")
-	public ResponseEntity<Page<WorkoutSheetDTO>> getAll(@PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.ASC) Pageable pageable){
-		Page<WorkoutSheetDTO> workoutSheetDTOPage = workoutSheetService.getAll(pageable);
-		return ResponseEntity.status(HttpStatus.OK).body(workoutSheetDTOPage);
+	public ResponseEntity<Page<WorkoutSheetDTO>> getAll(
+			@PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.ASC) Pageable pageable) {
+		Page<WorkoutSheetDTO> workoutsSheetDTOPage = workoutSheetService.getAll(pageable);
+		return ResponseEntity.status(HttpStatus.OK).body(workoutsSheetDTOPage);
 	}
-	
+
 	@Operation(summary = "Get a workout sheet.")
 	@GetMapping("getById/{id}")
 	@Retry(name = "default")
 	@CircuitBreaker(name = "default")
-	public ResponseEntity<WorkoutSheetDTO> getById(@PathVariable(value = "id") UUID id){
+	public ResponseEntity<WorkoutSheetDTO> getById(@PathVariable(value = "id") UUID id) {
 		WorkoutSheetDTO workoutSheetDTO = workoutSheetService.getById(id);
 		return ResponseEntity.status(HttpStatus.OK).body(workoutSheetDTO);
 	}
-	
+
 	@Operation(summary = "Delete a workout sheet.")
 	@DeleteMapping("delete/{id}")
 	@Retry(name = "default")
 	@CircuitBreaker(name = "default")
-	public ResponseEntity<String> delete(@PathVariable(value = "id") UUID id){
+	public ResponseEntity<String> delete(@PathVariable(value = "id") UUID id) {
 		workoutSheetService.delete(id);
 		return ResponseEntity.status(HttpStatus.OK).body("Workout sheet deleted successfully.");
 	}
-	
-	@Operation(summary = "Update a workoutSheet.")
+
+	@Operation(summary = "Update a workout sheet.")
 	@PutMapping("update/{id}")
 	@Retry(name = "default")
 	@CircuitBreaker(name = "default")
-	public ResponseEntity<WorkoutSheetDTO> update(@PathVariable(value = "id") UUID id, @RequestBody WorkoutSheetDTO workoutSheetDTO){
+	public ResponseEntity<WorkoutSheetDTO> update(@PathVariable(value = "id") UUID id, @RequestBody WorkoutSheetDTO workoutSheetDTO) {
 		workoutSheetDTO = workoutSheetService.update(id, workoutSheetDTO);
 		return ResponseEntity.status(HttpStatus.CREATED).body(workoutSheetDTO);
 	}
-}	
+}

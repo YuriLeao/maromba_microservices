@@ -1,6 +1,5 @@
-package com.api.maromba.workout.dtos;
+package com.api.maromba.workoutSheet.dtos;
 
-import java.math.BigDecimal;
 import java.util.UUID;
 
 import javax.validation.constraints.NotNull;
@@ -12,19 +11,17 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class WorkoutItemDTO {
+public class WorkoutDivisionExerciseDTO {
 	
 	private UUID id;
 	@NotNull
-	private UUID idExercise;
+	private UUID exerciseId;
 	@NotNull
 	private Integer reps;
 	@NotNull
 	private Integer sets;
-	private BigDecimal weight;
 	private String observation;
-	private BigDecimal recordWeight;
 	@NotNull
-	private Integer coolDown;
+	private Integer restTimeSeconds;
 	
 }

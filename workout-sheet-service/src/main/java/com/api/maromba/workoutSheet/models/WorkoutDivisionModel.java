@@ -1,49 +1,42 @@
 package com.api.maromba.workoutSheet.models;
 
-import java.io.Serializable;
-import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.Size;
 
-import org.hibernate.annotations.CreationTimestamp;
-
 import lombok.Data;
 
 @Entity
-@Table(name = "tb_workout_sheet")
+@Table(name = "tb_workout_division")
 @Data
-public class WorkoutSheetModel implements Serializable {
+public class WorkoutDivisionModel {
 
-    private static final long serialVersionUID = 1L;
-
-	@Id
+    @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(columnDefinition = "UUID")
     private UUID id;
-    
+
     @Column(nullable = false, length = 100)
-    @Size(min = 1, max = 100)
+    @Size(max = 100)
     private String name;
-    
-    @Column(length = 500)
-    @Size(max = 500)
-    private String description;
-    
-    @OneToMany(mappedBy = "workoutSheet", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<WorkoutDivisionModel> divisions;
-    
-    @CreationTimestamp
-    @Column(nullable = false, updatable = false)
-    private LocalDate createdAt;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "workout_sheet_id", nullable = false)
+    private WorkoutSheetModel workoutSheet;
+
+    @OneToMany(mappedBy = "division", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<WorkoutDivisionExerciseModel> exercises;
     
 }

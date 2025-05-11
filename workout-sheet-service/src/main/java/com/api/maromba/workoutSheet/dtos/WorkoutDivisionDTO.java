@@ -12,13 +12,12 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class WorkoutSheetDTO {
+public class WorkoutDivisionDTO {
 	
 	private UUID id;
 	@NotNull
 	private String name;
-	private String description;
 	@NotNull
-	private List<WorkoutDivisionDTO> divisions;
+	private List<WorkoutDivisionExerciseDTO> exercises;
 	
 }
