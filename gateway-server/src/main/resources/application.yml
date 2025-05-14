@@ -51,12 +51,12 @@ spring:
            - Path=/muscleGroup-service/**
         filters:
            - RewritePath=/muscleGroup-service/v3/api-docs, /v3/api-docs
-      - id: workout-service
-        uri: lb://workout-service
+      - id: executed-workout-service
+        uri: lb://executed-workout-service
         predicates:
-           - Path=/workout-service/**
+           - Path=/executed-workout-service/**
         filters:
-           - RewritePath=/workout-service/v3/api-docs, /v3/api-docs
+           - RewritePath=/executed-workout-service/v3/api-docs, /v3/api-docs
       - id: workout-sheet-service
         uri: lb://workout-sheet-service
         predicates:
@@ -84,7 +84,7 @@ springdoc:
       url: /v3/api-docs/company-service
     - name: exercise-service
       url: /v3/api-docs/exercise-service
-    - name: workout-service
-      url: /v3/api-docs/workout-service
+    - name: executed-workout-service
+      url: /v3/api-docs/executed-workout-service
     - name: workout-sheet-service
       url: /v3/api-docs/workout-sheet-service

@@ -17,7 +17,7 @@ resilience4j:
         enable-exponential-backoff: true
 spring:
   application:
-    name: workout-service
+    name: executed-workout-service
   cache:
     type: caffeine
   jpa:

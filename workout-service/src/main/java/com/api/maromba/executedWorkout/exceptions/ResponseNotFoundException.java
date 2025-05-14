@@ -1,4 +1,4 @@
-package com.api.maromba.workout.exceptions;
+package com.api.maromba.executedWorkout.exceptions;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;

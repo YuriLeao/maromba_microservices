@@ -1,4 +1,4 @@
-package com.api.maromba.workout.configuration;
+package com.api.maromba.executedWorkout.configuration;
 
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.cache.caffeine.CaffeineCacheManager;

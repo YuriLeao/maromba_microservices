@@ -1,4 +1,4 @@
-package com.api.maromba.workout;
+package com.api.maromba.executedWorkout;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

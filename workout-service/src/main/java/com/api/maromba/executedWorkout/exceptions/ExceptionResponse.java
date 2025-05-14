@@ -1,4 +1,4 @@
-package com.api.maromba.workout.exceptions;
+package com.api.maromba.executedWorkout.exceptions;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;

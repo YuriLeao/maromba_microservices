@@ -1,4 +1,4 @@
-package com.api.maromba.workout.exceptions.handler;
+package com.api.maromba.executedWorkout.exceptions.handler;
 
 import java.time.LocalDateTime;
 
@@ -12,10 +12,10 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import com.api.maromba.workout.exceptions.ExceptionResponse;
-import com.api.maromba.workout.exceptions.ResponseBadRequestException;
-import com.api.maromba.workout.exceptions.ResponseConflictException;
-import com.api.maromba.workout.exceptions.ResponseNotFoundException;
+import com.api.maromba.executedWorkout.exceptions.ExceptionResponse;
+import com.api.maromba.executedWorkout.exceptions.ResponseBadRequestException;
+import com.api.maromba.executedWorkout.exceptions.ResponseConflictException;
+import com.api.maromba.executedWorkout.exceptions.ResponseNotFoundException;
 
 @ControllerAdvice
 @RestController

@@ -36,7 +36,7 @@ public class JwtAuthenticationFilter implements GlobalFilter {
 		final List<String> apiEndpoints = List.of("/login", "/v3/api-docs", "/user-service/v3/api-docs", "/gender-service/v3/api-docs",
 				"/authorization-service/v3/api-docs", "/company-service/v3/api-docs", "/exercise-service/v3/api-docs",
 				"/muscleGroup-service/v3/api-docs", "/workout-sheet-service/v3/api-docs",
-				"/workout-service/v3/api-docs");
+				"/executed-workout-service/v3/api-docs");
 
 		Predicate<ServerHttpRequest> isApiSecured = r -> apiEndpoints.stream()
 				.noneMatch(uri -> r.getURI().getPath().contains(uri));
@@ -91,7 +91,7 @@ public class JwtAuthenticationFilter implements GlobalFilter {
 				|| request.getURI().getPath().contains("/company-service/getById")
 				|| request.getURI().getPath().contains("/exercise-service/")
 				|| request.getURI().getPath().contains("/muscleGroup-service/")
-				|| request.getURI().getPath().contains("/workout-service/")
+				|| request.getURI().getPath().contains("/executed-workout-service/")
 				|| request.getURI().getPath().contains("/workout-sheet-service/"))
 				&& decodedJWT.getClaim("authorization").asString().contains("E")) {
 			throw new RoleException("Service don't authorizate for this user.");
@@ -102,7 +102,7 @@ public class JwtAuthenticationFilter implements GlobalFilter {
 				|| request.getURI().getPath().contains("/exercise-service/")
 				|| request.getURI().getPath().contains("/muscleGroup-service/")
 				|| request.getURI().getPath().contains("/workout-sheet-service/")
-				|| request.getURI().getPath().contains("/workout-service/"))
+				|| request.getURI().getPath().contains("/executed-workout-service/"))
 				&& decodedJWT.getClaim("authorization").asString().contains("P")) {
 			throw new RoleException("Service don't authorizate for this user.");
 		} else if (!(request.getURI().getPath().contains("/user-service/update")
@@ -114,8 +114,7 @@ public class JwtAuthenticationFilter implements GlobalFilter {
 				|| request.getURI().getPath().contains("/muscleGroup-service/")
 				|| request.getURI().getPath().contains("/workout-sheet-service/getById")
 				|| request.getURI().getPath().contains("/workout-sheet-service/getAll")
-				|| request.getURI().getPath().contains("/workout-service/getById")
-				|| request.getURI().getPath().contains("/workout-service/getAll"))
+				|| request.getURI().getPath().contains("/executed-workout-service/getById"))
 				&& decodedJWT.getClaim("authorization").asString().contains("AL")) {
 			throw new RoleException("Service don't authorizate for this user.");
 		} else if (!decodedJWT.getClaim("authorization").asString().contains("A")) {
