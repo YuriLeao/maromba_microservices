@@ -32,7 +32,7 @@ spring:
           lob:
             non-contextual-creation: true
   datasource:
-    url: jdbc:postgresql://localhost:5435/maromba-workout?currentSchema=public
+    url: jdbc:postgresql://localhost:5435/maromba-executed-workout?currentSchema=public
     username: postgres
     password: root
     driverClassName: org.postgresql.Driver

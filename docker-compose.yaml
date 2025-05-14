@@ -35,17 +35,17 @@ services:
     networks:
       - maromba-network
 
-  workout-db:
+  executed-workout-db:
     image: postgres:14.5
     restart: on-failure
     tty: true
     volumes: 
-      - .pgdata/maromba-workout:/var/lib/postgresql/data
+      - .pgdata/maromba-executed-workout:/var/lib/postgresql/data
     command: -p 5435
     environment: 
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=root
-      - POSTGRES_DB=maromba-workout
+      - POSTGRES_DB=maromba-executed-workout
     ports: 
       - 5435:5435
     expose:
@@ -102,7 +102,7 @@ services:
     depends_on: 
       - user-db
       - company-db
-      - workout-db
+      - executed-workout-db
       - workout-sheet-db
       - exercise-db
 
@@ -202,14 +202,14 @@ services:
       context: .
       dockerfile: workout-service/Dockerfile
     links:
-      - workout-db
+      - executed-workout-db
     environment:
       EUREKA.CLIENT.SERVICEURL.DEFAULTZONE: http://eureka-server:8761/eureka
       SPRING.ZIPKIN.BASEURL: http://zipkin-server:9411/
       RABBIT_URI: amqp://guest:guest@rabbit-mq:5672
       SPRING_RABBITMQ_HOST: rabbit-mq
       SPRING_ZIPKIN_SENDER_TYPE: rabbit
-      SPRING.DATASOURCE.URL: jdbc:postgresql://workout-db:5435/maromba-workout?ssl=false&currentSchema=public
+      SPRING.DATASOURCE.URL: jdbc:postgresql://executed-workout-db:5435/maromba-executed-workout?ssl=false&currentSchema=public
       SPRING.DATASOURCE.USERNAME: postgres
       SPRING.DATASOURCE.PASSWORD: root
       SPRING.DATASOURCE.DRIVECLASSNAME: org.postgresql.Driver
@@ -217,7 +217,7 @@ services:
       API.SERVER.DESCRIPTION: dev
       JAVA_TOOL_OPTIONS: "-XX:+UnlockExperimentalVMOptions -XX:-UseContainerSupport"
     depends_on:
-      - workout-db
+      - executed-workout-db
       - rabbit-mq
       - eureka-server
     networks:
