@@ -18,6 +18,6 @@ public class WorkoutDivisionDTO {
 	@NotNull
 	private String name;
 	@NotNull
-	private List<WorkoutDivisionExerciseDTO> exercises;
+	private List<WorkoutExerciseDTO> exercises;
 	
 }

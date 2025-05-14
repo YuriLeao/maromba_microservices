@@ -17,6 +17,8 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.CreationTimestamp;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import lombok.Data;
 
 @Entity
@@ -42,8 +44,9 @@ public class WorkoutSheetModel implements Serializable {
     @OneToMany(mappedBy = "workoutSheet", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<WorkoutDivisionModel> divisions;
     
+	@Column(nullable = false)
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
     @CreationTimestamp
-    @Column(nullable = false, updatable = false)
     private LocalDate createdAt;
     
 }

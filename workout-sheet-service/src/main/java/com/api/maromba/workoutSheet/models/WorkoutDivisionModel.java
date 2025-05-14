@@ -37,6 +37,6 @@ public class WorkoutDivisionModel {
     private WorkoutSheetModel workoutSheet;
 
     @OneToMany(mappedBy = "division", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<WorkoutDivisionExerciseModel> exercises;
+    private List<WorkoutExerciseModel> exercises;
     
 }

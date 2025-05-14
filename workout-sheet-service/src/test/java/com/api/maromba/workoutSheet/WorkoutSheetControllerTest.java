@@ -7,13 +7,11 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.BeanUtils;
@@ -27,11 +25,11 @@ import org.springframework.data.domain.Sort;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import com.api.maromba.workoutSheet.dtos.WorkoutSheetDTO;
 import com.api.maromba.workoutSheet.dtos.WorkoutDivisionDTO;
-import com.api.maromba.workoutSheet.dtos.WorkoutDivisionExerciseDTO;
-import com.api.maromba.workoutSheet.models.WorkoutDivisionExerciseModel;
+import com.api.maromba.workoutSheet.dtos.WorkoutExerciseDTO;
+import com.api.maromba.workoutSheet.dtos.WorkoutSheetDTO;
 import com.api.maromba.workoutSheet.models.WorkoutDivisionModel;
+import com.api.maromba.workoutSheet.models.WorkoutExerciseModel;
 import com.api.maromba.workoutSheet.models.WorkoutSheetModel;
 import com.api.maromba.workoutSheet.repositories.WorkoutSheetRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -51,7 +49,7 @@ public class WorkoutSheetControllerTest {
 
 	private WorkoutSheetTestData initializeTestData() {
 		// Criação do exercício
-		WorkoutDivisionExerciseDTO exerciseDTO = new WorkoutDivisionExerciseDTO(null,
+		WorkoutExerciseDTO exerciseDTO = new WorkoutExerciseDTO(null,
 				UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a"), 12, 4, "dropset", 90);
 
 		// Criação da divisão com exercício
@@ -59,7 +57,7 @@ public class WorkoutSheetControllerTest {
 
 		// Criação da planilha com divisão
 		WorkoutSheetDTO workoutSheetDTO = new WorkoutSheetDTO(UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a"),
-				"treino iniciante", " ", Collections.singletonList(divisionDTO));
+				"treino iniciante", " ", Collections.singletonList(divisionDTO), null);
 
 		// Conversão para Model
 		WorkoutSheetModel workoutSheetModel = new WorkoutSheetModel();
@@ -70,7 +68,7 @@ public class WorkoutSheetControllerTest {
 			BeanUtils.copyProperties(division, divisionModel);
 
 			divisionModel.setExercises(division.getExercises().stream().map(exercise -> {
-				WorkoutDivisionExerciseModel exerciseModel = new WorkoutDivisionExerciseModel();
+				WorkoutExerciseModel exerciseModel = new WorkoutExerciseModel();
 				BeanUtils.copyProperties(exercise, exerciseModel);
 				return exerciseModel;
 			}).collect(Collectors.toList()));
@@ -81,7 +79,6 @@ public class WorkoutSheetControllerTest {
 		return new WorkoutSheetTestData(workoutSheetDTO, workoutSheetModel);
 	}
 
-	// Classe interna para encapsular os dados de teste
 	private static class WorkoutSheetTestData {
 		final WorkoutSheetDTO workoutSheetDTO;
 		final WorkoutSheetModel workoutSheetModel;

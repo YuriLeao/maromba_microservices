@@ -18,10 +18,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.api.maromba.workoutSheet.dtos.WorkoutDivisionDTO;
-import com.api.maromba.workoutSheet.dtos.WorkoutDivisionExerciseDTO;
+import com.api.maromba.workoutSheet.dtos.WorkoutExerciseDTO;
 import com.api.maromba.workoutSheet.dtos.WorkoutSheetDTO;
 import com.api.maromba.workoutSheet.exceptions.ResponseNotFoundException;
-import com.api.maromba.workoutSheet.models.WorkoutDivisionExerciseModel;
+import com.api.maromba.workoutSheet.models.WorkoutExerciseModel;
 import com.api.maromba.workoutSheet.models.WorkoutDivisionModel;
 import com.api.maromba.workoutSheet.models.WorkoutSheetModel;
 import com.api.maromba.workoutSheet.repositories.WorkoutSheetRepository;
@@ -83,20 +83,20 @@ public class WorkoutSheetService {
 	}
 
 	private void processExercisesWithStream(WorkoutDivisionModel divisionModel,
-			List<WorkoutDivisionExerciseDTO> exerciseDTOs) {
+			List<WorkoutExerciseDTO> exerciseDTOs) {
 
-		Map<UUID, WorkoutDivisionExerciseModel> existingExercisesMap = divisionModel.getExercises().stream()
-				.collect(Collectors.toMap(WorkoutDivisionExerciseModel::getId, Function.identity()));
+		Map<UUID, WorkoutExerciseModel> existingExercisesMap = divisionModel.getExercises().stream()
+				.collect(Collectors.toMap(WorkoutExerciseModel::getId, Function.identity()));
 
-		List<WorkoutDivisionExerciseModel> updatedExercises = IntStream.range(0, exerciseDTOs.size()).mapToObj(i -> {
-			WorkoutDivisionExerciseDTO exerciseDTO = exerciseDTOs.get(i);
-			WorkoutDivisionExerciseModel exerciseModel;
+		List<WorkoutExerciseModel> updatedExercises = IntStream.range(0, exerciseDTOs.size()).mapToObj(i -> {
+			WorkoutExerciseDTO exerciseDTO = exerciseDTOs.get(i);
+			WorkoutExerciseModel exerciseModel;
 
 			if (exerciseDTO.getId() != null && existingExercisesMap.containsKey(exerciseDTO.getId())) {
 				exerciseModel = existingExercisesMap.get(exerciseDTO.getId());
 				BeanUtils.copyProperties(exerciseDTO, exerciseModel, "id");
 			} else {
-				exerciseModel = new WorkoutDivisionExerciseModel();
+				exerciseModel = new WorkoutExerciseModel();
 				BeanUtils.copyProperties(exerciseDTO, exerciseModel, "id");
 				exerciseModel.setDivision(divisionModel);
 			}
@@ -144,7 +144,7 @@ public class WorkoutSheetService {
 	                .orElseGet(ArrayList::new)
 	                .stream()
 	                .map(ex -> {
-	                    WorkoutDivisionExerciseDTO exDTO = new WorkoutDivisionExerciseDTO();
+	                    WorkoutExerciseDTO exDTO = new WorkoutExerciseDTO();
 	                    BeanUtils.copyProperties(ex, exDTO);
 	                    return exDTO;
 	                }).toList());
@@ -163,8 +163,8 @@ public class WorkoutSheetService {
 			BeanUtils.copyProperties(divisionDTO, divisionModel);
 			divisionModel.setWorkoutSheet(workoutSheetModel);
 
-			List<WorkoutDivisionExerciseModel> exercises = divisionDTO.getExercises().stream().map(exerciseDTO -> {
-				WorkoutDivisionExerciseModel exerciseModel = new WorkoutDivisionExerciseModel();
+			List<WorkoutExerciseModel> exercises = divisionDTO.getExercises().stream().map(exerciseDTO -> {
+				WorkoutExerciseModel exerciseModel = new WorkoutExerciseModel();
 				BeanUtils.copyProperties(exerciseDTO, exerciseModel);
 				exerciseModel.setDivision(divisionModel);
 				return exerciseModel;

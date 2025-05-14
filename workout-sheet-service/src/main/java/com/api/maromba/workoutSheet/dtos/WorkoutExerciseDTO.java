@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class WorkoutDivisionExerciseDTO {
+public class WorkoutExerciseDTO {
 	
 	private UUID id;
 	@NotNull

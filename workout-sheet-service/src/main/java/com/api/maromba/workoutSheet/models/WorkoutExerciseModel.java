@@ -18,10 +18,10 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 @Entity
-@Table(name = "tb_workout_division_exercise")
+@Table(name = "tb_workout_exercise")
 @Data
 @EqualsAndHashCode(of = "id")
-public class WorkoutDivisionExerciseModel implements Serializable {
+public class WorkoutExerciseModel implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
