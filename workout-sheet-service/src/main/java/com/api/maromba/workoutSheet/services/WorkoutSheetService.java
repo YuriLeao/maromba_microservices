@@ -54,7 +54,7 @@ public class WorkoutSheetService {
 		String auth = getAuthorization(token);
 
 		if (!"A".equals(auth) && existingSheet.getCompanyId() == null) {
-			new ResponseBadRequestException("It's only allowed to update workout sheets created by the company itself.");
+			throw new ResponseBadRequestException("It's only allowed to update workout sheets created by the company itself.");
 		}
 
 		UUID originalId = existingSheet.getId();
@@ -133,7 +133,7 @@ public class WorkoutSheetService {
 		String auth = getAuthorization(token);
 
 		if (!"A".equals(auth) && workoutSheetModel.getCompanyId() == null) {
-			new ResponseBadRequestException("It's only allowed to delete workout sheets created by the company itself.");
+			throw new ResponseBadRequestException("It's only allowed to delete workout sheets created by the company itself.");
 		}
 
 		workoutSheetRepository.delete(workoutSheetModel);

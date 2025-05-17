@@ -47,7 +47,7 @@ public class ExerciseService {
 		String auth = getAuthorization(token);
 		
 		if(!"A".equals(auth) && exerciseModel.getCompanyId() == null) {
-			new ResponseBadRequestException("It's only allowed to update exercises created by the company itself.");
+			throw new ResponseBadRequestException("It's only allowed to update exercises created by the company itself.");
 		}
 
 		UUID idemp = exerciseModel.getId();
@@ -72,7 +72,7 @@ public class ExerciseService {
 		String auth = getAuthorization(token);
 		
 		if(!"A".equals(auth) && exerciseModel.getCompanyId() == null) {
-			new ResponseBadRequestException("It's only allowed to delete exercises created by the company itself.");
+			throw new ResponseBadRequestException("It's only allowed to delete exercises created by the company itself.");
 		}
 
 		exerciseRepository.delete(exerciseModel);

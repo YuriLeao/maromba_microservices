@@ -195,12 +195,12 @@ services:
     networks:
       - maromba-network
 
-  workout-service:
-    image: yurileao/maromba/backend/workout-service:0.0.1-SNAPSHOT
+  executed-workout-service:
+    image: yurileao/maromba/backend/executed-workout-service:0.0.1-SNAPSHOT
     #restart: always
     build: 
       context: .
-      dockerfile: workout-service/Dockerfile
+      dockerfile: executed-workout-service/Dockerfile
     links:
       - executed-workout-db
     environment:

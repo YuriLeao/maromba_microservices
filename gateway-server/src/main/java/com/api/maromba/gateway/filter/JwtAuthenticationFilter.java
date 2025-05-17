@@ -33,10 +33,10 @@ public class JwtAuthenticationFilter implements GlobalFilter {
 	public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
 		ServerHttpRequest request = (ServerHttpRequest) exchange.getRequest();
 
-		final List<String> apiEndpoints = List.of("/login", "/v3/api-docs", "/user-service/v3/api-docs", "/gender-service/v3/api-docs",
-				"/authorization-service/v3/api-docs", "/company-service/v3/api-docs", "/exercise-service/v3/api-docs",
-				"/muscleGroup-service/v3/api-docs", "/workout-sheet-service/v3/api-docs",
-				"/executed-workout-service/v3/api-docs");
+		final List<String> apiEndpoints = List.of("/login", "/v3/api-docs", "/user-service/v3/api-docs",
+				"/gender-service/v3/api-docs", "/authorization-service/v3/api-docs", "/company-service/v3/api-docs",
+				"/exercise-service/v3/api-docs", "/muscleGroup-service/v3/api-docs",
+				"/workout-sheet-service/v3/api-docs", "/executed-workout-service/v3/api-docs");
 
 		Predicate<ServerHttpRequest> isApiSecured = r -> apiEndpoints.stream()
 				.noneMatch(uri -> r.getURI().getPath().contains(uri));
@@ -84,6 +84,12 @@ public class JwtAuthenticationFilter implements GlobalFilter {
 	}
 
 	private void roleFilter(ServerHttpRequest request, DecodedJWT decodedJWT) throws RoleException {
+		if (!decodedJWT.getClaim("authorization").asString().equals("E")
+				&& !decodedJWT.getClaim("authorization").asString().equals("P")
+				&& !decodedJWT.getClaim("authorization").asString().equals("AL")
+				&& !decodedJWT.getClaim("authorization").asString().equals("A")) {
+			throw new RoleException("Service don't authorizate for this user.");
+		}
 		if (!(request.getURI().getPath().contains("/user-service/")
 				|| request.getURI().getPath().contains("/gender-service/")
 				|| request.getURI().getPath().contains("/authorization-service/")
@@ -93,7 +99,7 @@ public class JwtAuthenticationFilter implements GlobalFilter {
 				|| request.getURI().getPath().contains("/muscleGroup-service/")
 				|| request.getURI().getPath().contains("/executed-workout-service/")
 				|| request.getURI().getPath().contains("/workout-sheet-service/"))
-				&& decodedJWT.getClaim("authorization").asString().contains("E")) {
+				&& decodedJWT.getClaim("authorization").asString().equals("E")) {
 			throw new RoleException("Service don't authorizate for this user.");
 		} else if (!(request.getURI().getPath().contains("/user-service/")
 				|| request.getURI().getPath().contains("/gender-service/")
@@ -103,7 +109,7 @@ public class JwtAuthenticationFilter implements GlobalFilter {
 				|| request.getURI().getPath().contains("/muscleGroup-service/")
 				|| request.getURI().getPath().contains("/workout-sheet-service/")
 				|| request.getURI().getPath().contains("/executed-workout-service/"))
-				&& decodedJWT.getClaim("authorization").asString().contains("P")) {
+				&& decodedJWT.getClaim("authorization").asString().equals("P")) {
 			throw new RoleException("Service don't authorizate for this user.");
 		} else if (!(request.getURI().getPath().contains("/user-service/update")
 				|| request.getURI().getPath().contains("/user-service/login")
@@ -115,9 +121,7 @@ public class JwtAuthenticationFilter implements GlobalFilter {
 				|| request.getURI().getPath().contains("/workout-sheet-service/getById")
 				|| request.getURI().getPath().contains("/workout-sheet-service/getAll")
 				|| request.getURI().getPath().contains("/executed-workout-service/getById"))
-				&& decodedJWT.getClaim("authorization").asString().contains("AL")) {
-			throw new RoleException("Service don't authorizate for this user.");
-		} else if (!decodedJWT.getClaim("authorization").asString().contains("A")) {
+				&& decodedJWT.getClaim("authorization").asString().equals("AL")) {
 			throw new RoleException("Service don't authorizate for this user.");
 		}
 	}
