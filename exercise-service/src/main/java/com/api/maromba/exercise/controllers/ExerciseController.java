@@ -17,7 +17,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.api.maromba.exercise.dtos.ExerciseDTO;
@@ -34,53 +36,57 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @RestController
 @RequestMapping("/exercise-service")
 public class ExerciseController {
-	
+
 	@Autowired
 	private ExerciseService exerciseService;
-	
+
 	@Operation(summary = "Save a new exercise.")
 	@PostMapping("save")
 	@Retry(name = "default")
 	@CircuitBreaker(name = "default")
-	public ResponseEntity<String> save(@RequestBody @Valid ExerciseDTO exerciseDTO){
+	public ResponseEntity<String> save(@RequestBody @Valid ExerciseDTO exerciseDTO) {
 		exerciseService.save(exerciseDTO);
 		return ResponseEntity.status(HttpStatus.CREATED).body("Successfully created.");
 	}
-	
-	@Operation(summary = "Gets all exercises.")
-	@GetMapping("getAll")
+
+	@Operation(summary = "Gets all exercises by company id.")
+	@GetMapping("getAllByCompanyId")
 	@Retry(name = "default")
 	@CircuitBreaker(name = "default")
-	public ResponseEntity<Page<ExerciseDTO>> getAll(@PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.ASC) Pageable pageable){
-		Page<ExerciseDTO> exerciseDTOPages = exerciseService.getAll(pageable);
+	public ResponseEntity<Page<ExerciseDTO>> getAllByCompanyId(
+			@PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.ASC) Pageable pageable,
+			@RequestParam(required = false) UUID companyId) {
+		Page<ExerciseDTO> exerciseDTOPages = exerciseService.getAllByCompanyId(pageable, companyId);
 		return ResponseEntity.status(HttpStatus.OK).body(exerciseDTOPages);
 	}
-	
+
 	@Operation(summary = "Get a exercise.")
 	@GetMapping("getById/{id}")
 	@Retry(name = "default")
 	@CircuitBreaker(name = "default")
-	public ResponseEntity<ExerciseDTO> getById(@PathVariable(value = "id") UUID id){
+	public ResponseEntity<ExerciseDTO> getById(@PathVariable(value = "id") UUID id) {
 		ExerciseDTO exerciseDTO = exerciseService.getById(id);
 		return ResponseEntity.status(HttpStatus.OK).body(exerciseDTO);
 	}
-	
+
 	@Operation(summary = "Delete a exercise.")
 	@DeleteMapping("delete/{id}")
 	@Retry(name = "default")
 	@CircuitBreaker(name = "default")
-	public ResponseEntity<String> delete(@PathVariable(value = "id") UUID id){
-		exerciseService.delete(id);
+	public ResponseEntity<String> delete(@RequestHeader("Authorization") String authorization,
+			@PathVariable(value = "id") UUID id) {
+		exerciseService.delete(id, authorization);
 		return ResponseEntity.status(HttpStatus.OK).body("Exercise deleted successfully.");
 	}
-	
+
 	@Operation(summary = "Update a exercise.")
 	@PutMapping("update/{id}")
 	@Retry(name = "default")
 	@CircuitBreaker(name = "default")
-	public ResponseEntity<ExerciseDTO> update(@PathVariable(value = "id") UUID id, @RequestBody ExerciseDTO exerciseDTO){
-		exerciseDTO = exerciseService.update(id, exerciseDTO);
+	public ResponseEntity<ExerciseDTO> update(@RequestHeader("Authorization") String authorization,
+			@PathVariable(value = "id") UUID id, @RequestBody ExerciseDTO exerciseDTO) {
+		exerciseDTO = exerciseService.update(id, exerciseDTO, authorization);
 		return ResponseEntity.status(HttpStatus.CREATED).body(exerciseDTO);
 	}
-	
-}	
+
+}

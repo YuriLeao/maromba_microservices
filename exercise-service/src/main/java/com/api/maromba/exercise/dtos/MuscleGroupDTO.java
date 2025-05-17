@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 public class MuscleGroupDTO {
 
 	private String id;
+	
 	@NotBlank
 	private String description;
 	

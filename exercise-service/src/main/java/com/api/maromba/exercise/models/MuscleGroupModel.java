@@ -23,6 +23,7 @@ public class MuscleGroupModel implements Serializable {
 	@Id
 	@Column(length = 2)
 	private String id;
+	
 	@Column(nullable = false, unique = true, length = 30)
 	private String description;
 

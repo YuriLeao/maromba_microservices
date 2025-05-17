@@ -27,7 +27,9 @@ public class WorkoutSheetDTO {
 	@NotNull
 	private List<WorkoutDivisionDTO> divisions;
 	
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy HH:mm:ss")
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
 	private LocalDate createdAt;
+	
+	private UUID companyId;
 
 }

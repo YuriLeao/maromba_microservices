@@ -15,11 +15,16 @@ import lombok.NoArgsConstructor;
 public class ExerciseDTO {
 
 	private UUID id;
+	
 	@NotBlank
 	private String name;
+	
 	@NotBlank
 	private String gif;
+	
 	@NotNull
 	private MuscleGroupDTO muscleGroup;
+	
+	private UUID companyId;
 	
 }

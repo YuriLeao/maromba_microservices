@@ -27,6 +27,7 @@ import com.api.maromba.exercise.dtos.MuscleGroupDTO;
 import com.api.maromba.exercise.models.ExerciseModel;
 import com.api.maromba.exercise.models.MuscleGroupModel;
 import com.api.maromba.exercise.repositories.ExerciseRepository;
+import com.api.maromba.exercise.util.JwtUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @SpringBootTest
@@ -42,15 +43,18 @@ public class ExerciseControllerTest {
 	@MockBean
 	private ExerciseRepository exerciseRepository;
 
+	@Autowired
+	private JwtUtil jwtUtil;
+
 	@Test
 	public void save() throws Exception {
-		var exerciseDTO = new ExerciseDTO(null, "teste",
-				"video", new MuscleGroupDTO("P", "Peito"));
+		var exerciseDTO = new ExerciseDTO(null, "teste", "video", new MuscleGroupDTO("P", "Peito"),
+				UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a"));
 		var exercise = new ExerciseModel();
 		BeanUtils.copyProperties(exerciseDTO, exercise);
 		exercise.setMuscleGroup(new MuscleGroupModel());
 		BeanUtils.copyProperties(exerciseDTO.getMuscleGroup(), exercise.getMuscleGroup());
-		
+
 		when(exerciseRepository.existsByName("teste")).thenReturn(false);
 		when(exerciseRepository.save(exercise)).thenReturn(exercise);
 
@@ -60,48 +64,52 @@ public class ExerciseControllerTest {
 
 	@Test
 	public void update() throws Exception {
-		var exerciseDTO = new ExerciseDTO(UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a"), "teste",
-				"video", new MuscleGroupDTO("P", "Peito"));
+		var exerciseDTO = new ExerciseDTO(UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a"), "teste", "video",
+				new MuscleGroupDTO("P", "Peito"), UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a"));
 		var exercise = new ExerciseModel();
 		BeanUtils.copyProperties(exerciseDTO, exercise);
 		exercise.setMuscleGroup(new MuscleGroupModel());
 		BeanUtils.copyProperties(exerciseDTO.getMuscleGroup(), exercise.getMuscleGroup());
-		
+
 		when(exerciseRepository.findById(UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a")))
 				.thenReturn(Optional.of(exercise));
 		when(exerciseRepository.save(exercise)).thenReturn(exercise);
 
+		var token = jwtUtil.generateTokenTeste("/user-service/login");
+
 		mockMvc.perform(put("/exercise-service/update/" + UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a"))
-				.contentType("application/json").content(objectMapper.writeValueAsString(exerciseDTO)))
-				.andExpect(status().isCreated());
+				.header("Authorization", "Bearer " + token).contentType("application/json")
+				.content(objectMapper.writeValueAsString(exerciseDTO))).andExpect(status().isCreated());
 	}
 
 	@Test
-	public void getAll() throws Exception {
-		var exerciseDTO = new ExerciseDTO(UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a"), "teste",
-				"video", new MuscleGroupDTO("P", "Peito"));
+	public void getAllByCompanyId() throws Exception {
+		var exerciseDTO = new ExerciseDTO(UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a"), "teste", "video",
+				new MuscleGroupDTO("P", "Peito"), UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a"));
 		var exercise = new ExerciseModel();
 		BeanUtils.copyProperties(exerciseDTO, exercise);
 		exercise.setMuscleGroup(new MuscleGroupModel());
 		BeanUtils.copyProperties(exerciseDTO.getMuscleGroup(), exercise.getMuscleGroup());
 		List<ExerciseModel> list = new ArrayList<ExerciseModel>();
 		list.add(exercise);
-		
-		when(exerciseRepository.findAll(PageRequest.of(0, 10).withSort(Sort.by(Sort.Direction.ASC, "id"))))
+
+		when(exerciseRepository.findAllByCompanyId(UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a"),
+				PageRequest.of(0, 10).withSort(Sort.by(Sort.Direction.ASC, "id"))))
 				.thenReturn(new PageImpl<ExerciseModel>(list));
 
-		mockMvc.perform(get("/exercise-service/getAll").contentType("application/json")).andExpect(status().isOk());
+		mockMvc.perform(get("/exercise-service/getAllByCompanyId").contentType("application/json").param("companyId",
+				"6abc9768-d3c7-47e0-845e-241a084ab34a")).andExpect(status().isOk());
 	}
 
 	@Test
 	public void getById() throws Exception {
-		var exerciseDTO = new ExerciseDTO(UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a"), "teste",
-				"video", new MuscleGroupDTO("P", "Peito"));
+		var exerciseDTO = new ExerciseDTO(UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a"), "teste", "video",
+				new MuscleGroupDTO("P", "Peito"), UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a"));
 		var exercise = new ExerciseModel();
 		BeanUtils.copyProperties(exerciseDTO, exercise);
 		exercise.setMuscleGroup(new MuscleGroupModel());
 		BeanUtils.copyProperties(exerciseDTO.getMuscleGroup(), exercise.getMuscleGroup());
-		
+
 		when(exerciseRepository.findById(UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a")))
 				.thenReturn(Optional.of(exercise));
 
@@ -111,15 +119,18 @@ public class ExerciseControllerTest {
 
 	@Test
 	public void delete() throws Exception {
-		var exerciseDTO = new ExerciseDTO(UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a"), "teste",
-				"video", new MuscleGroupDTO("P", "Peito"));
+		var exerciseDTO = new ExerciseDTO(UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a"), "teste", "video",
+				new MuscleGroupDTO("P", "Peito"), UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a"));
 		var exercise = new ExerciseModel();
 		BeanUtils.copyProperties(exerciseDTO, exercise);
 		when(exerciseRepository.findById(UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a")))
 				.thenReturn(Optional.of(exercise)).thenReturn(null);
 
-		mockMvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete("/exercise-service/delete/" + UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a"))
-				.contentType("application/json")).andExpect(status().isOk());
+		var token = jwtUtil.generateTokenTeste("/user-service/login");
+
+		mockMvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders
+				.delete("/exercise-service/delete/" + UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a"))
+				.header("Authorization", "Bearer " + token).contentType("application/json")).andExpect(status().isOk());
 	}
 
 }

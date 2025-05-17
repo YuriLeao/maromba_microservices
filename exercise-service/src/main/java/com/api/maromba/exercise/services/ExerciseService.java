@@ -1,7 +1,5 @@
 package com.api.maromba.exercise.services;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
 import javax.transaction.Transactional;
@@ -9,23 +7,28 @@ import javax.transaction.Transactional;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.api.maromba.exercise.dtos.ExerciseDTO;
 import com.api.maromba.exercise.dtos.MuscleGroupDTO;
+import com.api.maromba.exercise.exceptions.ResponseBadRequestException;
 import com.api.maromba.exercise.exceptions.ResponseConflictException;
 import com.api.maromba.exercise.exceptions.ResponseNotFoundException;
 import com.api.maromba.exercise.models.ExerciseModel;
 import com.api.maromba.exercise.models.MuscleGroupModel;
 import com.api.maromba.exercise.repositories.ExerciseRepository;
+import com.api.maromba.exercise.util.JwtUtil;
+import com.auth0.jwt.interfaces.DecodedJWT;
 
 @Service
 public class ExerciseService {
 
 	@Autowired
 	ExerciseRepository exerciseRepository;
+	
+	@Autowired
+	private JwtUtil jwtUtil;
 
 	@Transactional
 	public ExerciseDTO save(ExerciseDTO exerciseDTO) {
@@ -37,9 +40,15 @@ public class ExerciseService {
 	}
 
 	@Transactional
-	public ExerciseDTO update(UUID id, ExerciseDTO exerciseDTO) {
+	public ExerciseDTO update(UUID id, ExerciseDTO exerciseDTO, String token) {
 		ExerciseModel exerciseModel = exerciseRepository.findById(id)
 				.orElseThrow(() -> new ResponseNotFoundException("No exercise found."));
+		
+		String auth = getAuthorization(token);
+		
+		if(!"A".equals(auth) && exerciseModel.getCompanyId() == null) {
+			new ResponseBadRequestException("It's only allowed to update exercises created by the company itself.");
+		}
 
 		UUID idemp = exerciseModel.getId();
 		exerciseModel = convertDTOToModel(exerciseDTO);
@@ -56,24 +65,32 @@ public class ExerciseService {
 	}
 
 	@Transactional
-	public void delete(UUID id) {
+	public void delete(UUID id, String token) {
 		ExerciseModel exerciseModel = exerciseRepository.findById(id)
 				.orElseThrow(() -> new ResponseNotFoundException("No exercise found."));
+		
+		String auth = getAuthorization(token);
+		
+		if(!"A".equals(auth) && exerciseModel.getCompanyId() == null) {
+			new ResponseBadRequestException("It's only allowed to delete exercises created by the company itself.");
+		}
 
 		exerciseRepository.delete(exerciseModel);
 	}
 
-	public Page<ExerciseDTO> getAll(Pageable pageable) {
-		Page<ExerciseModel> exercisePages = exerciseRepository.findAll(pageable);
-		if (exercisePages.isEmpty()) {
-			throw new ResponseNotFoundException("No exercise found.");
-		}
-		List<ExerciseDTO> exercisesDTO = new ArrayList<ExerciseDTO>();
-		for (ExerciseModel exercise : exercisePages) {
-			ExerciseDTO exerciseDTO = convertModelToDTO(exercise);
-			exercisesDTO.add(exerciseDTO);
-		}
-		return new PageImpl<ExerciseDTO>(exercisesDTO);
+	public Page<ExerciseDTO> getAllByCompanyId(Pageable pageable, UUID companyId) {
+	    Page<ExerciseModel> exercisePages = exerciseRepository.findAllByCompanyId(companyId, pageable);
+	    
+	    if (exercisePages.isEmpty()) {
+	        throw new ResponseNotFoundException("No exercise found.");
+	    }
+
+	    return exercisePages.map(this::convertModelToDTO);
+	}
+	
+	private String getAuthorization(String token) {
+		DecodedJWT decodedJWT = jwtUtil.validateToken(token.replace("Bearer ", ""), "/user-service/login");
+		return decodedJWT.getClaim("authorization").asString();
 	}
 
 	private ExerciseModel convertDTOToModel(ExerciseDTO exerciseDTO) {

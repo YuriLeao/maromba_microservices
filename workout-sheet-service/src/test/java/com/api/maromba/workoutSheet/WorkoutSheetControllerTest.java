@@ -32,6 +32,7 @@ import com.api.maromba.workoutSheet.models.WorkoutDivisionModel;
 import com.api.maromba.workoutSheet.models.WorkoutExerciseModel;
 import com.api.maromba.workoutSheet.models.WorkoutSheetModel;
 import com.api.maromba.workoutSheet.repositories.WorkoutSheetRepository;
+import com.api.maromba.workoutSheet.util.JwtUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @SpringBootTest
@@ -47,6 +48,9 @@ public class WorkoutSheetControllerTest {
 	@MockBean
 	private WorkoutSheetRepository workoutSheetRepository;
 
+	@Autowired
+	private JwtUtil jwtUtil;
+
 	private WorkoutSheetTestData initializeTestData() {
 		// Criação do exercício
 		WorkoutExerciseDTO exerciseDTO = new WorkoutExerciseDTO(null,
@@ -57,7 +61,8 @@ public class WorkoutSheetControllerTest {
 
 		// Criação da planilha com divisão
 		WorkoutSheetDTO workoutSheetDTO = new WorkoutSheetDTO(UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a"),
-				"treino iniciante", " ", Collections.singletonList(divisionDTO), null);
+				"treino iniciante", " ", Collections.singletonList(divisionDTO), null,
+				UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a"));
 
 		// Conversão para Model
 		WorkoutSheetModel workoutSheetModel = new WorkoutSheetModel();
@@ -103,27 +108,29 @@ public class WorkoutSheetControllerTest {
 	public void update() throws Exception {
 		WorkoutSheetTestData testData = initializeTestData();
 
+		var token = jwtUtil.generateTokenTeste("/user-service/login");
+
 		when(workoutSheetRepository.findById(testData.workoutSheetDTO.getId()))
 				.thenReturn(Optional.of(testData.workoutSheetModel));
 		when(workoutSheetRepository.save(any(WorkoutSheetModel.class))).thenReturn(testData.workoutSheetModel);
 
 		mockMvc.perform(put("/workout-sheet-service/update/" + testData.workoutSheetDTO.getId())
-				.contentType("application/json").content(objectMapper.writeValueAsString(testData.workoutSheetDTO)))
-				.andExpect(status().isCreated());
+				.header("Authorization", "Bearer " + token).contentType("application/json")
+				.content(objectMapper.writeValueAsString(testData.workoutSheetDTO))).andExpect(status().isCreated());
 	}
 
 	@Test
-    public void getAll() throws Exception {
-        WorkoutSheetTestData testData = initializeTestData();
-        List<WorkoutSheetModel> list = Collections.singletonList(testData.workoutSheetModel);
-        
-        when(workoutSheetRepository.findAll(PageRequest.of(0, 10).withSort(Sort.by(Sort.Direction.ASC, "id"))))
-            .thenReturn(new PageImpl<>(list));
+	public void getAllByCompanyId() throws Exception {
+		WorkoutSheetTestData testData = initializeTestData();
+		List<WorkoutSheetModel> list = Collections.singletonList(testData.workoutSheetModel);
 
-        mockMvc.perform(get("/workout-sheet-service/getAll")
-                .contentType("application/json"))
-                .andExpect(status().isOk());
-    }
+		when(workoutSheetRepository.findAllByCompanyId(UUID.fromString("6abc9768-d3c7-47e0-845e-241a084ab34a"),
+				PageRequest.of(0, 10).withSort(Sort.by(Sort.Direction.ASC, "id")))).thenReturn(new PageImpl<>(list));
+
+		mockMvc.perform(get("/workout-sheet-service/getAllByCompanyId")
+				.param("companyId", "6abc9768-d3c7-47e0-845e-241a084ab34a").contentType("application/json"))
+				.andExpect(status().isOk());
+	}
 
 	@Test
 	public void getById() throws Exception {
@@ -138,13 +145,16 @@ public class WorkoutSheetControllerTest {
 
 	@Test
 	public void delete() throws Exception {
-	    WorkoutSheetTestData testData = initializeTestData();
-	    
-	    when(workoutSheetRepository.findById(testData.workoutSheetDTO.getId()))
-	        .thenReturn(Optional.of(testData.workoutSheetModel));
+		WorkoutSheetTestData testData = initializeTestData();
 
-	    mockMvc.perform(MockMvcRequestBuilders.delete("/workout-sheet-service/delete/" + testData.workoutSheetDTO.getId())
-	            .contentType("application/json"))
-	            .andExpect(status().isOk());
+		var token = jwtUtil.generateTokenTeste("/user-service/login");
+
+		when(workoutSheetRepository.findById(testData.workoutSheetDTO.getId()))
+				.thenReturn(Optional.of(testData.workoutSheetModel));
+
+		mockMvc.perform(
+				MockMvcRequestBuilders.delete("/workout-sheet-service/delete/" + testData.workoutSheetDTO.getId())
+						.header("Authorization", "Bearer " + token).contentType("application/json"))
+				.andExpect(status().isOk());
 	}
 }

@@ -48,5 +48,8 @@ public class WorkoutSheetModel implements Serializable {
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
     @CreationTimestamp
     private LocalDate createdAt;
+	
+    @Column
+    private UUID companyId;
     
 }

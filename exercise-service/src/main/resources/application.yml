@@ -2,6 +2,8 @@ api:
   server:
     url: http://localhost:8765/
     description: dev
+jwt:
+    secret: birllMonstrao
 server:
   port: 8200
 eureka:

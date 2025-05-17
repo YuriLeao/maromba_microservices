@@ -17,7 +17,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.api.maromba.workoutSheet.dtos.WorkoutSheetDTO;
@@ -47,13 +49,14 @@ public class WorkoutSheetController {
 		return ResponseEntity.status(HttpStatus.CREATED).body("Successfully created.");
 	}
 
-	@Operation(summary = "Gets all workouts sheet.")
-	@GetMapping("getAll")
+	@Operation(summary = "Gets all workouts sheet by company id.")
+	@GetMapping("getAllByCompanyId")
 	@Retry(name = "default")
 	@CircuitBreaker(name = "default")
-	public ResponseEntity<Page<WorkoutSheetDTO>> getAll(
-			@PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.ASC) Pageable pageable) {
-		Page<WorkoutSheetDTO> workoutsSheetDTOPage = workoutSheetService.getAll(pageable);
+	public ResponseEntity<Page<WorkoutSheetDTO>> getAllByCompanyId(
+			@PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.ASC) Pageable pageable,
+			@RequestParam(required = false) UUID companyId) {
+		Page<WorkoutSheetDTO> workoutsSheetDTOPage = workoutSheetService.getAllByCompanyId(pageable, companyId);
 		return ResponseEntity.status(HttpStatus.OK).body(workoutsSheetDTOPage);
 	}
 
@@ -70,8 +73,9 @@ public class WorkoutSheetController {
 	@DeleteMapping("delete/{id}")
 	@Retry(name = "default")
 	@CircuitBreaker(name = "default")
-	public ResponseEntity<String> delete(@PathVariable(value = "id") UUID id) {
-		workoutSheetService.delete(id);
+	public ResponseEntity<String> delete(@RequestHeader("Authorization") String authorization,
+			@PathVariable(value = "id") UUID id) {
+		workoutSheetService.delete(id, authorization);
 		return ResponseEntity.status(HttpStatus.OK).body("Workout sheet deleted successfully.");
 	}
 
@@ -79,8 +83,9 @@ public class WorkoutSheetController {
 	@PutMapping("update/{id}")
 	@Retry(name = "default")
 	@CircuitBreaker(name = "default")
-	public ResponseEntity<WorkoutSheetDTO> update(@PathVariable(value = "id") UUID id, @RequestBody WorkoutSheetDTO workoutSheetDTO) {
-		workoutSheetDTO = workoutSheetService.update(id, workoutSheetDTO);
+	public ResponseEntity<WorkoutSheetDTO> update(@RequestHeader("Authorization") String authorization,
+			@PathVariable(value = "id") UUID id, @RequestBody WorkoutSheetDTO workoutSheetDTO) {
+		workoutSheetDTO = workoutSheetService.update(id, workoutSheetDTO, authorization);
 		return ResponseEntity.status(HttpStatus.CREATED).body(workoutSheetDTO);
 	}
 }

@@ -20,17 +20,23 @@ import org.springframework.stereotype.Service;
 import com.api.maromba.workoutSheet.dtos.WorkoutDivisionDTO;
 import com.api.maromba.workoutSheet.dtos.WorkoutExerciseDTO;
 import com.api.maromba.workoutSheet.dtos.WorkoutSheetDTO;
+import com.api.maromba.workoutSheet.exceptions.ResponseBadRequestException;
 import com.api.maromba.workoutSheet.exceptions.ResponseNotFoundException;
 import com.api.maromba.workoutSheet.models.WorkoutExerciseModel;
 import com.api.maromba.workoutSheet.models.WorkoutDivisionModel;
 import com.api.maromba.workoutSheet.models.WorkoutSheetModel;
 import com.api.maromba.workoutSheet.repositories.WorkoutSheetRepository;
+import com.api.maromba.workoutSheet.util.JwtUtil;
+import com.auth0.jwt.interfaces.DecodedJWT;
 
 @Service
 public class WorkoutSheetService {
 
 	@Autowired
 	WorkoutSheetRepository workoutSheetRepository;
+	
+	@Autowired
+	private JwtUtil jwtUtil;
 
 	@Transactional
 	public WorkoutSheetDTO save(WorkoutSheetDTO workoutSheetDTO) {
@@ -41,9 +47,15 @@ public class WorkoutSheetService {
 	}
 
 	@Transactional
-	public WorkoutSheetDTO update(UUID id, WorkoutSheetDTO workoutSheetDTO) {
+	public WorkoutSheetDTO update(UUID id, WorkoutSheetDTO workoutSheetDTO, String token) {
 		WorkoutSheetModel existingSheet = workoutSheetRepository.findById(id)
 				.orElseThrow(() -> new ResponseNotFoundException("No workout sheet found."));
+		
+		String auth = getAuthorization(token);
+
+		if (!"A".equals(auth) && existingSheet.getCompanyId() == null) {
+			new ResponseBadRequestException("It's only allowed to update workout sheets created by the company itself.");
+		}
 
 		UUID originalId = existingSheet.getId();
 		BeanUtils.copyProperties(workoutSheetDTO, existingSheet, "id", "divisions");
@@ -82,8 +94,7 @@ public class WorkoutSheetService {
 		existingSheet.getDivisions().addAll(updatedDivisions);
 	}
 
-	private void processExercisesWithStream(WorkoutDivisionModel divisionModel,
-			List<WorkoutExerciseDTO> exerciseDTOs) {
+	private void processExercisesWithStream(WorkoutDivisionModel divisionModel, List<WorkoutExerciseDTO> exerciseDTOs) {
 
 		Map<UUID, WorkoutExerciseModel> existingExercisesMap = divisionModel.getExercises().stream()
 				.collect(Collectors.toMap(WorkoutExerciseModel::getId, Function.identity()));
@@ -115,43 +126,52 @@ public class WorkoutSheetService {
 	}
 
 	@Transactional
-	public void delete(UUID id) {
+	public void delete(UUID id, String token) {
 		WorkoutSheetModel workoutSheetModel = workoutSheetRepository.findById(id)
 				.orElseThrow(() -> new ResponseNotFoundException("No workout sheet found."));
+
+		String auth = getAuthorization(token);
+
+		if (!"A".equals(auth) && workoutSheetModel.getCompanyId() == null) {
+			new ResponseBadRequestException("It's only allowed to delete workout sheets created by the company itself.");
+		}
 
 		workoutSheetRepository.delete(workoutSheetModel);
 	}
 
-	public Page<WorkoutSheetDTO> getAll(Pageable pageable) {
-	    Page<WorkoutSheetModel> page = workoutSheetRepository.findAll(pageable);
-	    if (page.isEmpty()) {
-	        throw new ResponseNotFoundException("No workouts sheet found.");
-	    }
-	    return page.map(this::convertModelToDTO);
+	public Page<WorkoutSheetDTO> getAllByCompanyId(Pageable pageable, UUID companyId) {
+		Page<WorkoutSheetModel> page = workoutSheetRepository.findAllByCompanyId(companyId, pageable);
+
+		if (page.isEmpty()) {
+			throw new ResponseNotFoundException("No workouts sheet found.");
+		}
+
+		return page.map(this::convertModelToDTO);
+	}
+
+	private String getAuthorization(String token) {
+		DecodedJWT decodedJWT = jwtUtil.validateToken(token.replace("Bearer ", ""), "/user-service/login");
+		return decodedJWT.getClaim("authorization").asString();
 	}
 
 	private WorkoutSheetDTO convertModelToDTO(WorkoutSheetModel workoutSheet) {
-	    WorkoutSheetDTO dto = new WorkoutSheetDTO();
-	    BeanUtils.copyProperties(workoutSheet, dto);
-	    
-	    dto.setDivisions(Optional.ofNullable(workoutSheet.getDivisions())
-	        .orElseGet(ArrayList::new)
-	        .stream()
-	        .map(div -> {
-	            WorkoutDivisionDTO divDTO = new WorkoutDivisionDTO();
-	            BeanUtils.copyProperties(div, divDTO);
-	            divDTO.setExercises(Optional.ofNullable(div.getExercises())
-	                .orElseGet(ArrayList::new)
-	                .stream()
-	                .map(ex -> {
-	                    WorkoutExerciseDTO exDTO = new WorkoutExerciseDTO();
-	                    BeanUtils.copyProperties(ex, exDTO);
-	                    return exDTO;
-	                }).toList());
-	            return divDTO;
-	        }).toList());
-	    
-	    return dto;
+		WorkoutSheetDTO dto = new WorkoutSheetDTO();
+		BeanUtils.copyProperties(workoutSheet, dto);
+
+		dto.setDivisions(
+				Optional.ofNullable(workoutSheet.getDivisions()).orElseGet(ArrayList::new).stream().map(div -> {
+					WorkoutDivisionDTO divDTO = new WorkoutDivisionDTO();
+					BeanUtils.copyProperties(div, divDTO);
+					divDTO.setExercises(
+							Optional.ofNullable(div.getExercises()).orElseGet(ArrayList::new).stream().map(ex -> {
+								WorkoutExerciseDTO exDTO = new WorkoutExerciseDTO();
+								BeanUtils.copyProperties(ex, exDTO);
+								return exDTO;
+							}).toList());
+					return divDTO;
+				}).toList());
+
+		return dto;
 	}
 
 	private WorkoutSheetModel convertDTOToModel(WorkoutSheetDTO workoutSheetDTO) {
